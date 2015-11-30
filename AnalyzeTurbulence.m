@@ -26,7 +26,7 @@ addpath('C:/Users/Jeff/Desktop/Github/thesis-pivpr')
      load('Vfree.mat');
      %load('DynamicVelocities.mat');
      
-     cd('C:\Users\Jeff\Desktop\Github\thesis-pivpr\plots\2015_11_30');
+     cd('C:\Users\Jeff\Desktop\Github\thesis-pivpr\plots\2015_11_30\analyze_turbulence');
  
 for i=Runs
     close all;

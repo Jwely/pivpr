@@ -45,4 +45,3 @@ figure (2);
     print(figure (1),'PIV example figureA','-djpeg85','-r800');
     print(figure (2),'PIV example figureB','-djpeg85','-r800');
 end    
-end
