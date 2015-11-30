@@ -1,0 +1,83 @@
+----------------------------------------------------------------------------------------
+/Data2
+----------------------------------------------------------------------------------------
+	root directory containing all files used for matlab processing of data
+	including [output.xls]. Test matrices are included as well as multiple 	
+	index files.
+
+		BatchCropDirectory.m
+			matlab function to batch autocrop white space out of all images
+			in a directory, used for final formating of plots.
+		CoreIndex.txt
+			Contains a list of all core locations by run number, these core		
+			locations were found manually using the tools within the matlab
+			program marked Vanalysis
+		Load3d.m
+			Loads raw vector data and performs averaging operations, weeding
+			grid point data which does not have at least 3 good runs.
+			Translates this data into two files which are stored in each runs	
+			vector directory. One is DynData.txt, which is a 2-dimensionalized
+			representation of ALL data runs for dynamic turbulence processing 
+			via the Vanalysis m file. The other is AvgData.xls, which contains
+			data in the format of.
+			
+				[x,y,z,u,v,w,Uu,Uv,Uw,N,Uu/u,Uv/v,Uw/w]
+
+		1-3	x,y,z    = coordinates
+		4-6	u,v,w    = velocity components
+		7-9	Uu,Uv,Uw = Uncertainty in those components
+		10	N	 = Number of good values which the data came from
+		11-13	Uu/u etc = Normalized Uncertainty values as percentage of Vfree
+		
+			(The normalized uncertainty values i believe ended up unused)
+
+		Output.xls
+			Vtheta_Max and Rcore data by run, unlabled run numbers.
+
+		
+		TerminalVanalysis.m
+			The script file to run when full automation of data processing
+			is required. 
+
+		Vanalysis.m
+			Data processor, responsible for all output data and fully 
+customizable
+
+		Testmatrix.xls
+			Master tracker of run data, Numerical Final results are recorded
+			here
+
+
+----------------------------------------------------------------------------------------
+/Data2/Ely_May28th/Output charts
+----------------------------------------------------------------------------------------
+
+	Contains all output figures
+
+----------------------------------------------------------------------------------------
+/Data2/Ely_May28th/Vector
+----------------------------------------------------------------------------------------
+
+	Contains all vector data as well as files produced by Load3d. This data is produced
+	from the raw image data and relevant calibration data by INSIGHT.
+
+----------------------------------------------------------------------------------------
+/Data2/Ely_May28th/Image
+----------------------------------------------------------------------------------------
+
+	Raw PIV Image data.	
+	
+----------------------------------------------------------------------------------------
+/Data2/Ely_May28th/Calibration
+----------------------------------------------------------------------------------------
+
+	Contains calibration data necessary to properly process the image files.
+	There are 7 calibrations, one for each location of data, see the master testmatrix
+	file for clarification.
+
+
+
+----------------------------------------------------------------------------------------
+EVERYTHING in these directories was produced by Jeffry W Ely towards completion of 
+a masters thesis and coresponding degree in Aerospace Engineering from ODU in Norfolk VA.
+----------------------------------------------------------------------------------------

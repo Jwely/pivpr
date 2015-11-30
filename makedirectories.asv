@@ -1,0 +1,8 @@
+%create individual directories.
+path=('E:\Data2\Ely_May28th\Output charts');
+cd(path);
+
+
+for i=1:70
+    
+end
