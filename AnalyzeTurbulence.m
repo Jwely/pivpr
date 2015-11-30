@@ -1,6 +1,6 @@
 % Loads up the workspace containing Data for turbulent analysis.
 clc; clear all; %close all;
-addpath('E:/Data2/')
+addpath('C:/Users/Jeff/Desktop/Github/thesis-pivpr')
 %Plot tuning parameters.
     Runs=[1:38 41:70];  %Runs to plot.
     Chord = 101.6;      %Chord length of model (in milimeters) (4 inches)
@@ -26,7 +26,7 @@ addpath('E:/Data2/')
      load('Vfree.mat');
      %load('DynamicVelocities.mat');
      
-     cd('E:\Data2\Oct_2014_Output\Analyze_turbulence');
+     cd('C:\Users\Jeff\Desktop\Github\thesis-pivpr\plots\2015_11_30');
  
 for i=Runs
     close all;
