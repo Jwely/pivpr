@@ -26,8 +26,8 @@ class MeanVecFieldCartesian:
         self.x_set = None
         self.y_set = None
         self.dims = (None, None)
-        self.meshgrid = {"x": None,
-                         "y": None}
+        self.meshgrid = {"x_mesh": None,
+                         "y_mesh": None}
 
         # dictionary of matrices by key symbol. Capitols are averages, lowercase are fluctuations
         self.vel_matrix = {'U': None,       # x direction mean velocity
@@ -57,9 +57,21 @@ class MeanVecFieldCartesian:
         self._average_cartesian()           # fill in the velocity matrix
 
 
-    def __getitem__(self, item):
-        """ allows components of the vel_matrix to be accessed more simply through instance[key] """
-        return self.vel_matrix[item]
+    def __getitem__(self, key):
+        """ allows components of the instance to be accessed more simply through instance[key] """
+        if key in self.vel_matrix.keys():
+            return self.vel_matrix[key]
+
+        elif key in self.meshgrid.keys():
+            return self.meshgrid[key]
+
+
+    def __setitem__(self, key, value):
+        """ allows components of the instance to be set more briefly """
+        if key in self.vel_matrix.keys():
+            self.vel_matrix[key] = value
+        else:
+            raise AttributeError("instance does not accept __setitem__ for '{0}'".format(key))
 
 
     def _ingest_paths(self, filepath_list):
@@ -78,7 +90,6 @@ class MeanVecFieldCartesian:
             next_vf = VecFieldCartesian(path)
             assert next_vf.dims == first_vf.dims, "Inconsistent dimensions detected!"
             self.VecFields.append(next_vf)
-
         print("loaded {0} files in {1} s".format(len(filepath_list), t.finish()))
 
 
@@ -99,28 +110,26 @@ class MeanVecFieldCartesian:
             w_set[:, :, i] = vf.vel_matrix['W']
 
         # populate the velocity matrix
-        self.vel_matrix['U'] = np.ma.mean(u_set, axis=2)
-        self.vel_matrix['V'] = np.ma.mean(v_set, axis=2)
-        self.vel_matrix['W'] = np.ma.mean(w_set, axis=2)
-        self.vel_matrix['M'] = (self.vel_matrix['U'] ** 2 +
-                                self.vel_matrix['V'] ** 2 +
-                                self.vel_matrix['W'] ** 2) ** 0.5
+        self['U'] = np.ma.mean(u_set, axis=2)
+        self['V'] = np.ma.mean(v_set, axis=2)
+        self['W'] = np.ma.mean(w_set, axis=2)
+        self['M'] = (self['U'] ** 2 + self['V'] ** 2 + self['W'] ** 2) ** 0.5
 
-        self.vel_matrix['u'] = np.ma.std(u_set, axis=2)
-        self.vel_matrix['v'] = np.ma.std(v_set, axis=2)
-        self.vel_matrix['w'] = np.ma.std(w_set, axis=2)
+        self['u'] = np.ma.std(u_set, axis=2)
+        self['v'] = np.ma.std(v_set, axis=2)
+        self['w'] = np.ma.std(w_set, axis=2)
 
-        self.vel_matrix['uu'] = self.vel_matrix['u'] * self.vel_matrix['u']
-        self.vel_matrix['vv'] = self.vel_matrix['v'] * self.vel_matrix['v']
-        self.vel_matrix['ww'] = self.vel_matrix['w'] * self.vel_matrix['w']
-        self.vel_matrix['cte'] = (self.vel_matrix['uu'] + self.vel_matrix['vv'] + self.vel_matrix['ww'])
+        self['uu'] = self['u'] * self['u']
+        self['vv'] = self['v'] * self['v']
+        self['ww'] = self['w'] * self['w']
+        self['cte'] = (self['uu'] + self['vv'] + self['ww'])
 
-        self.vel_matrix['uv'] = self.vel_matrix['u'] * self.vel_matrix['v']
-        self.vel_matrix['uw'] = self.vel_matrix['u'] * self.vel_matrix['w']
-        self.vel_matrix['vw'] = self.vel_matrix['v'] * self.vel_matrix['w']
-        self.vel_matrix['crs'] = (self.vel_matrix['uv'] + self.vel_matrix['uw'] + self.vel_matrix['vw'])
+        self['uv'] = self['u'] * self['v']
+        self['uw'] = self['u'] * self['w']
+        self['vw'] = self['v'] * self['w']
+        self['crs'] = (self['uv'] + self['uw'] + self['vw'])
 
-        self.vel_matrix['num'] = u_set.count(axis=2)
+        self['num'] = u_set.count(axis=2)
 
 
     def to_pickle(self, pickle_path, reduce_memory=False):
@@ -154,7 +163,8 @@ class MeanVecFieldCartesian:
     def show_heatmap(self, component):
         """ prints a quick simple heads up heatmap of input component of the vel_matrix attribute"""
         fig, ax = plt.subplots()
-        heatmap = ax.pcolor(self.vel_matrix[component])
+        heatmap = ax.pcolor(self[component])    # see __getitem__
+        plt.title(component)
         plt.show()
 
 
@@ -165,11 +175,8 @@ if __name__ == "__main__":
              r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01002.v3d",
              r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01003.v3d",
              r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01004.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01005.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01006.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01007.v3d"]
+             ]
 
     mvf = MeanVecFieldCartesian(paths, "test")
-    #mvf.show_heatmap('num')
-    print mvf['U']
+    mvf.show_heatmap('M')
 

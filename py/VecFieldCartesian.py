@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 
 class VecFieldCartesian:
+
     def __init__(self, filepath, velocity_fs=None):
         """
         All meaningful attributes of a VecField3d object are constructed upon __init__.
@@ -28,8 +29,8 @@ class VecFieldCartesian:
         # set up empty coordinate value dictionary, (x and y are two-dimensionalized 1d vectors)
         self.x_set = None
         self.y_set = None
-        self.meshgrid = {"x": None,
-                         "y": None}
+        self.meshgrid = {"x_mesh": None,
+                         "y_mesh": None}
 
         self.vel_matrix = {'U': None,       # x direction velocity
                            'V': None,       # y direction velocity
@@ -40,6 +41,15 @@ class VecFieldCartesian:
         self._get_meshgrid()                # populate self.dims, self.meshgrid
         self._table_to_matrix()             # populate self.vel_matrix
         print("loaded {0} in {1} s".format(filepath, t.finish()))
+
+
+    def __getitem__(self, item):
+        """ allows components of the vel_matrix to be accessed more simply through instance[key] """
+        if item in self.vel_matrix.keys():
+            return self.vel_matrix[item]
+
+        elif item in self.meshgrid.keys():
+            return self.meshgrid[item]
 
 
     def _read_v3d(self):
@@ -65,9 +75,9 @@ class VecFieldCartesian:
         self.y_set = sorted(set(self.dataframe['Y mm']))
         self.dims = (len(self.y_set), len(self.x_set))
 
-        y_mesh, x_mesh = np.meshgrid(self.y_set, self.x_set)
-        self.meshgrid['x'] = x_mesh
-        self.meshgrid['y'] = y_mesh
+        x_mesh, y_mesh = np.meshgrid(self.x_set, self.y_set)
+        self.meshgrid['x_mesh'] = x_mesh
+        self.meshgrid['y_mesh'] = y_mesh
 
         for component in ['U', 'V', 'W']:
             self.vel_matrix[component] = np.zeros(self.dims)
@@ -98,10 +108,11 @@ class VecFieldCartesian:
             self.vel_matrix[component] = masked
 
 
-    def show(self, component):
-        """ prints a quick simple heads up  heatmap of each of the components """
+    def show_heatmap(self, component):
+        """ prints a quick simple heads up heatmap of input component of the vel_matrix attribute"""
         fig, ax = plt.subplots()
-        heatmap = ax.pcolor(self.vel_matrix[component])
+        heatmap = ax.pcolor(self[component])    # see __getitem__
+        plt.title(component)
         plt.show()
 
 
@@ -113,5 +124,5 @@ if __name__ == "__main__":
 
     for p in paths:
         v = VecFieldCartesian(p)
-        v.show('W')
+        v.show_heatmap('W')
 
