@@ -2,3 +2,4 @@
 /plots/*
 /.idea/*
 *.asv
+*.pyc
