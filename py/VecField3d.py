@@ -8,6 +8,7 @@ import numpy as np
 
 class VecField3d:
 
+
     def __init__(self, filepath):
         """
         All meaningful attributes of a VecField3d object are constructed upon __init__.
@@ -25,14 +26,19 @@ class VecField3d:
     # value is a matrix with dimensions equal to self.dims
 
         # set up empty coordinate value dictionary, (x and y are two-dimensionalized 1d vectors)
-        self.cords_matrix = {"x": None,
-                             "y": None}
+        self.meshgrid = {"x": None,
+                         "y": None}
 
-        self.velocity_matrix = {"u": None,      # x direction
-                                "v": None,      # y direction
-                                "w": None,      # z (stream-wise) direction
-                                "r": None,      # radial about vortex core
-                                "t": None}      # tangential about vortex core
+        self.velocity_matrix = {'U': None,      # x direction mean velocity
+                                'V': None,      # y direction mean velocity
+                                'W': None,      # z direction mean velocity
+                                'R': None,      # radial mean velocity around vortex core
+                                'T': None,      # tangential mean velocity around vortex core
+                                'u': None,      # U fluctuation
+                                'v': None,      # V fluctuation
+                                'w': None,      # W fluctuation
+                                'r': None,      # R fluctuation
+                                't': None}      # T fluctuation
 
         self.reynolds_matrix = {'uu': None,     # turbulent energy in u
                                 'vv': None,     # turbulent energy in v
@@ -49,11 +55,16 @@ class VecField3d:
                                 'tot': None}    # total turbulent energies
 
         # all the same data in the matrices above, but flattened into a 1d array and in terms of "distance to core"
-        self.velocity_flat = {"u": None,        # x direction
-                              "v": None,        # y direction
-                              "w": None,        # z (streamwise) direction
-                              "r": None,        # radial about vortex core
-                              "t": None}        # tangential about vortex core
+        self.velocity_flat = {'U': None,        # x direction mean velocity
+                              'V': None,        # y direction mean velocity
+                              'W': None,        # z direction mean velocity
+                              'R': None,        # radial mean velocity around vortex core
+                              'T': None,        # tangential mean velocity around vortex core
+                              'u': None,        # U fluctuation
+                              'v': None,        # V fluctuation
+                              'w': None,        # W fluctuation
+                              'r': None,        # R fluctuation
+                              't': None}        # T fluctuation
 
         self.reynolds_flat = {'uu': None,       # turbulent energy in u
                               'vv': None,       # turbulent energy in v
@@ -73,10 +84,7 @@ class VecField3d:
 
 
         self._read_v3d()                        # parse the .v3d file
-        self._get_matrix_dims()                 # populate self.dims, coord_matrix
-
-
-
+        self._get_meshgrid()                 # populate self.dims, self.meshgrid
 
 
     def _read_v3d(self):
@@ -93,13 +101,33 @@ class VecField3d:
         self.dataframe = pd.read_csv(self.filepath, skiprows=1, names=self.headers)
 
 
-    def _get_matrix_dims(self):
+    def _get_meshgrid(self):
+        """
+        Fills the following attributes of the object:
+            self.meshgrid
+            self.dims
+        """
 
-        self.x_set = sorted(set(self.dataframe['X mm']))
-        self.y_set = sorted(set(self.dataframe['Y mm']))
+        x_set = sorted(set(self.dataframe['X mm']))
+        y_set = sorted(set(self.dataframe['Y mm']))
+        self.dims = (len(x_set), len(y_set))
 
-        print(len(self.x_set))
-        print(len(self.y_set))
+        x_mesh, y_mesh = np.meshgrid(x_set, y_set)
+        self.meshgrid['x'] = x_mesh
+        self.meshgrid['y'] = y_mesh
+
+
+    def _get_cart_velocities(self):
+        """
+        Fills matrix values for cartesian mesh
+        """
+
+
+
+
+    def _get_flat(self):
+        pass
+
 
 
 
