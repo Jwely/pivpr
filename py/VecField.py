@@ -7,22 +7,23 @@ import matplotlib.pyplot as plt
 
 
 class VecField:
-
-    def __init__(self, filepath):
+    def __init__(self, filepath, velocity_fs=None):
         """
         All meaningful attributes of a VecField3d object are constructed upon __init__.
-        The "output" attribute is the velocity_matrix.
+        The "output" attribute is the vel_matrix.
 
         :param filepath:        local filepath to a .v3d file
+        :param velocity_fs:     free stream velocity, values more than 130% this value will be masked
         """
 
         assert filepath.endswith(".v3d"), "Input is not a valid .v3d file! filepath='{0}'".format(filepath)
 
         t = Timer()
-        self.filepath = filepath                # local filepath to .v3d file
-        self.headers = None                     # list of column headers
-        self.dataframe = None                   # pandas dataframe of csv like data.
-        self.dims = (None, None)                # x, y dimensions of all matrix data
+        self.filepath = filepath            # local filepath to .v3d file
+        self.velocity_fs = velocity_fs      # free stream velocity associated with this file
+        self.headers = None                 # list of column headers
+        self.dataframe = None               # pandas dataframe of csv like data.
+        self.dims = (None, None)            # x, y dimensions of all matrix data
 
         # set up empty coordinate value dictionary, (x and y are two-dimensionalized 1d vectors)
         self.x_set = None
@@ -30,14 +31,14 @@ class VecField:
         self.meshgrid = {"x": None,
                          "y": None}
 
-        self.velocity_matrix = {'U': None,      # x direction velocity
-                                'V': None,      # y direction velocity
-                                'W': None}      # z direction velocity
+        self.vel_matrix = {'U': None,       # x direction velocity
+                           'V': None,       # y direction velocity
+                           'W': None}       # z direction velocity
 
         # Build up the attributes
-        self._read_v3d()                        # parse the .v3d file, populates the dataframe
-        self._get_meshgrid()                    # populate self.dims, self.meshgrid
-        self._table_to_matrix()                 # populate self.velocity_matrix
+        self._read_v3d()                    # parse the .v3d file, populates the dataframe
+        self._get_meshgrid()                # populate self.dims, self.meshgrid
+        self._table_to_matrix()             # populate self.vel_matrix
         print("loaded {0} in {1} s".format(filepath, t.finish()))
 
 
@@ -69,7 +70,7 @@ class VecField:
         self.meshgrid['y'] = y_mesh
 
         for component in ['U', 'V', 'W']:
-            self.velocity_matrix[component] = np.zeros(self.dims)
+            self.vel_matrix[component] = np.zeros(self.dims)
 
 
     def _table_to_matrix(self):
@@ -81,29 +82,36 @@ class VecField:
             x_index = self.x_set.index(row['X mm'])
             y_index = self.y_set.index(row['Y mm'])
 
-            self.velocity_matrix['U'][y_index, x_index] = row['U m/s']
-            self.velocity_matrix['V'][y_index, x_index] = row['V m/s']
-            self.velocity_matrix['W'][y_index, x_index] = row['W m/s']
+            self.vel_matrix['U'][y_index, x_index] = row['U m/s']
+            self.vel_matrix['V'][y_index, x_index] = row['V m/s']
+            self.vel_matrix['W'][y_index, x_index] = row['W m/s']
 
-        # turn the arrays into masked arrays to hide no_data values
+        # turn the arrays into masked arrays to hide no_data and anomalously high values
+        if self.velocity_fs is not None:
+            high_thresh = self.velocity_fs * 1.3
+        else:
+            high_thresh = 100
+
         for component in ['U', 'V', 'W']:
-            masked = np.ma.masked_array(self.velocity_matrix[component],
-                                        mask=self.velocity_matrix[component] > 100)
-            self.velocity_matrix[component] = masked
+            masked = np.ma.masked_array(self.vel_matrix[component],
+                                        mask=self.vel_matrix[component] > high_thresh)
+            self.vel_matrix[component] = masked
 
 
-    def show(self):
+    def show(self, component):
         """ prints a quick simple heads up  heatmap of each of the components """
-        for component in ['U', 'V', 'W']:
-            plot_data = self.velocity_matrix[component]
-            fig, ax = plt.subplots()
-            heatmap = ax.pcolor(plot_data)
-            plt.show()
+        fig, ax = plt.subplots()
+        heatmap = ax.pcolor(self.vel_matrix[component])
+        plt.show()
 
 
 if __name__ == "__main__":
+    paths = [r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01000.v3d",
+             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01001.v3d",
+             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01002.v3d",
+             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01003.v3d"]
 
-    fpath = r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01000.v3d"
-    v = VecField3d(fpath)
-    v.show()
+    for p in paths:
+        v = VecField(p)
+        v.show('U')
 
