@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class VecField:
+class VecFieldCartesian:
     def __init__(self, filepath, velocity_fs=None):
         """
         All meaningful attributes of a VecField3d object are constructed upon __init__.
@@ -112,6 +112,6 @@ if __name__ == "__main__":
              r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01003.v3d"]
 
     for p in paths:
-        v = VecField(p)
-        v.show('U')
+        v = VecFieldCartesian(p)
+        v.show('W')
 
