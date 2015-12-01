@@ -1,6 +1,9 @@
 __author__ = 'Jwely'
 
-from VecField3d import VecField3d
+from VecField import VecField
+from Timer import Timer
+
+import numpy as np
 
 
 class MeanVecField3d:
@@ -16,7 +19,7 @@ class MeanVecField3d:
 
         self.name_tag = name_tag
         self.v3d_paths = v3d_paths
-        self.VecField3d_list = self._ingest_paths(v3d_paths)
+        self.VecFields = self._ingest_paths(v3d_paths)
 
         # dictionary of matrices by key symbol. Capitols are averages, lowercase are fluctuations
         self.velocity_matrix = {'U': None,      # x direction mean velocity
@@ -79,9 +82,15 @@ class MeanVecField3d:
 
     @staticmethod
     def _ingest_paths(filepath_list):
+        """ Creates VecField3d objects from each filepath in the list"""
+        t = Timer()
         outlist = []
-        for path in filepath_list:
-            outlist.append(VecField3d(path))
+
+        # use of "set" ensures no duplicate file paths
+        for path in set(filepath_list):
+            outlist.append(VecField(path))
+
+        print("loaded {0} files in {1} s".format(len(filepath_list), t.finish()))
         return outlist
 
 
@@ -93,11 +102,24 @@ class MeanVecField3d:
         pass
 
 
-    def take_averages(self, *args):
+    def average_cartesian(self, *args):
+        """
+        Populates the  U, V, W, u, v, w, uu, vv, ww, uv, uw, and vw  values of the velocity matrix.
+        :param args:
+        :return:
+        """
+
+        depth = len(self.VecFields)
+
+        for vf3d in self.VecFields:
 
 
 
+
+
+    def find_vortex_core(self):
         pass
+
 
 
 

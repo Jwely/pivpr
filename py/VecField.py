@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class VecField3d:
+class VecField:
 
     def __init__(self, filepath):
         """
