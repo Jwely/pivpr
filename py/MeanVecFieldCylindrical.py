@@ -56,6 +56,7 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
                                 'tw': None,  # reynolds stress in t/w
                                 'yrs': None})  # total cylindrical reynolds stress
 
+
     def to_pickle(self, pickle_path, reduce_memory=False):
         """ dumps the contents of this object to a pickle """
 
@@ -124,10 +125,9 @@ if __name__ == "__main__":
     directory = r"E:\Data2\Ely_May28th\Vector\1"
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
 
-    pkl_path = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test.pkl"
     small_pkl = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test_small.pkl"
-    #mvf = MeanVecFieldCylindrical("Station_1", paths)
-    #mvf.to_pickle(pkl_path, reduce_memory=True)
+    mvf = MeanVecFieldCylindrical("Station_1", paths)
+    mvf.to_pickle(small_pkl, reduce_memory=True)
 
     mvf = MeanVecFieldCylindrical().from_pickle(small_pkl)
     mvf.build_cylindrical((73.5214, 43.4737))

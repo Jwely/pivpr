@@ -6,12 +6,11 @@ from Timer import Timer
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import cPickle
 
 
 class MeanVecFieldCartesian:
 
-    def __init__(self, v3d_paths, name_tag):
+    def __init__(self, name_tag=None, v3d_paths=None):
         """
         :param v3d_paths:       list of filepaths to v3d files
         :param name_tag:        unique string name tag for this data set
@@ -20,7 +19,7 @@ class MeanVecFieldCartesian:
 
         self.name_tag = name_tag
         self.v3d_paths = v3d_paths
-        self.VecFields = []
+        self.constituent_vel_matrix_list = []
 
         # attributes that will be inherited from the constituent VecField instances
         self.x_set = None
@@ -33,6 +32,7 @@ class MeanVecFieldCartesian:
         self.vel_matrix = {'U': None,       # x direction mean velocity
                            'V': None,       # y direction mean velocity
                            'W': None,       # z direction mean velocity
+                           'P': None,       # in-plane velocities (U and V components, not W)
                            'M': None,       # velocity magnitude (all three components)
 
                            'u': None,       # fluctuation in U
@@ -51,16 +51,19 @@ class MeanVecFieldCartesian:
 
                            'num': None}     # number of good data points making up stats for other values
 
-
         # Build up the data set
-        self._ingest_paths(v3d_paths)       # creates VecFields from input filepath list
-        self._average_cartesian()           # fill in the velocity matrix
+        if v3d_paths is not None:
+            self.ingest_paths(v3d_paths)    # creates constituent_vel_matrix_list from input filepath list
 
 
     def __getitem__(self, key):
         """ allows components of the instance to be accessed more simply through instance[key] """
         if key in self.vel_matrix.keys():
             return self.vel_matrix[key]
+
+        # allows 'uv' to be returned for input key 'vu', which is nice.
+        elif key[::-1] in self.vel_matrix.keys():
+            return self.vel_matrix[key[::-1]]
 
         elif key in self.meshgrid.keys():
             return self.meshgrid[key]
@@ -70,11 +73,13 @@ class MeanVecFieldCartesian:
         """ allows components of the instance to be set more briefly """
         if key in self.vel_matrix.keys():
             self.vel_matrix[key] = value
+        elif key[::-1] in self.vel_matrix.keys():
+            self.vel_matrix[key[::-1]] = value
         else:
             raise AttributeError("instance does not accept __setitem__ for '{0}'".format(key))
 
 
-    def _ingest_paths(self, filepath_list):
+    def ingest_paths(self, filepath_list):
         """ Creates VecField3d objects from each filepath in the list"""
         t = Timer()
 
@@ -84,13 +89,16 @@ class MeanVecFieldCartesian:
         self.y_set = first_vf.y_set
         self.dims = first_vf.dims
         self.meshgrid = first_vf.meshgrid
-        self.VecFields.append(first_vf)
+        self.constituent_vel_matrix_list.append(first_vf.vel_matrix)
 
         for path in filepath_list:
             next_vf = VecFieldCartesian(path)
             assert next_vf.dims == first_vf.dims, "Inconsistent dimensions detected!"
-            self.VecFields.append(next_vf)
-        print("loaded {0} files in {1} s".format(len(filepath_list), t.finish()))
+            self.constituent_vel_matrix_list.append(next_vf.vel_matrix)
+        print("loaded {0} files in {1} s".format(len(filepath_list) + 1, t.finish()))
+
+        # now take statistics on the set
+        self._average_cartesian()
 
 
     def _average_cartesian(self):
@@ -98,22 +106,23 @@ class MeanVecFieldCartesian:
         Populates the  U, V, W, u, v, w, uu, vv, ww, uv, uw, and vw  values of the velocity matrix.
         """
 
-        depth = len(self.VecFields)
+        depth = len(self.constituent_vel_matrix_list)
         u_set = np.ma.zeros(self.dims + tuple([depth]))
         v_set = np.ma.zeros(self.dims + tuple([depth]))
         w_set = np.ma.zeros(self.dims + tuple([depth]))
 
         print("Taking statistics...")
-        for i, vf in enumerate(self.VecFields):
-            u_set[:, :, i] = vf.vel_matrix['U']
-            v_set[:, :, i] = vf.vel_matrix['V']
-            w_set[:, :, i] = vf.vel_matrix['W']
+        for i, cvm in enumerate(self.constituent_vel_matrix_list):
+            u_set[:, :, i] = cvm['U']
+            v_set[:, :, i] = cvm['V']
+            w_set[:, :, i] = cvm['W']
 
         # populate the velocity matrix
         self['U'] = np.ma.mean(u_set, axis=2)
         self['V'] = np.ma.mean(v_set, axis=2)
         self['W'] = np.ma.mean(w_set, axis=2)
         self['M'] = (self['U'] ** 2 + self['V'] ** 2 + self['W'] ** 2) ** 0.5
+        self['P'] = (self['U'] ** 2 + self['V'] ** 2) ** 0.5
 
         self['u'] = np.ma.std(u_set, axis=2)
         self['v'] = np.ma.std(v_set, axis=2)
@@ -132,34 +141,6 @@ class MeanVecFieldCartesian:
         self['num'] = u_set.count(axis=2)
 
 
-    def to_pickle(self, pickle_path, reduce_memory=False):
-        """ dumps the contents of this object to a pickle """
-
-        # delete the constituent objects with hundreds of additional matrices to reduce pkl size
-        if reduce_memory:
-            del self.VecFields
-            self.VecFields = None
-
-        # create the directory and write the pkl file.
-        if not os.path.exists(os.path.dirname(pickle_path)):
-            os.mkdir(os.path.dirname(pickle_path))
-
-        with open(pickle_path, 'wb+') as f:
-            cPickle.dump(self, f)
-            print("Saved to {0}".format(pickle_path))
-
-
-    @staticmethod
-    def from_pickle(pickle_path):
-        """ loads previous saved state from a .pkl file and returns a MeanVecFieldCartesian instance """
-
-        with open(pickle_path, 'rb') as f:
-            new_instance = cPickle.load(f)
-
-        print("loaded pkl from {0}".format(pickle_path))
-        return new_instance
-
-
     def show_heatmap(self, component):
         """ prints a quick simple heads up heatmap of input component of the vel_matrix attribute"""
         fig, ax = plt.subplots()
@@ -170,13 +151,11 @@ class MeanVecFieldCartesian:
 
 
 if __name__ == "__main__":
-    paths = [r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01000.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01001.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01002.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01003.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01004.v3d",
-             ]
 
-    mvf = MeanVecFieldCartesian(paths, "test")
-    mvf.show_heatmap('M')
+    directory = r"E:\Data2\Ely_May28th\Vector\1"
+    paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
+
+    pkl_path = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test.pkl"
+    mvf = MeanVecFieldCartesian("Station_1", paths)
+    mvf.show_heatmap('P')
 
