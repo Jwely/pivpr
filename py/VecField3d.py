@@ -1,27 +1,27 @@
 __author__ = 'Jwely'
 
-
+from Timer import Timer
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 
 
 class VecField3d:
 
-
     def __init__(self, filepath):
         """
         All meaningful attributes of a VecField3d object are constructed upon __init__.
-        The "output" attributes is the velocity_matrix
+        The "output" attribute is the velocity_matrix.
+
         :param filepath:        local filepath to a .v3d file
         """
 
+        assert filepath.endswith(".v3d"), "Input is not a valid .v3d file! filepath='{0}'".format(filepath)
+
+        t = Timer()
         self.filepath = filepath                # local filepath to .v3d file
         self.headers = None                     # list of column headers
         self.dataframe = None                   # pandas dataframe of csv like data.
-
-        # set up empty coordinate dictionary
         self.dims = (None, None)                # x, y dimensions of all matrix data
 
         # set up empty coordinate value dictionary, (x and y are two-dimensionalized 1d vectors)
@@ -35,10 +35,10 @@ class VecField3d:
                                 'W': None}      # z direction velocity
 
         # Build up the attributes
-        self._read_v3d()                        # parse the .v3d file, populate self.headers, self.dataframe
+        self._read_v3d()                        # parse the .v3d file, populates the dataframe
         self._get_meshgrid()                    # populate self.dims, self.meshgrid
         self._table_to_matrix()                 # populate self.velocity_matrix
-        print("loaded {0}".format(filepath))
+        print("loaded {0} in {1} s".format(filepath, t.finish()))
 
 
     def _read_v3d(self):
@@ -57,9 +57,7 @@ class VecField3d:
 
     def _get_meshgrid(self):
         """
-        Fills the following attributes of the object:
-            self.meshgrid
-            self.dims
+        fills the meshgrid and grabs essential dimensional information to matrisize the data
         """
 
         self.x_set = sorted(set(self.dataframe['X mm']))
@@ -76,9 +74,9 @@ class VecField3d:
 
     def _table_to_matrix(self):
         """
-        Fills matrix values for cartesian mesh. These values tend to be organized
+        Fills matrix values for cartesian mesh. A little slow, but will work without any
+        known information about the ordering of the input data.
         """
-
         for i, row in self.dataframe.iterrows():
             x_index = self.x_set.index(row['X mm'])
             y_index = self.y_set.index(row['Y mm'])
@@ -87,7 +85,7 @@ class VecField3d:
             self.velocity_matrix['V'][y_index, x_index] = row['V m/s']
             self.velocity_matrix['W'][y_index, x_index] = row['W m/s']
 
-        # turn the arrays into masked arrays to hide nodata
+        # turn the arrays into masked arrays to hide no_data values
         for component in ['U', 'V', 'W']:
             masked = np.ma.masked_array(self.velocity_matrix[component],
                                         mask=self.velocity_matrix[component] > 100)
@@ -95,13 +93,12 @@ class VecField3d:
 
 
     def show(self):
-
+        """ prints a quick simple heads up  heatmap of each of the components """
         for component in ['U', 'V', 'W']:
             plot_data = self.velocity_matrix[component]
             fig, ax = plt.subplots()
             heatmap = ax.pcolor(plot_data)
             plt.show()
-
 
 
 if __name__ == "__main__":
