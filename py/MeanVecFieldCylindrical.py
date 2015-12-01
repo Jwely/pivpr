@@ -1,12 +1,16 @@
 __author__ = 'Jwely'
 
 from MeanVecFieldCartesian import MeanVecFieldCartesian
+from cart2cyl_vector import cart2cyl_vector
+
+import cPickle
 import numpy as np
+import os
 
 
 class MeanVecFieldCylindrical(MeanVecFieldCartesian):
 
-    def __init__(self, v3d_paths, name_tag):
+    def __init__(self, name_tag=None, v3d_paths=None):
         """
         Built to extend the cartesian version of this class. Since all PIV data is
         reasonably always going to be taken raw in cartesian coordinates, there is no
@@ -27,7 +31,7 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
         """
 
         # invoke the parent class init
-        MeanVecFieldCartesian.__init__(self, v3d_paths, name_tag)
+        MeanVecFieldCartesian.__init__(self, name_tag, v3d_paths)
 
         # add cylindrical specific attributes
         self.core_location = (None, None)       # position of core
@@ -45,55 +49,65 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
 
                                 'rr': None,  # turbulent energy in radial
                                 'tt': None,  # turbulent energy in tangential
+                                'yte': None,  # total cylindrical turbulent energy
 
                                 'rt': None,  # reynolds stress in r/t
                                 'rw': None,  # reynolds stress in r/w
-                                'tw': None})  # reynolds stress in t/w
+                                'tw': None,  # reynolds stress in t/w
+                                'yrs': None})  # total cylindrical reynolds stress
+
+    def to_pickle(self, pickle_path, reduce_memory=False):
+        """ dumps the contents of this object to a pickle """
+
+        # delete the constituent objects with hundreds of additional matrices to reduce pkl size
+        if reduce_memory:
+            del self.constituent_vel_matrix_list
+            self.constituent_vel_matrix_list = None
+
+        # create the directory and write the pkl file.
+        if not os.path.exists(os.path.dirname(pickle_path)):
+            os.mkdir(os.path.dirname(pickle_path))
+
+        with open(pickle_path, 'wb+') as f:
+            cPickle.dump(self, f)
+            print("Saved to {0}".format(pickle_path))
 
 
-    def define_core(self, index_location=None, real_location=None):
-        """
-        Accepts a manual definition of x,y coordinates of the core location.
+    @staticmethod
+    def from_pickle(pickle_path):
+        """ loads previous saved state from a .pkl file and returns a MeanVecFieldCartesian instance """
 
-        :param index_location:  tuple of (x,y) index locations (may be floats for fractional index positioning)
-        :param real_location:   tuple of (X mm, Y mm) real coordinate locations
-        :return:
-        """
+        with open(pickle_path, 'rb') as f:
+            new_instance = cPickle.load(f)
 
-        pass
+        print("loaded pkl from {0}".format(pickle_path))
+        return new_instance
 
 
-    def _cartesian_to_cylindrical(self, real_location):
+    def build_cylindrical(self, core_location_tuple):
         """
         Converts cartesian coordinate attributes into cylindrical attributes, and
 
-        :param real_location:   tuple (X mm, Y mm) of actual core location on the meshgrid
-        :return:
+        :param core_location_tuple:   tuple (X mm, Y mm) of actual core location on the meshgrid
         """
 
-        xc, yc = real_location
-
-        # r = ((x - x_core)**2 + (y - y_core)**2)**0.5
-        # t = numpy.math.atan2((x - x_core), (y - y_core))
+        xc, yc = core_location_tuple
 
         # build the cylindrical meshgrid
         self['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
         self['t_mesh'] = np.math.atan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
 
+        self['R'], self['T'] = cart2cyl_vector(self['U'], self['V'], self['t_mesh'])
+        self['r'], self['t'] = cart2cyl_vector(self['u'], self['v'], self['t_mesh'])
 
-        # need to fill these vel_matrix attributes with this function
-        blah = {'R': None,  # mean radial velocity around vortex core
-                'T': None,  # mean tangential velocity around vortex core
+        self['rr'] = self['r'] ** 2.0
+        self['tt'] = self['t'] ** 2.0
+        self['yte'] = self['r'] + self['t'] + self['w']
 
-                'r': None,  # fluctuation in R
-                't': None,  # fluctuation in T
-
-                'rr': None,  # turbulent energy in radial
-                'tt': None,  # turbulent energy in tangential
-
-                'rt': None,  # reynolds stress in r/t
-                'rw': None,  # reynolds stress in r/w
-                'tw': None}  # reynolds stress in t/w
+        self['rt'] = self['r'] * self['t']
+        self['rw'] = self['r'] * self['w']
+        self['tw'] = self['t'] * self['w']
+        self['yrs'] = self['rt'] + self['rw'] + self['tw']
 
 
     def show_scatter(self, component_y, component_x):
@@ -101,18 +115,24 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T) """
 
-        # will need to 1dimensionalize the vel_matrix data for plotting purposes.
+        # will need to 1-dimensionalize the vel_matrix data for plotting purposes.
         pass
 
 
 if __name__ == "__main__":
-    paths = [r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01000.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01001.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01002.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01003.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01004.v3d",
-             ]
 
-    mvf = MeanVecFieldCylindrical(paths, "test")
-    mvf.show_heatmap('num')
-    mvf.define_core(index_location=(74, 61))
+    directory = r"E:\Data2\Ely_May28th\Vector\1"
+    paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
+
+    pkl_path = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test.pkl"
+    small_pkl = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test_small.pkl"
+    #mvf = MeanVecFieldCylindrical("Station_1", paths)
+    #mvf.to_pickle(pkl_path, reduce_memory=True)
+
+    mvf = MeanVecFieldCylindrical().from_pickle(small_pkl)
+    mvf.build_cylindrical((73.5214, 43.4737))
+
+    for thing in ['r_mesh', 't_mesh', 'yte', 'cte', 'rr', 'tt', 'ww']:
+        mvf.show_heatmap('r_mesh')
+        mvf.show_heatmap('t_mesh')
+        mvf.show_heatmap()
