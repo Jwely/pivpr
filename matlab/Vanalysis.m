@@ -192,7 +192,7 @@ end
     YHp=Y(YHploc); XHp=X(XHploc);
     
 %========================================================================== 
-%   Using In plan velocities to estimate Vazimuthal in order to find core.
+%   Using in-plane velocities to estimate Vazimuthal in order to find core.
 %========================================================================== 
 
 % looking for a minimum wich is near the maximum, attempting to hone in on
