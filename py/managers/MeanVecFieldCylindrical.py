@@ -223,14 +223,14 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
 
 if __name__ == "__main__":
 
-    run = 1
 
+    run = 1
     directory = r"E:\Data2\Ely_May28th\Vector\{0}".format(run)
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
 
     small_pkl = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_{0}_test_small.pkl".format(run)
-    #mvf = MeanVecFieldCylindrical("Station_{0}".format(run), paths, velocity_fs=15.22)
-    #mvf.to_pickle(small_pkl, reduce_memory=True)
+    mvf = MeanVecFieldCylindrical("Station_{0}".format(run), paths, velocity_fs=15.22)
+    mvf.to_pickle(small_pkl, reduce_memory=True)
 
     mvf = MeanVecFieldCylindrical().from_pickle(small_pkl)
     mvf.find_core()
@@ -239,4 +239,5 @@ if __name__ == "__main__":
     mvf.show_stream()
     mvf.show_contour('cte')
     mvf.show_contour('yte')
+
 
