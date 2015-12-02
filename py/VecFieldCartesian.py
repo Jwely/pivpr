@@ -1,9 +1,10 @@
 __author__ = 'Jwely'
 
-from Timer import Timer
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+
+from py.utils import Timer
 
 
 class VecFieldCartesian:
@@ -14,7 +15,7 @@ class VecFieldCartesian:
         The "output" attribute is the vel_matrix.
 
         :param filepath:        local filepath to a .v3d file
-        :param velocity_fs:     free stream velocity, values more than 130% this value will be masked
+        :param velocity_fs:     free stream velocity, values more than 125% this value will be masked
         """
 
         assert filepath.endswith(".v3d"), "Input is not a valid .v3d file! filepath='{0}'".format(filepath)
@@ -98,7 +99,7 @@ class VecFieldCartesian:
 
         # turn the arrays into masked arrays to hide no_data and anomalously high values
         if self.velocity_fs is not None:
-            high_thresh = self.velocity_fs * 1.3
+            high_thresh = self.velocity_fs * 1.25
         else:
             high_thresh = 100
 

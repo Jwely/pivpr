@@ -1,6 +1,6 @@
 __author__ = 'Jwely'
 
-from numpy import math as npm
+import numpy as np
 
 
 def cart2cyl_vector(u, v, t_mesh):
@@ -12,7 +12,7 @@ def cart2cyl_vector(u, v, t_mesh):
     :return: r, t
     """
 
-    r = u * npm.cos(t_mesh) + v * npm.sin(t_mesh)
-    t = v * npm.cos(t_mesh) - u * npm.sin(t_mesh)
+    r = u * np.cos(t_mesh) + v * np.sin(t_mesh)
+    t = v * np.cos(t_mesh) - u * np.sin(t_mesh)
     return r, t
 

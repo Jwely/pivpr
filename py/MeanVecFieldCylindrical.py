@@ -1,16 +1,17 @@
 __author__ = 'Jwely'
 
-from MeanVecFieldCartesian import MeanVecFieldCartesian
-from cart2cyl_vector import cart2cyl_vector
-
 import cPickle
-import numpy as np
 import os
+
+import numpy as np
+
+from MeanVecFieldCartesian import MeanVecFieldCartesian
+from py.utils.cart2cyl_vector import cart2cyl_vector
 
 
 class MeanVecFieldCylindrical(MeanVecFieldCartesian):
 
-    def __init__(self, name_tag=None, v3d_paths=None):
+    def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None):
         """
         Built to extend the cartesian version of this class. Since all PIV data is
         reasonably always going to be taken raw in cartesian coordinates, there is no
@@ -31,7 +32,7 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
         """
 
         # invoke the parent class init
-        MeanVecFieldCartesian.__init__(self, name_tag, v3d_paths)
+        MeanVecFieldCartesian.__init__(self, name_tag, v3d_paths, velocity_fs)
 
         # add cylindrical specific attributes
         self.core_location = (None, None)       # position of core
@@ -85,6 +86,29 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
         return new_instance
 
 
+    def find_core(self, range=20):
+        """
+        Attempts to find the core near the center of the matrix. The core is found by searching
+        for the minimum value of in_plane velocities within :param range: mm of the image center.
+        :return:
+        """
+
+        # find x and y indices of the image center
+        xic = len(self.x_set) / 2
+        yic = len(self.y_set) / 2
+
+        # subset the in plane matrix to near the image center and find minimum there
+        sub_p = self['P'][(xic - range):(xic + range), (yic - range):(yic + range)]
+        sub_xi_min, sub_yi_min = np.unravel_index(sub_p.argmin(), sub_p.shape)
+
+        # now place the location in terms of the whole image
+        xi_min = sub_xi_min + xic
+        yi_min = sub_yi_min + yic
+
+        print self.x_set[xi_min], self.y_set[yi_min]
+
+
+
     def build_cylindrical(self, core_location_tuple):
         """
         Converts cartesian coordinate attributes into cylindrical attributes, and
@@ -95,8 +119,8 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
         xc, yc = core_location_tuple
 
         # build the cylindrical meshgrid
-        self['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
-        self['t_mesh'] = np.math.atan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
+        self.meshgrid['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
+        self.meshgrid['t_mesh'] = np.arctan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
 
         self['R'], self['T'] = cart2cyl_vector(self['U'], self['V'], self['t_mesh'])
         self['r'], self['t'] = cart2cyl_vector(self['u'], self['v'], self['t_mesh'])
@@ -122,17 +146,20 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
 
 if __name__ == "__main__":
 
-    directory = r"E:\Data2\Ely_May28th\Vector\1"
+    run = 1
+
+    directory = r"E:\Data2\Ely_May28th\Vector\{0}".format(run)
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
 
-    small_pkl = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test_small.pkl"
-    mvf = MeanVecFieldCylindrical("Station_1", paths)
-    mvf.to_pickle(small_pkl, reduce_memory=True)
+    small_pkl = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_{0}_test_small.pkl".format(run)
+    #mvf = MeanVecFieldCylindrical("Station_{0}".format(run), paths, velocity_fs=15.22)
+    #mvf.to_pickle(small_pkl, reduce_memory=True)
 
     mvf = MeanVecFieldCylindrical().from_pickle(small_pkl)
-    mvf.build_cylindrical((73.5214, 43.4737))
+    mvf.find_core()
+    mvf.show_contour('P')
+    #mvf.build_cylindrical((73.5214, 43.4737))
 
-    for thing in ['r_mesh', 't_mesh', 'yte', 'cte', 'rr', 'tt', 'ww']:
-        mvf.show_heatmap('r_mesh')
-        mvf.show_heatmap('t_mesh')
-        mvf.show_heatmap()
+    #mvf.show_stream()
+    #mvf.show_contour('t_mesh')
+

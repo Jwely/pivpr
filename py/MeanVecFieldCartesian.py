@@ -1,16 +1,19 @@
 __author__ = 'Jwely'
 
-from VecFieldCartesian import VecFieldCartesian
-from Timer import Timer
+import os
 
 import matplotlib.pyplot as plt
+from matplotlib import cm
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-import os
+
+from VecFieldCartesian import VecFieldCartesian
+from py.utils import Timer
 
 
 class MeanVecFieldCartesian:
 
-    def __init__(self, name_tag=None, v3d_paths=None):
+    def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None):
         """
         :param v3d_paths:       list of filepaths to v3d files
         :param name_tag:        unique string name tag for this data set
@@ -19,6 +22,7 @@ class MeanVecFieldCartesian:
 
         self.name_tag = name_tag
         self.v3d_paths = v3d_paths
+        self.velocity_fs = velocity_fs
         self.constituent_vel_matrix_list = []
 
         # attributes that will be inherited from the constituent VecField instances
@@ -84,7 +88,7 @@ class MeanVecFieldCartesian:
         t = Timer()
 
         # grab the first one and inherit its dimensional information
-        first_vf = VecFieldCartesian(filepath_list.pop(0))
+        first_vf = VecFieldCartesian(filepath_list.pop(0), velocity_fs=self.velocity_fs)
         self.x_set = first_vf.x_set
         self.y_set = first_vf.y_set
         self.dims = first_vf.dims
@@ -92,7 +96,7 @@ class MeanVecFieldCartesian:
         self.constituent_vel_matrix_list.append(first_vf.vel_matrix)
 
         for path in filepath_list:
-            next_vf = VecFieldCartesian(path)
+            next_vf = VecFieldCartesian(path, velocity_fs=self.velocity_fs)
             assert next_vf.dims == first_vf.dims, "Inconsistent dimensions detected!"
             self.constituent_vel_matrix_list.append(next_vf.vel_matrix)
         print("loaded {0} files in {1} s".format(len(filepath_list) + 1, t.finish()))
@@ -141,13 +145,53 @@ class MeanVecFieldCartesian:
         self['num'] = u_set.count(axis=2)
 
 
-    def show_heatmap(self, component):
-        """ prints a quick simple heads up heatmap of input component of the vel_matrix attribute"""
-        fig, ax = plt.subplots()
-        heatmap = ax.pcolor(self[component])    # see __getitem__
-        plt.title(component)
-        plt.show()
+    def show_stream(self, title=None):
+        """
+        Renders a stream plot of the data to the screen.
+        :return:
+        """
 
+        if title is None:
+            title = "Stream: colored by in-plane velocities"
+
+        stream = plt.figure()
+        plt.streamplot(self['x_mesh'],
+                       self['y_mesh'],
+                       self['U'],
+                       self['V'],
+                       color=self['P'],
+                       arrowstyle='->',
+                       arrowsize=1,
+                       density=[len(self.x_set) / 20, len(self.y_set) / 20],
+                       )
+
+        plt.colorbar()
+        plt.title(title)
+        plt.show(stream)
+
+
+    def show_contour(self, component, title=None):
+        """
+        displays a 3d contour plot, which is initially oriented from straight down.
+
+        :param title:
+        :return:
+        """
+
+        if title is None:
+            title = component
+
+        cont = plt.contourf(self['x_mesh'],
+                            self['y_mesh'],
+                            self[component],    # the values determining color for the plot
+                            128,                # this is the number of distinct color levels
+                            cmap=cm.jet         # the colormap (jet, winter, )
+                            )
+        plt.colorbar()
+        plt.title(title)
+        plt.xlabel("X position (mm)")
+        plt.ylabel("Y position (mm)")
+        plt.show(cont)
 
 
 if __name__ == "__main__":
@@ -157,5 +201,5 @@ if __name__ == "__main__":
 
     pkl_path = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test.pkl"
     mvf = MeanVecFieldCartesian("Station_1", paths)
-    mvf.show_heatmap('P')
+    mvf.show_contour()
 
