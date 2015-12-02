@@ -12,7 +12,7 @@ from py.managers import MeanVecFieldCartesian
 from py.utils.cart2cyl_vector import cart2cyl_vector
 
 
-class MeanVecFieldCylindrical(MeanVecFieldCartesian):
+class AxialVortex(MeanVecFieldCartesian):
 
     def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None):
         """
@@ -229,10 +229,10 @@ if __name__ == "__main__":
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
 
     small_pkl = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_{0}_test_small.pkl".format(run)
-    mvf = MeanVecFieldCylindrical("Station_{0}".format(run), paths, velocity_fs=15.22)
+    mvf = AxialVortex("Station_{0}".format(run), paths, velocity_fs=15.22)
     mvf.to_pickle(small_pkl, reduce_memory=True)
 
-    mvf = MeanVecFieldCylindrical().from_pickle(small_pkl)
+    mvf = AxialVortex().from_pickle(small_pkl)
     mvf.find_core()
     mvf.build_cylindrical()
 

@@ -1,6 +1,6 @@
 __author__ = 'Jwely'
 
 
-from MeanVecFieldCylindrical import *
+from AxialVortex import *
 from MeanVecFieldCartesian import *
 from VecFieldCartesian import *
