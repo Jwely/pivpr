@@ -8,7 +8,7 @@ from matplotlib import cm
 
 import numpy as np
 
-from py.managers import MeanVecFieldCartesian
+from py.managers.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.utils.cart2cyl_vector import cart2cyl_vector
 
 
@@ -29,15 +29,17 @@ class AxialVortex(MeanVecFieldCartesian):
         R = radial outwards, always positive.
         T = tangential, clockwise positive?
 
-        :param v3d_paths:       list of filepaths to v3d files
         :param name_tag:        unique string name tag for this data set
+        :param v3d_paths:       list of filepaths to v3d files
+        :param velocity_fs:     free stream velocity (meters/second)
         :return:
         """
 
         # invoke the parent class init
         MeanVecFieldCartesian.__init__(self, name_tag, v3d_paths, velocity_fs)
+        name_tag = name_tag
 
-        # add cylindrical specific attributes
+        # add vortex cylindrical specific attributes
         self.core_location = (None, None)       # position of core
         self.core_index = (None, None)          # fractional index position of core
 
@@ -61,11 +63,11 @@ class AxialVortex(MeanVecFieldCartesian):
                                 'yrs': None})  # total cylindrical reynolds stress
 
 
-    def to_pickle(self, pickle_path, reduce_memory=False):
+    def to_pickle(self, pickle_path, include_dynamic=False):
         """ dumps the contents of this object to a pickle """
 
         # delete the constituent objects with hundreds of additional matrices to reduce pkl size
-        if reduce_memory:
+        if include_dynamic:
             del self.constituent_vel_matrix_list
             self.constituent_vel_matrix_list = None
 
@@ -230,7 +232,7 @@ if __name__ == "__main__":
 
     small_pkl = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_{0}_test_small.pkl".format(run)
     mvf = AxialVortex("Station_{0}".format(run), paths, velocity_fs=15.22)
-    mvf.to_pickle(small_pkl, reduce_memory=True)
+    mvf.to_pickle(small_pkl, include_dynamic=True)
 
     mvf = AxialVortex().from_pickle(small_pkl)
     mvf.find_core()

@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 
-from py.managers import VecFieldCartesian
+from py.managers.VecFieldCartesian import VecFieldCartesian
 from py.utils import Timer
 
 
