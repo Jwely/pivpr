@@ -3,9 +3,12 @@ __author__ = 'Jwely'
 import cPickle
 import os
 
+import matplotlib.pyplot as plt
+from matplotlib import cm
+
 import numpy as np
 
-from MeanVecFieldCartesian import MeanVecFieldCartesian
+from py.managers import MeanVecFieldCartesian
 from py.utils.cart2cyl_vector import cart2cyl_vector
 
 
@@ -86,37 +89,49 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
         return new_instance
 
 
-    def find_core(self, range=20):
+    def find_core(self, range=40):
         """
-        Attempts to find the core near the center of the matrix. The core is found by searching
-        for the minimum value of in_plane velocities within :param range: mm of the image center.
-        :return:
+        Attempts to find the core near the center of the matrix. The core is found by
+        searching for the minimum value of in_plane velocities within :param range:
+        index units (not mm) of the image center.
         """
 
         # find x and y indices of the image center
-        xic = len(self.x_set) / 2
-        yic = len(self.y_set) / 2
+        xic = int(len(self.x_set) / 2)
+        yic = int(len(self.y_set) / 2)
 
         # subset the in plane matrix to near the image center and find minimum there
-        sub_p = self['P'][(xic - range):(xic + range), (yic - range):(yic + range)]
-        sub_xi_min, sub_yi_min = np.unravel_index(sub_p.argmin(), sub_p.shape)
+        sub_p = self['P'][(yic - range):(yic + range), (xic - range):(xic + range)]
+        sub_yi_min, sub_xi_min = np.unravel_index(sub_p.argmin(), sub_p.shape)
 
         # now place the location in terms of the whole image
-        xi_min = sub_xi_min + xic
-        yi_min = sub_yi_min + yic
+        xi_min = xic + (sub_xi_min - range)
+        yi_min = yic + (sub_yi_min - range)
 
-        print self.x_set[xi_min], self.y_set[yi_min]
+        # subset again, in the immediate core zone to interpolate a "true" core position
+        cz = self['P'][(yi_min - 1):(yi_min + 2), (xi_min - 1):(xi_min + 2)]
+        cz_x_mesh = self['x_mesh'][(yi_min - 1):(yi_min + 2), (xi_min - 1):(xi_min + 2)]
+        cz_y_mesh = self['y_mesh'][(yi_min - 1):(yi_min + 2), (xi_min - 1):(xi_min + 2)]
+
+        # just take an inverse in-plane velocity weighted average of the meshgrids
+        xc = np.sum((1 / cz) * cz_x_mesh) / np.sum(1 / cz)  # x coordinate of core axis
+        yc = np.sum((1 / cz) * cz_y_mesh) / np.sum(1 / cz)  # y coordinate of core axis
+
+        self.core_location = (xc, yc)
+        return self.core_location
 
 
-
-    def build_cylindrical(self, core_location_tuple):
+    def build_cylindrical(self, core_location_tuple=None):
         """
         Converts cartesian coordinate attributes into cylindrical attributes, and
 
         :param core_location_tuple:   tuple (X mm, Y mm) of actual core location on the meshgrid
         """
 
-        xc, yc = core_location_tuple
+        if core_location_tuple is not None:
+            xc, yc = core_location_tuple
+        else:
+            xc, yc = self.find_core()
 
         # build the cylindrical meshgrid
         self.meshgrid['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
@@ -127,7 +142,7 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
 
         self['rr'] = self['r'] ** 2.0
         self['tt'] = self['t'] ** 2.0
-        self['yte'] = self['r'] + self['t'] + self['w']
+        self['yte'] = self['rr'] + self['tt'] + self['ww']
 
         self['rt'] = self['r'] * self['t']
         self['rw'] = self['r'] * self['w']
@@ -144,6 +159,68 @@ class MeanVecFieldCylindrical(MeanVecFieldCartesian):
         pass
 
 
+    def show_stream(self, title=None):
+        """
+        Renders a stream plot of the data to the screen.
+        :return:
+        """
+
+        if title is None:
+            title = "Stream: colored by in-plane velocities"
+
+        fig, ax = plt.subplots()
+        plt.streamplot(self['x_mesh'],
+                       self['y_mesh'],
+                       self['U'],
+                       self['V'],
+                       color=self['P'],
+                       arrowstyle='->',
+                       arrowsize=1,
+                       density=[len(self.x_set) / 20, len(self.y_set) / 20],
+                       )
+
+        plt.colorbar()
+        plt.title(title)
+
+        # plot the core location for reference
+        if self.core_location[0] is not None:
+            ax.scatter(*self.core_location, marker='+', s=200, c='black')
+
+        plt.show(fig)
+
+
+    def show_contour(self, component, title=None):
+        """
+        displays a 3d contour plot, which is initially oriented from straight down.
+
+        :param title:
+        :return:
+        """
+
+        if title is None:
+            title = component
+
+        fig, ax = plt.subplots()
+        plt.contourf(self['x_mesh'],
+                     self['y_mesh'],
+                     self[component],    # the values determining color for the plot
+                     128,                # this is the number of distinct color levels
+                     cmap=cm.jet         # the colormap (jet, winter, )
+                     )
+
+        plt.colorbar()
+        plt.title(title)
+        plt.xlabel("X position (mm)")
+        plt.ylabel("Y position (mm)")
+
+        # plot the core location for reference
+        if self.core_location[0] is not None:
+            ax.scatter(*self.core_location, marker='+', s=100, c='white')
+
+        plt.show(fig)
+
+
+
 if __name__ == "__main__":
 
     run = 1
@@ -157,9 +234,9 @@ if __name__ == "__main__":
 
     mvf = MeanVecFieldCylindrical().from_pickle(small_pkl)
     mvf.find_core()
-    mvf.show_contour('P')
-    #mvf.build_cylindrical((73.5214, 43.4737))
+    mvf.build_cylindrical()
 
-    #mvf.show_stream()
-    #mvf.show_contour('t_mesh')
+    mvf.show_stream()
+    mvf.show_contour('cte')
+    mvf.show_contour('yte')
 

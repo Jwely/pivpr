@@ -1,6 +1,6 @@
 __author__ = 'Jwely'
 
-from MeanVecFieldCylindrical import MeanVecFieldCylindrical
+from py.managers import MeanVecFieldCylindrical
 
 
 class AxialVortex(MeanVecFieldCylindrical):

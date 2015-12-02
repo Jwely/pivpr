@@ -2,12 +2,9 @@ __author__ = 'Jwely'
 
 import os
 
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
-from VecFieldCartesian import VecFieldCartesian
+from py.managers import VecFieldCartesian
 from py.utils import Timer
 
 
@@ -145,54 +142,6 @@ class MeanVecFieldCartesian:
         self['num'] = u_set.count(axis=2)
 
 
-    def show_stream(self, title=None):
-        """
-        Renders a stream plot of the data to the screen.
-        :return:
-        """
-
-        if title is None:
-            title = "Stream: colored by in-plane velocities"
-
-        stream = plt.figure()
-        plt.streamplot(self['x_mesh'],
-                       self['y_mesh'],
-                       self['U'],
-                       self['V'],
-                       color=self['P'],
-                       arrowstyle='->',
-                       arrowsize=1,
-                       density=[len(self.x_set) / 20, len(self.y_set) / 20],
-                       )
-
-        plt.colorbar()
-        plt.title(title)
-        plt.show(stream)
-
-
-    def show_contour(self, component, title=None):
-        """
-        displays a 3d contour plot, which is initially oriented from straight down.
-
-        :param title:
-        :return:
-        """
-
-        if title is None:
-            title = component
-
-        cont = plt.contourf(self['x_mesh'],
-                            self['y_mesh'],
-                            self[component],    # the values determining color for the plot
-                            128,                # this is the number of distinct color levels
-                            cmap=cm.jet         # the colormap (jet, winter, )
-                            )
-        plt.colorbar()
-        plt.title(title)
-        plt.xlabel("X position (mm)")
-        plt.ylabel("Y position (mm)")
-        plt.show(cont)
-
 
 if __name__ == "__main__":
 
@@ -201,5 +150,4 @@ if __name__ == "__main__":
 
     pkl_path = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test.pkl"
     mvf = MeanVecFieldCartesian("Station_1", paths)
-    mvf.show_contour()
 
