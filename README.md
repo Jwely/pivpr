@@ -1,5 +1,7 @@
 # pivpr
 
+exploration of the Pressure Relaxation phenomena with Particle Image Velocimetry, or `pivpr` for short.
+
 ## About
 
 This repository is for code and resources for my masters thesis in Aerospace Engineering at [Old Dominion University](https://www.odu.edu/mae). The code revolves around synthesis and siplay of test data taken of an axial wake vortex with Particle Image Velocitmetry (PIV) in the ODU Low Speed Wind Tunnel (LSWT).
