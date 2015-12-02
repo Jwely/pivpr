@@ -44,7 +44,7 @@ def build_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
 if __name__ == "__main__":
 
     kwargs = {"v3d_dir": r"E:\Data2\Ely_May28th\Vector\1",
-              "pkl_dir": "../../pickles",
+              "pkl_dir": "../pickles",
               "name_tag": "01",
               "include_dynamic": True,
               "velocity_fs": 15.22,
