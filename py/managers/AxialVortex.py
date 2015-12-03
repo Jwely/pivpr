@@ -170,8 +170,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return xlim, ylim
 
 
-    def get_scatter_plot(self, component_x, component_y, component_c=None, title=None,
-                         x_label=None, y_label=None, c_label=None):
+    def get_scatter_plot2(self, component_x, component_y, title=None, x_label=None, y_label=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -184,7 +183,51 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         if title is None:
-            title = "{0} vs {1}".format(component_x, component_y)
+            title = "{0} vs {1}".format(component_y, component_x)
+        if x_label is None:
+            x_label = component_x
+        if y_label is None:
+            y_label = component_y
+
+        x = self[component_x].flatten()
+        y = self[component_y].flatten()
+        c = self['num'].flatten()
+
+        fig, ax = plt.subplots()
+
+        plt.scatter(x, y, marker='x', c=c, cmap=cm.bone_r)
+        cb = plt.colorbar(orientation='horizontal')
+        cb.set_label("Quality of point (N good samples)")
+
+        vmin, vmax = self._get_vrange(component_y)
+
+        plt.ylim(vmin - 0.1, vmax * 2)
+        plt.tight_layout(pad=2)
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.title(title)
+        plt.show()
+
+
+    def get_scatter_plot(self, component_x, component_y, component_c=None, title=None,
+                         x_label=None, y_label=None, c_label=None, cmap=cm.hsv):
+        """
+        prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
+        as a function of distance to vortex core (R) or angle around the core (T)
+
+        :param component_x:     component to make the X axis
+        :param component_y:     component to make the Y axis
+        :param component_c:     component who's value will determine the color of the dots
+        :param title:
+        :return:
+        """
+
+        if title is None:
+            title = "{0} vs {1}".format(component_y, component_x)
+        if x_label is None:
+            x_label = component_x
+        if y_label is None:
+            y_label = component_y
 
         x = self[component_x].flatten()
         y = self[component_y].flatten()
@@ -192,7 +235,8 @@ class AxialVortex(MeanVecFieldCartesian):
         fig, ax = plt.subplots()
         if component_c is not None:
             c = self[component_c].flatten()
-            plt.scatter(x, y, marker='x', c=c, cmap=cm.viridis, vmin=vmin, vmax=vmax)
+            vmin, vmax = self._get_vrange(component_c)
+            plt.scatter(x, y, marker='x', c=c, cmap=cmap, vmax=vmax, vmin=vmin)
             cb = plt.colorbar(orientation='horizontal')
             cb.set_label(c_label)
         else:
@@ -202,6 +246,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
         plt.ylim(vmin - 0.1, vmax * 2)
         plt.tight_layout(pad=2)
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
         plt.title(title)
         plt.show()
 
