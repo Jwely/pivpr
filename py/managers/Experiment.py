@@ -6,12 +6,12 @@ from py.utils.get_rel_humidity import get_rel_humidity
 
 class Experiment:
 
-    def __init__(self, experiment_dir, experiment_id, n_samples, z_location, v_nominal, dt, test_date,
+    def __init__(self, experiment_id, n_samples, z_location, v_nominal, dt, test_date,
                  v_fs_mean, v_fs_sigma, q, pres_atm, temp_tunnel, wet_bulb, dry_bulb):
         """
-        Class to represent the entire state of an experiment
+        Class to represent the entire state of an experiment. Create one with a
+        constructor
 
-        :param experiment_dir:  filepath to directory containing experiment folders (str)
         :param experiment_id:   integer ID number 1 through 70 (integer)
         :param n_samples:       number of observations, usually 200 (integer)
         :param z_location:      downstream distance of interrogation plane (inches, float)
