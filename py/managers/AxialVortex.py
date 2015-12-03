@@ -5,8 +5,6 @@ import os
 
 import matplotlib.pyplot as plt
 from matplotlib import cm
-import pylab
-
 import numpy as np
 
 from py.managers.MeanVecFieldCartesian import MeanVecFieldCartesian
@@ -167,8 +165,8 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         distance_mask = self['r_mesh'] > core_distance
-        item = np.ma.masked_array(self[component], mask=distance_mask)
-        return item
+        core_component = np.ma.masked_array(self[component], mask=distance_mask)
+        return core_component
 
 
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=120):
