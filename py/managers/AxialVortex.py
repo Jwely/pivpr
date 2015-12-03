@@ -52,9 +52,8 @@ class AxialVortex(MeanVecFieldCartesian):
                                 'r': None,  # fluctuation in R
                                 't': None,  # fluctuation in T
 
-                                'rr': None,  # turbulent energy in radial
-                                'tt': None,  # turbulent energy in tangential
-                                'yte': None,  # total cylindrical turbulent energy
+                                'rr': None,  # turbulent energy in r (r' * r') bar
+                                'tt': None,  # turbulent energy in t (t' * t') bar
 
                                 'rt': None,  # reynolds stress in r/t
                                 'rw': None,  # reynolds stress in r/w
@@ -134,21 +133,42 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             xc, yc = self.find_core()
 
-        # build the cylindrical meshgrid
+        # set up empty matrices
+        depth = len(self.constituent_vel_matrix_list)
+        r_set = np.ma.zeros(self.dims + tuple([depth]))     # r matrix (3d)
+        t_set = np.ma.zeros(self.dims + tuple([depth]))     # t matrix (3d)
+        w_set = np.ma.zeros(self.dims + tuple([depth]))     # w matrix (3d)
+        r_set_p = np.ma.zeros(self.dims + tuple([depth]))   # r fluctuation matrix (3d)
+        t_set_p = np.ma.zeros(self.dims + tuple([depth]))   # t fluctuation matrix (3d)
+        w_set_p = np.ma.zeros(self.dims + tuple([depth]))   # w fluctuation matrix (3d)
+
+        # build the cylindrical meshgrids
         self.meshgrid['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
         self.meshgrid['t_mesh'] = np.arctan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
 
-        self['R'], self['T'] = cart2cyl_vector(self['U'], self['V'], self['t_mesh'])
-        self['r'], self['t'] = cart2cyl_vector(self['u'], self['v'], self['t_mesh'])
+        # build a 3d matrix from constituent datasets
+        for i, cvm in enumerate(self.constituent_vel_matrix_list):
+            r_set[:, :, i], t_set[:, :, i] = cart2cyl_vector(cvm['U'], cvm['V'], self['t_mesh'])
+            w_set[:, :, i] = cvm['W']
 
-        self['rr'] = self['r'] ** 2.0
-        self['tt'] = self['t'] ** 2.0
-        self['yte'] = self['rr'] + self['tt'] + self['ww']
+        self['R'] = np.ma.mean(r_set, axis=2)
+        self['T'] = np.ma.mean(t_set, axis=2)
 
-        self['rt'] = self['r'] * self['t']
-        self['rw'] = self['r'] * self['w']
-        self['tw'] = self['t'] * self['w']
-        self['yrs'] = self['rt'] + self['rw'] + self['tw']
+        # now subtract out the averages for fluctuation measurements (time averaged)
+        for i, cvm in enumerate(self.constituent_vel_matrix_list):
+            r_set_p[:, :, i] = r_set[:, :, i] - self['R']
+            t_set_p[:, :, i] = t_set[:, :, i] - self['T']
+            w_set_p[:, :, i] = w_set[:, :, i] - self['W']
+
+        self['r'] = np.ma.mean(abs(r_set_p), axis=2)
+        self['t'] = np.ma.mean(abs(t_set_p), axis=2)
+
+        self['rr'] = np.ma.mean(r_set_p * r_set_p, axis=2)
+        self['tt'] = np.ma.mean(t_set_p * t_set_p, axis=2)
+
+        self['rt'] = np.ma.mean(r_set_p * t_set_p, axis=2)
+        self['rw'] = np.ma.mean(r_set_p * w_set_p, axis=2)
+        self['tw'] = np.ma.mean(t_set_p * w_set_p, axis=2)
 
 
     def getitem_corezone(self, component, core_distance=50):
