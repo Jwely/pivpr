@@ -153,6 +153,9 @@ class AxialVortex(MeanVecFieldCartesian):
         self['yrs'] = self['rt'] + self['rw'] + self['tw']
 
 
+
+
+
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=120):
         """
         returns the plot limits for scater plots
@@ -170,7 +173,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return xlim, ylim
 
 
-    def get_scatter_plot2(self, component_x, component_y, title=None, x_label=None, y_label=None):
+    def scatter_plot2(self, component_x, component_y, title=None, x_label=None, y_label=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -209,7 +212,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.show()
 
 
-    def get_scatter_plot(self, component_x, component_y, component_c=None, title=None,
+    def scatter_plot(self, component_x, component_y, component_c=None, title=None,
                          x_label=None, y_label=None, c_label=None, cmap=cm.hsv):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
@@ -252,7 +255,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.show()
 
 
-    def get_stream_plot(self, title=None):
+    def stream_plot(self, title=None):
         """
         Renders a stream plot of the data to the screen.
         :return:
@@ -358,7 +361,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.show(fig)
 
 
-    def get_contour_plot(self, components, titles=None):
+    def contour_plot(self, components, titles=None):
 
         if titles is None:
             titles = components
@@ -369,6 +372,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
         elif isinstance(components, list):
             self._multi_contour_plot(components, titles)
+
+
 
 
 if __name__ == "__main__":
@@ -386,8 +391,8 @@ if __name__ == "__main__":
     mvf.find_core()
     mvf.build_cylindrical()
 
-    mvf.get_stream_plot()
-    mvf.get_contour_plot('cte')
-    mvf.get_contour_plot('yte')
+    mvf.stream_plot()
+    mvf.contour_plot('cte')
+    mvf.contour_plot('yte')
 
 
