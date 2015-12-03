@@ -14,12 +14,12 @@ cm.nipy_spectral     # qualitative spectrum colormap
 
 def test_data():
 
-    kwargs = {"v3d_dir": "../../test_data",
+    kwargs = {"v3d_dir": "../../data_test",
               "pkl_dir": "../pickles",
               "name_tag": "test_data",
               "include_dynamic": False,
               "velocity_fs": 15.22,
-              "force_recalc": False}
+              "force_recalc": True}
 
     av = build_axial_vortex(**kwargs)
     #av.stream_plot()
