@@ -368,13 +368,13 @@ class AxialVortex(MeanVecFieldCartesian):
 
             # plot the core location for reference
             if self.core_location[0] is not None:
-                ax[i] = plt.scatter(*self.core_location, marker='+', s=100, c='white')
+                plt.scatter(*self.core_location, marker='+', s=100, c='white')
 
         # show the figure
         plt.show(fig)
 
 
-    def contour_plot(self, components, titles=None):
+    def contour_plot(self, components, titles=None, shape=None):
 
         if titles is None:
             titles = components
@@ -384,7 +384,7 @@ class AxialVortex(MeanVecFieldCartesian):
             self._single_contour_plot(components, titles)
 
         elif isinstance(components, list):
-            self._multi_contour_plot(components, titles)
+            self._multi_contour_plot(components, titles, shape)
 
 
 
