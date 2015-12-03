@@ -1,6 +1,6 @@
 # pivpr
 
-exploration of the Pressure Relaxation phenomena with Particle Image Velocimetry, or `pivpr` for short.
+exploration of the Pressure Relaxation phenomena with Particle Image Velocimetry, or `pivpr` for short. The `py` directory contains the current python implementation, the `matlab` directory is for good record keeping.
 
 ## About
 
