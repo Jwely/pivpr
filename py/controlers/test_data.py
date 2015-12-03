@@ -10,12 +10,13 @@ def test_data():
               "name_tag": "test_data",
               "include_dynamic": False,
               "velocity_fs": 15.22,
-              "force_recalc": False}
+              "force_recalc": True}
 
     av = build_axial_vortex(**kwargs)
     #av.get_stream_plot()
     #av.get_contour_plot('P')
-    av.get_contour_plot('T')
+    av.get_scatter_plot('r_mesh', 'T', 'num')
+    #av.get_contour_plot('T')
 
 
 if __name__ == "__main__":
