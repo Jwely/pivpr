@@ -67,7 +67,7 @@ class AxialVortex(MeanVecFieldCartesian):
         """ dumps the contents of this object to a pickle """
 
         # delete the constituent objects with hundreds of additional matrices to reduce pkl size
-        if include_dynamic:
+        if not include_dynamic:
             del self.constituent_vel_matrix_list
             self.constituent_vel_matrix_list = None
 
@@ -152,7 +152,7 @@ class AxialVortex(MeanVecFieldCartesian):
         self['yrs'] = self['rt'] + self['rw'] + self['tw']
 
 
-    def show_scatter(self, component_y, component_x):
+    def get_scatter_plot(self, component_y, component_x):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T) """
@@ -161,7 +161,7 @@ class AxialVortex(MeanVecFieldCartesian):
         pass
 
 
-    def show_stream(self, title=None):
+    def get_stream_plot(self, title=None):
         """
         Renders a stream plot of the data to the screen.
         :return:
@@ -191,7 +191,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.show(fig)
 
 
-    def show_contour(self, component, title=None):
+    def get_contour_plot(self, component, title=None):
         """
         displays a 3d contour plot, which is initially oriented from straight down.
 
@@ -206,7 +206,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.contourf(self['x_mesh'],
                      self['y_mesh'],
                      self[component],    # the values determining color for the plot
-                     128,                # this is the number of distinct color levels
+                     64,                # this is the number of distinct color levels
                      cmap=cm.jet         # the colormap (jet, winter, )
                      )
 
@@ -238,8 +238,8 @@ if __name__ == "__main__":
     mvf.find_core()
     mvf.build_cylindrical()
 
-    mvf.show_stream()
-    mvf.show_contour('cte')
-    mvf.show_contour('yte')
+    mvf.get_stream_plot()
+    mvf.get_contour_plot('cte')
+    mvf.get_contour_plot('yte')
 
 
