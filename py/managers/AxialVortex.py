@@ -92,10 +92,10 @@ class AxialVortex(MeanVecFieldCartesian):
         return new_instance
 
 
-    def find_core(self, range=40):
+    def find_core(self, crange=40):
         """
         Attempts to find the core near the center of the matrix. The core is found by
-        searching for the minimum value of in_plane velocities within :param range:
+        searching for the minimum value of in_plane velocities within :param crange:
         index units (not mm) of the image center.
         """
 
@@ -104,12 +104,12 @@ class AxialVortex(MeanVecFieldCartesian):
         yic = int(len(self.y_set) / 2)
 
         # subset the in plane matrix to near the image center and find minimum there
-        sub_p = self['P'][(yic - range):(yic + range), (xic - range):(xic + range)]
+        sub_p = self['P'][(yic - crange):(yic + crange), (xic - crange):(xic + crange)]
         sub_yi_min, sub_xi_min = np.unravel_index(sub_p.argmin(), sub_p.shape)
 
         # now place the location in terms of the whole image
-        xi_min = xic + (sub_xi_min - range)
-        yi_min = yic + (sub_yi_min - range)
+        xi_min = xic + (sub_xi_min - crange)
+        yi_min = yic + (sub_yi_min - crange)
 
         # subset again, in the immediate core zone to interpolate a "true" core position
         cz = self['P'][(yi_min - 1):(yi_min + 2), (xi_min - 1):(xi_min + 2)]
@@ -153,26 +153,57 @@ class AxialVortex(MeanVecFieldCartesian):
         self['yrs'] = self['rt'] + self['rw'] + self['tw']
 
 
-    def set_plot_range(self, x_extent=None, y_extent=None):
+    def _get_plot_lims(self, x_core_dist=100, y_core_dist=120):
         """
-        accepts kwargs for x and y extents
-        :param x_extent:
-        :param y_extent:
+        returns the plot limits for scater plots
+        :param x_core_dist:
+        :param y_core_dist:
         :return:
         """
+        if self.core_location[0] is None:
+            self.core_location = (len(self.x_set) / 2, len(self.y_set) / 2)
+            raise Warning("core location not set! using image center instead!")
+
+        xlim = (self.core_location[0] - x_core_dist, self.core_location[0] + x_core_dist)
+        ylim = (self.core_location[1] - y_core_dist, self.core_location[1] + y_core_dist)
+
+        return xlim, ylim
 
 
-    def get_scatter_plot(self, component_y, component_x, title=None):
+    def get_scatter_plot(self, component_x, component_y, component_c=None, title=None,
+                         x_label=None, y_label=None, c_label=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
-        as a function of distance to vortex core (R) or angle around the core (T) """
+        as a function of distance to vortex core (R) or angle around the core (T)
+
+        :param component_x:     component to make the X axis
+        :param component_y:     component to make the Y axis
+        :param component_c:     component whos value will determine the color of the dots
+        :param title:
+        :return:
+        """
 
         if title is None:
             title = "{0} vs {1}".format(component_x, component_y)
 
+        x = self[component_x].flatten()
+        y = self[component_y].flatten()
+
         fig, ax = plt.subplots()
+        if component_c is not None:
+            c = self[component_c].flatten()
+            plt.scatter(x, y, marker='x', c=c, cmap=cm.viridis, vmin=vmin, vmax=vmax)
+            cb = plt.colorbar(orientation='horizontal')
+            cb.set_label(c_label)
+        else:
+            plt.scatter(x, y, marker='x', color='black')
 
+        vmin, vmax = self._get_vrange(component_y)
 
+        plt.ylim(vmin - 0.1, vmax * 2)
+        plt.tight_layout(pad=2)
+        plt.title(title)
+        plt.show()
 
 
     def get_stream_plot(self, title=None):
