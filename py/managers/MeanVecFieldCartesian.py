@@ -47,7 +47,7 @@ class MeanVecFieldCartesian:
                            'uu': None,      # turbulent energy in u (u' * u') bar
                            'vv': None,      # turbulent energy in v (v' * v') bar
                            'ww': None,      # turbulent energy in w (w' * w') bar
-                           'cte': None,     # total cartesian turbulent energy
+                           'ctke': None,    # cartesian turbulent kinetic energy (TKE)
 
                            'uv': None,      # reynolds stress in u/v
                            'uw': None,      # reynolds stress in u/w
@@ -124,14 +124,16 @@ class MeanVecFieldCartesian:
         if min_points is not None:
             self.min_points = min_points
 
+        # set up empty matrices
         depth = len(self.constituent_vel_matrix_list)
         u_set = np.ma.zeros(self.dims + tuple([depth]))     # u matrix (3d)
-        v_set = np.ma.zeros(self.dims + tuple([depth]))     # u matrix (3d)
-        w_set = np.ma.zeros(self.dims + tuple([depth]))     # u matrix (3d)
+        v_set = np.ma.zeros(self.dims + tuple([depth]))     # v matrix (3d)
+        w_set = np.ma.zeros(self.dims + tuple([depth]))     # w matrix (3d)
         u_set_p = np.ma.zeros(self.dims + tuple([depth]))   # u fluctuation matrix (3d)
         v_set_p = np.ma.zeros(self.dims + tuple([depth]))   # v fluctuation matrix (3d)
         w_set_p = np.ma.zeros(self.dims + tuple([depth]))   # w fluctuation matrix (3d)
 
+        # build a 3d matrix from constituent datasets
         print("Taking statistics with min_points = {0}".format(min_points))
         for i, cvm in enumerate(self.constituent_vel_matrix_list):
             u_set[:, :, i] = cvm['U']
@@ -163,7 +165,7 @@ class MeanVecFieldCartesian:
         self['uu'] = np.ma.masked_array(np.ma.mean(u_set_p * u_set_p, axis=2), mask=mpm)
         self['vv'] = np.ma.masked_array(np.ma.mean(v_set_p * v_set_p, axis=2), mask=mpm)
         self['ww'] = np.ma.masked_array(np.ma.mean(w_set_p * w_set_p, axis=2), mask=mpm)
-        self['cte'] = (self['uu'] + self['vv'] + self['ww']) / 2
+        self['ctke'] = (self['uu'] + self['vv'] + self['ww']) / 2
 
         self['uv'] = np.ma.masked_array(np.ma.mean(u_set_p * v_set_p, axis=2), mask=mpm)
         self['uw'] = np.ma.masked_array(np.ma.mean(u_set_p * w_set_p, axis=2), mask=mpm)
