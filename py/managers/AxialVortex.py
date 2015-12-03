@@ -153,7 +153,22 @@ class AxialVortex(MeanVecFieldCartesian):
         self['yrs'] = self['rt'] + self['rw'] + self['tw']
 
 
+    def getitem_corezone(self, component, core_distance=50):
+        """
+        Gets a component, but subset to within :param core_distance: mm from the core.
+        this is nice for finding minimums and maximums and taking statistics without including
+        data at the edges of the observation are where spurious values are common.
 
+        Note, this function returns the full component matrix, but with an updated mask
+
+        :param component:       component to subset
+        :param core_distance:   max distance (mm) to keep unmasked.
+        :return:
+        """
+
+        distance_mask = self['r_mesh'] > core_distance
+        item = np.ma.masked_array(self[component], mask=distance_mask)
+        return item
 
 
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=120):
