@@ -5,6 +5,7 @@ import os
 
 import matplotlib.pyplot as plt
 from matplotlib import cm
+import pylab
 
 import numpy as np
 
@@ -152,13 +153,26 @@ class AxialVortex(MeanVecFieldCartesian):
         self['yrs'] = self['rt'] + self['rw'] + self['tw']
 
 
-    def get_scatter_plot(self, component_y, component_x):
+    def set_plot_range(self, x_extent=None, y_extent=None):
+        """
+        accepts kwargs for x and y extents
+        :param x_extent:
+        :param y_extent:
+        :return:
+        """
+
+
+    def get_scatter_plot(self, component_y, component_x, title=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T) """
 
-        # will need to 1-dimensionalize the vel_matrix data for plotting purposes.
-        pass
+        if title is None:
+            title = "{0} vs {1}".format(component_x, component_y)
+
+        fig, ax = plt.subplots()
+
+
 
 
     def get_stream_plot(self, title=None):
@@ -191,26 +205,32 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.show(fig)
 
 
-    def get_contour_plot(self, component, title=None):
+    def _get_vrange(self, component, low_percentile=3, high_percentile=97):
         """
-        displays a 3d contour plot, which is initially oriented from straight down.
+        Gets the percentile range for color bar scaling on a given component matrix. Used
+        to ensure spurious high and low values do not over stretch the color ramps on plots.
+        The more noise in the data the further form 0 and 100 respectively these percentiles
+        must be.
 
-        :param title:
+        :param component:           component to get range for
+        :param low_percentile:      low percentile value marking coolest color
+        :param high_percentile:     high percentile value marking warmest color
         :return:
         """
+        vmin = np.percentile(self[component], low_percentile)
+        vmax = np.percentile(self[component], high_percentile)
+        return vmin, vmax
 
-        if title is None:
-            title = component
 
+    def _single_contour_plot(self, component, title=None):
+        """ Handles the instances in which only a single contour plot is desired """
         fig, ax = plt.subplots()
-        plt.contourf(self['x_mesh'],
-                     self['y_mesh'],
-                     self[component],    # the values determining color for the plot
-                     64,                # this is the number of distinct color levels
-                     cmap=cm.jet         # the colormap (jet, winter, )
-                     )
+        vmin, vmax = self._get_vrange(component)
 
-        plt.colorbar()
+        cf = plt.contourf(self['x_mesh'], self['y_mesh'], self[component], 256,
+                          cmap=cm.jet, vmin=vmin, vmax=vmax)
+        cf.set_clim(vmin=vmin, vmax=vmax)
+        plt.colorbar(cf)
         plt.title(title)
         plt.xlabel("X position (mm)")
         plt.ylabel("Y position (mm)")
@@ -218,9 +238,60 @@ class AxialVortex(MeanVecFieldCartesian):
         # plot the core location for reference
         if self.core_location[0] is not None:
             ax.scatter(*self.core_location, marker='+', s=100, c='white')
+        plt.show()
 
+
+    def _multi_contour_plot(self, components, titles=None, shape=None):
+        """
+        Manages multiple user plots.
+        :param components:      list of components
+        :param titles:          list of titles
+        :param shape:           tuple of (nrows, ncols) for figure tiling matrix
+        """
+
+        # determine the shape of the subplots
+        if shape is None:
+            nrows = 1
+            ncols = len(components)
+        else:
+            nrows, ncols = shape
+
+        # create the figure
+        fig, ax = plt.subplots(nrows=nrows, ncols=ncols)
+
+        # add each component plot
+        for i, component in enumerate(components):
+
+            plt.subplot(nrows, ncols, i + 1)
+            vmin, vmax = self._get_vrange(component)
+
+            cf = plt.contourf(self['x_mesh'], self['y_mesh'], self[component], 64,
+                              cmap=cm.jet, vmin=vmin, vmax=vmax)
+
+            plt.colorbar(cf)
+            plt.xlabel("X position (mm)")
+            plt.ylabel("Y position (mm)")
+            plt.title(titles[i])
+
+            # plot the core location for reference
+            if self.core_location[0] is not None:
+                ax[i] = plt.scatter(*self.core_location, marker='+', s=100, c='white')
+
+        # show the figure
         plt.show(fig)
 
+
+    def get_contour_plot(self, components, titles=None):
+
+        if titles is None:
+            titles = components
+
+        # if there is just one component to plot
+        if isinstance(components, str):
+            self._single_contour_plot(components, titles)
+
+        elif isinstance(components, list):
+            self._multi_contour_plot(components, titles)
 
 
 if __name__ == "__main__":
