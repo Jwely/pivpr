@@ -1,4 +1,4 @@
-RunID,Nsamples,Xloc_inches,Vnominal_mps,dt_us,Date,Vfree_mps,VfreeSigma_mps,Q_Pa,Patm_Pa,Ttunnel_C,wetbulb_K,drybulb_K
+RunID,Nsamples,Zloc_inches,Vnominal_mps,dt_us,Date,Vfree_mps,VfreeSigma_mps,Q_Pa,Patm_Pa,Ttunnel_C,wetbulb_K,drybulb_K
 1,200,21.500,15.0,50,31-May,15.22,0.02,135,102036,299.85,293.65,299.15
 2,200,21.500,17.0,50,31-May,16.88,0.02,170,102115,297.55,293.65,298.15
 3,200,21.500,19.0,50,31-May,19.43,0.01,225,102105,297.55,293.65,298.15
