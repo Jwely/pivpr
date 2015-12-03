@@ -19,17 +19,18 @@ def test_data():
               "name_tag": "test_data",
               "include_dynamic": False,
               "velocity_fs": 15.22,
-              "force_recalc": True}
+              "force_recalc": False}
 
     av = build_axial_vortex(**kwargs)
     #av.stream_plot()
     av.contour_plot('T')
+    #av.contour_plot(['R', 'rr', 'T', 'tt'], shape=(2, 2))
     #av.scatter_plot2('r_mesh', 'W')
-    av.scatter_plot('r_mesh', 'T', 'cte', cmap=cm.jet,
+    av.scatter_plot('r_mesh', 'T', 'ctke', cmap=cm.jet,
                         title="Tangential Velocity and Turbulent Kinetic Energy",
                         x_label="Distance to vortex core (mm)",
                         y_label="Tangential velocity (m/s)",
-                        c_label="Turbulent kinetic energy (2TKE)")
+                        c_label="Turbulent kinetic energy (TKE)")
     #av.get_scatter_plot2('r_mesh', 'cte')
     #av.get_contour_plot('T')
 
