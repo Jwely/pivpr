@@ -189,33 +189,43 @@ class AxialVortex(MeanVecFieldCartesian):
         return core_component
 
 
-    def _get_plot_lims(self, x_core_dist=100, y_core_dist=120):
+    def _get_plot_lims(self, x_core_dist=100, y_core_dist=100):
         """
-        returns the plot limits for scater plots
-        :param x_core_dist:
-        :param y_core_dist:
+        returns the plot extents based on user defined distance to core. If the
+        user input distances cause areas outside the image extent to be displayed, they
+        are automatically trimmed not to exceed the image extents.
+
+        :param x_core_dist:  maximum x distance from core to show on plot
+        :param y_core_dist:  maximum y distance from core to show on plot
         :return:
         """
         if self.core_location[0] is None:
             self.core_location = (len(self.x_set) / 2, len(self.y_set) / 2)
             raise Warning("core location not set! using image center instead!")
 
-        xlim = (self.core_location[0] - x_core_dist, self.core_location[0] + x_core_dist)
-        ylim = (self.core_location[1] - y_core_dist, self.core_location[1] + y_core_dist)
+        # use either the input distance away from the core, or the image extent, whichever is limiting
+        xlim_low = max([self.core_location[0] - x_core_dist, min(self.x_set)])
+        xlim_high = min([self.core_location[0] + x_core_dist, max(self.x_set)])
+        ylim_low = max([self.core_location[1] - y_core_dist, min(self.y_set)])
+        ylim_high = min([self.core_location[1] + y_core_dist, max(self.y_set)])
+
+        xlim = (xlim_low, xlim_high)
+        ylim = (ylim_low, ylim_high)
 
         return xlim, ylim
 
 
-    def scatter_plot2(self, component_x, component_y, title=None, x_label=None, y_label=None):
+    def scatter_plot_qual(self, component_x, component_y, title=None, x_label=None, y_label=None):
         """
-        prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
-        as a function of distance to vortex core (R) or angle around the core (T)
+        prints quick simple scatter plot of component_x vs component_y with the points colored
+        acording to the number of samples making up data from that point. Useful for evaluating
+        trends and differentiating between real trends and potentially spurious features.
 
         :param component_x:     component to make the X axis
         :param component_y:     component to make the Y axis
-        :param component_c:     component whos value will determine the color of the dots
-        :param title:
-        :return:
+        :param title:           custom title
+        :param x_label:         custom x axis label
+        :param y_label:         custom y axis label
         """
 
         if title is None:
@@ -254,7 +264,11 @@ class AxialVortex(MeanVecFieldCartesian):
         :param component_x:     component to make the X axis
         :param component_y:     component to make the Y axis
         :param component_c:     component who's value will determine the color of the dots
-        :param title:
+        :param title:           custom title for plot
+        :param x_label:         custom x axis label
+        :param y_label:         custom y axis label
+        :param c_label:         custom color bar label
+        :param cmap:            custom colormap for color bar
         :return:
         """
 
@@ -291,17 +305,14 @@ class AxialVortex(MeanVecFieldCartesian):
     def stream_plot(self, title=None):
         """
         Renders a stream plot of the data to the screen.
-        :return:
+        :param title:   A custom title for the stream plot
         """
 
         if title is None:
             title = "Stream: colored by in-plane velocities"
 
         fig, ax = plt.subplots()
-        plt.streamplot(self['x_mesh'],
-                       self['y_mesh'],
-                       self['U'],
-                       self['V'],
+        plt.streamplot(self['x_mesh'], self['y_mesh'], self['U'], self['V'],
                        color=self['P'],
                        arrowstyle='->',
                        arrowsize=1,
@@ -316,6 +327,9 @@ class AxialVortex(MeanVecFieldCartesian):
             ax.scatter(*self.core_location, marker='+', s=200, c='black')
 
         plt.show(fig)
+        xlims, ylims = self._get_plot_lims(50,60)
+        plt.xlim(xlims)
+        plt.ylim(ylims)
 
 
     def _get_vrange(self, component, low_percentile=3, high_percentile=97):
@@ -351,16 +365,16 @@ class AxialVortex(MeanVecFieldCartesian):
         # plot the core location for reference
         if self.core_location[0] is not None:
             ax.scatter(*self.core_location, marker='+', s=100, c='white')
+
+        xlims, ylims = self._get_plot_lims()
+        plt.xlim(xlims)
+        plt.ylim(ylims)
         plt.show()
 
 
+
     def _multi_contour_plot(self, components, titles=None, shape=None):
-        """
-        Manages multiple user plots.
-        :param components:      list of components
-        :param titles:          list of titles
-        :param shape:           tuple of (nrows, ncols) for figure tiling matrix
-        """
+        """ Manages multiple user plots """
 
         # determine the shape of the subplots
         if shape is None:
@@ -395,6 +409,13 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
     def contour_plot(self, components, titles=None, shape=None):
+        """
+        Creates a contour plot, accepts multiple plots in a subfigure according to shape layout
+
+        :param components:  string or list of all components to plot
+        :param titles:      string or list of custom titles to plot
+        :param shape:       custom shape layout, defaults to multiple plots horizontally
+        """
 
         if titles is None:
             titles = components
