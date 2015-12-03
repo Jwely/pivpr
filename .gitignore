@@ -4,3 +4,4 @@
 *.asv
 *.pyc
 *.pkl
+full_data/*.v3d
