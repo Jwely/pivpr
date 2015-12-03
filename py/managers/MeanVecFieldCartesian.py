@@ -10,15 +10,19 @@ from py.utils import Timer
 
 class MeanVecFieldCartesian:
 
-    def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None):
+    def __init__(self, name_tag=None, v3d_paths=None, min_points=20, velocity_fs=None):
         """
         :param v3d_paths:       list of filepaths to v3d files
         :param name_tag:        unique string name tag for this data set
+        :param min_points:      minimum number of values for given grid location for statistics to be
+                                considered valid. The more points the better, especially for turbulence values.
+        :param velocity_fs:     free stream velocity. not really used yet.
         :return:
         """
 
         self.name_tag = name_tag
         self.v3d_paths = v3d_paths
+        self.min_points = min_points
         self.velocity_fs = velocity_fs
         self.constituent_vel_matrix_list = []
 
@@ -81,7 +85,12 @@ class MeanVecFieldCartesian:
 
 
     def ingest_paths(self, filepath_list):
-        """ Creates VecField3d objects from each filepath in the list"""
+        """
+        Creates VecField3d objects from each filepath in the list
+        :param filepath_list:   list of filepaths to ingest
+        :param min_points:      grid spaces with fewer than this many good values will be set to no data
+
+        """
         t = Timer()
 
         # grab the first one and inherit its dimensional information
@@ -99,35 +108,44 @@ class MeanVecFieldCartesian:
         print("loaded {0} files in {1} s".format(len(filepath_list) + 1, t.finish()))
 
         # now take statistics on the set
-        self._average_cartesian()
+        self._average_cartesian(self.min_points)
 
 
-    def _average_cartesian(self):
+    def _average_cartesian(self, min_points=None):
         """
         Populates the  U, V, W, u, v, w, uu, vv, ww, uv, uw, and vw  values of the velocity matrix.
+        :param min_points:  same as in __init__
         """
+
+        if min_points is not None:
+            self.min_points = min_points
 
         depth = len(self.constituent_vel_matrix_list)
         u_set = np.ma.zeros(self.dims + tuple([depth]))
         v_set = np.ma.zeros(self.dims + tuple([depth]))
         w_set = np.ma.zeros(self.dims + tuple([depth]))
 
-        print("Taking statistics...")
+        print("Taking statistics with min_points = {0}".format(min_points))
         for i, cvm in enumerate(self.constituent_vel_matrix_list):
             u_set[:, :, i] = cvm['U']
             v_set[:, :, i] = cvm['V']
             w_set[:, :, i] = cvm['W']
 
+        # build a new mask based on whether or not more data than min_points is available
+        min_point_mask = u_set.count(axis=2) <= min_points
+        self['num'] = np.ma.masked_array(u_set.count(axis=2), mask=min_point_mask)
+
         # populate the velocity matrix
-        self['U'] = np.ma.mean(u_set, axis=2)
-        self['V'] = np.ma.mean(v_set, axis=2)
-        self['W'] = np.ma.mean(w_set, axis=2)
+        self['U'] = np.ma.masked_array(np.ma.mean(u_set, axis=2), mask=min_point_mask)
+        self['V'] = np.ma.masked_array(np.ma.mean(v_set, axis=2), mask=min_point_mask)
+        self['W'] = np.ma.masked_array(np.ma.mean(w_set, axis=2), mask=min_point_mask)
+
         self['M'] = (self['U'] ** 2 + self['V'] ** 2 + self['W'] ** 2) ** 0.5
         self['P'] = (self['U'] ** 2 + self['V'] ** 2) ** 0.5
 
-        self['u'] = np.ma.std(u_set, axis=2)
-        self['v'] = np.ma.std(v_set, axis=2)
-        self['w'] = np.ma.std(w_set, axis=2)
+        self['u'] = np.ma.masked_array(np.ma.std(u_set, axis=2), mask=min_point_mask)
+        self['v'] = np.ma.masked_array(np.ma.std(v_set, axis=2), mask=min_point_mask)
+        self['w'] = np.ma.masked_array(np.ma.std(w_set, axis=2), mask=min_point_mask)
 
         self['uu'] = self['u'] * self['u']
         self['vv'] = self['v'] * self['v']
@@ -139,15 +157,13 @@ class MeanVecFieldCartesian:
         self['vw'] = self['v'] * self['w']
         self['crs'] = (self['uv'] + self['uw'] + self['vw'])
 
-        self['num'] = u_set.count(axis=2)
-
 
 
 if __name__ == "__main__":
 
-    directory = r"E:\Data2\Ely_May28th\Vector\1"
+    directory = "../../test_data"
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
 
-    pkl_path = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_1_test.pkl"
-    mvf = MeanVecFieldCartesian("Station_1", paths)
+    mvf = MeanVecFieldCartesian("Station_1", paths[0:5], min_points=5)
+    print mvf['num'].mask.sum()
 
