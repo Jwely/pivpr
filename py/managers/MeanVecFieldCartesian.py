@@ -40,19 +40,19 @@ class MeanVecFieldCartesian:
                            'P': None,       # in-plane velocities (U and V components, not W)
                            'M': None,       # velocity magnitude (all three components)
 
-                           'u': None,       # fluctuation in U
-                           'v': None,       # fluctuation in V
-                           'w': None,       # fluctuation in W
+                           'u': None,       # mean absolute fluctuation in U
+                           'v': None,       # mean absolute fluctuation in V
+                           'w': None,       # mean absolute fluctuation in W
 
-                           'uu': None,      # turbulent energy in u
-                           'vv': None,      # turbulent energy in v
-                           'ww': None,      # turbulent energy in w
+                           'uu': None,      # turbulent energy in u (u' * u') bar
+                           'vv': None,      # turbulent energy in v (v' * v') bar
+                           'ww': None,      # turbulent energy in w (w' * w') bar
                            'cte': None,     # total cartesian turbulent energy
 
                            'uv': None,      # reynolds stress in u/v
                            'uw': None,      # reynolds stress in u/w
                            'vw': None,      # reynolds stress in v/w
-                           'crs': None,     # total cartesian reynolds stress
+                           'uvw': None,     # triple correlation reynolds stress
 
                            'num': None}     # number of good data points making up stats for other values
 
@@ -114,16 +114,23 @@ class MeanVecFieldCartesian:
     def _average_cartesian(self, min_points=None):
         """
         Populates the  U, V, W, u, v, w, uu, vv, ww, uv, uw, and vw  values of the velocity matrix.
-        :param min_points:  same as in __init__
+
+        This function is a little mathy, but the principle is to separate the history of values
+        into a time averaged mean component, and a time averaged fluctuation component.
+
+        :param min_points:  minimum number of good values in order to consider a cell a good value
         """
 
         if min_points is not None:
             self.min_points = min_points
 
         depth = len(self.constituent_vel_matrix_list)
-        u_set = np.ma.zeros(self.dims + tuple([depth]))
-        v_set = np.ma.zeros(self.dims + tuple([depth]))
-        w_set = np.ma.zeros(self.dims + tuple([depth]))
+        u_set = np.ma.zeros(self.dims + tuple([depth]))     # u matrix (3d)
+        v_set = np.ma.zeros(self.dims + tuple([depth]))     # u matrix (3d)
+        w_set = np.ma.zeros(self.dims + tuple([depth]))     # u matrix (3d)
+        u_set_p = np.ma.zeros(self.dims + tuple([depth]))   # u fluctuation matrix (3d)
+        v_set_p = np.ma.zeros(self.dims + tuple([depth]))   # v fluctuation matrix (3d)
+        w_set_p = np.ma.zeros(self.dims + tuple([depth]))   # w fluctuation matrix (3d)
 
         print("Taking statistics with min_points = {0}".format(min_points))
         for i, cvm in enumerate(self.constituent_vel_matrix_list):
@@ -132,38 +139,44 @@ class MeanVecFieldCartesian:
             w_set[:, :, i] = cvm['W']
 
         # build a new mask based on whether or not more data than min_points is available
-        min_point_mask = u_set.count(axis=2) <= min_points
-        self['num'] = np.ma.masked_array(u_set.count(axis=2), mask=min_point_mask)
+        mpm = u_set.count(axis=2) <= min_points
+        self['num'] = np.ma.masked_array(u_set.count(axis=2), mask=mpm)
 
         # populate the velocity matrix
-        self['U'] = np.ma.masked_array(np.ma.mean(u_set, axis=2), mask=min_point_mask)
-        self['V'] = np.ma.masked_array(np.ma.mean(v_set, axis=2), mask=min_point_mask)
-        self['W'] = np.ma.masked_array(np.ma.mean(w_set, axis=2), mask=min_point_mask)
+        self['U'] = np.ma.masked_array(np.ma.mean(u_set, axis=2), mask=mpm)
+        self['V'] = np.ma.masked_array(np.ma.mean(v_set, axis=2), mask=mpm)
+        self['W'] = np.ma.masked_array(np.ma.mean(w_set, axis=2), mask=mpm)
 
-        self['M'] = (self['U'] ** 2 + self['V'] ** 2 + self['W'] ** 2) ** 0.5
-        self['P'] = (self['U'] ** 2 + self['V'] ** 2) ** 0.5
+        self['M'] = (self['U'] ** 2 + self['V'] ** 2 + self['W'] ** 2) ** 0.5   # magnitudes
+        self['P'] = (self['U'] ** 2 + self['V'] ** 2) ** 0.5                    # in plane magnitude (no Z)
 
-        self['u'] = np.ma.masked_array(np.ma.std(u_set, axis=2), mask=min_point_mask)
-        self['v'] = np.ma.masked_array(np.ma.std(v_set, axis=2), mask=min_point_mask)
-        self['w'] = np.ma.masked_array(np.ma.std(w_set, axis=2), mask=min_point_mask)
+        # now subtract out the averages for fluctuation measurements (time averaged)
+        for i, cvm in enumerate(self.constituent_vel_matrix_list):
+            u_set_p[:, :, i] = u_set[:, :, i] - self['U']
+            v_set_p[:, :, i] = v_set[:, :, i] - self['V']
+            w_set_p[:, :, i] = w_set[:, :, i] - self['W']
 
-        self['uu'] = self['u'] * self['u']
-        self['vv'] = self['v'] * self['v']
-        self['ww'] = self['w'] * self['w']
-        self['cte'] = (self['uu'] + self['vv'] + self['ww'])
+        self['u'] = np.ma.masked_array(np.ma.mean(abs(u_set_p), axis=2), mask=mpm)
+        self['v'] = np.ma.masked_array(np.ma.mean(abs(v_set_p), axis=2), mask=mpm)
+        self['w'] = np.ma.masked_array(np.ma.mean(abs(w_set_p), axis=2), mask=mpm)
 
-        self['uv'] = self['u'] * self['v']
-        self['uw'] = self['u'] * self['w']
-        self['vw'] = self['v'] * self['w']
-        self['crs'] = (self['uv'] + self['uw'] + self['vw'])
+        self['uu'] = np.ma.masked_array(np.ma.mean(u_set_p * u_set_p, axis=2), mask=mpm)
+        self['vv'] = np.ma.masked_array(np.ma.mean(v_set_p * v_set_p, axis=2), mask=mpm)
+        self['ww'] = np.ma.masked_array(np.ma.mean(w_set_p * w_set_p, axis=2), mask=mpm)
+        self['cte'] = (self['uu'] + self['vv'] + self['ww']) / 2
+
+        self['uv'] = np.ma.masked_array(np.ma.mean(u_set_p * v_set_p, axis=2), mask=mpm)
+        self['uw'] = np.ma.masked_array(np.ma.mean(u_set_p * w_set_p, axis=2), mask=mpm)
+        self['vw'] = np.ma.masked_array(np.ma.mean(v_set_p * w_set_p, axis=2), mask=mpm)
+        self['uvw'] = np.ma.masked_array(np.ma.mean(u_set_p * v_set_p * w_set_p, axis=2), mask=mpm)
 
 
 
 if __name__ == "__main__":
 
-    directory = "../../test_data"
+    directory = "../../data_test"
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
 
-    mvf = MeanVecFieldCartesian("Station_1", paths[0:5], min_points=5)
-    print mvf['num'].mask.sum()
+    mvf = MeanVecFieldCartesian("Station_1", paths[0:5], min_points=3)
+    print mvf['u'].count()
 
