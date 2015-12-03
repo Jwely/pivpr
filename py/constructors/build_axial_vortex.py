@@ -45,16 +45,3 @@ def build_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
     av_instance.to_pickle(pkl_path_dyn, include_dynamic=True)
     av_instance.to_pickle(pkl_path, include_dynamic=False)
     return av_instance
-
-
-if __name__ == "__main__":
-
-    kwargs = {"v3d_dir": r"E:\Data2\Ely_May28th\Vector\1",
-              "pkl_dir": "../pickles",
-              "name_tag": "01",
-              "include_dynamic": False,
-              "velocity_fs": 15.22,
-              "force_recalc": False}
-
-    av = build_axial_vortex(**kwargs)
-    av.get_contour_plot('P')
