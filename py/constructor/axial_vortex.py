@@ -39,7 +39,7 @@ def axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
                               velocity_fs=velocity_fs, min_points=min_points)
 
     # find the core and build cylindrical coordinate data around it
-    av_instance.find_core()
+    av_instance._find_core()
     av_instance.build_cylindrical()
 
     # pickle both the full dynamic set and the reduced set

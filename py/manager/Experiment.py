@@ -22,7 +22,7 @@ class Experiment:
         :param v_fs_sigma:      instability in free stream velocity (m/s float)
         :param q:               stagnation pressure inside the tunnel (Pascals integer)
         :param pres_atm:        atmospheric pressure (Pascals integer)
-        :param temp_tunnel:     temperature in the tunnel (Celcius float)
+        :param temp_tunnel:     temperature in the tunnel (Celsius float)
         :param wet_bulb:        wet bulb temperature at time of test (Kelvin float)
         :param dry_bulb:        wet bulb temperature at time of test (Kelvin float)
         :return:
