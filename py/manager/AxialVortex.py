@@ -286,7 +286,7 @@ class AxialVortex(MeanVecFieldCartesian):
         vmin, vmax = self._get_vrange(component_y)
 
         plt.ylim(vmin - 0.1, vmax * 2)
-        plt.tight_layout(pad=2)
+        plt.tight_layout()
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title(title)
@@ -333,7 +333,7 @@ class AxialVortex(MeanVecFieldCartesian):
         vmin, vmax = self._get_vrange(component_y)
 
         plt.ylim(vmin - 0.1, vmax * 2)
-        plt.tight_layout(pad=2)
+        plt.tight_layout()
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title(title)
@@ -364,6 +364,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if self.core_location[0] is not None:
             ax.scatter(*self.core_location, marker='+', s=200, c='black')
 
+        plt.tight_layout()
         xlims, ylims = self._get_plot_lims()
         plt.xlim(xlims)
         plt.ylim(ylims)
@@ -404,6 +405,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if self.core_location[0] is not None:
             ax.scatter(*self.core_location, marker='+', s=100, c='white')
 
+        plt.tight_layout()
         xlims, ylims = self._get_plot_lims()
         plt.xlim(xlims)
         plt.ylim(ylims)
@@ -422,14 +424,13 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # create the figure
         fig, ax = plt.subplots(nrows=nrows, ncols=ncols)
-
         # add each component plot
         for i, component in enumerate(components):
 
             plt.subplot(nrows, ncols, i + 1)
             vmin, vmax = self._get_vrange(component)
 
-            cf = plt.contourf(self['x_mesh'], self['y_mesh'], self[component], 64,
+            cf = plt.contourf(self['x_mesh'], self['y_mesh'], self[component], 256,
                               cmap=cm.jet, vmin=vmin, vmax=vmax)
 
             plt.colorbar(cf)
@@ -446,6 +447,7 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.ylim(ylims)
 
         # show the figure
+        plt.subplots_adjust(left=0.03, right=0.97, wspace=0.1, hspace=0.2)
         plt.show(fig)
 
 
