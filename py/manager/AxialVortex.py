@@ -42,6 +42,7 @@ class AxialVortex(MeanVecFieldCartesian):
         # vortex cylindrical specific attributes
         self.core_location = (None, None)       # position of core
         self.core_index = (None, None)          # fractional index position of core
+        self.velocity_fs = velocity_fs          # free stream velocity (experimental input)
         self.core_radius = None                 # distance between core and Tmax location (mm)
         self.Tmax = None                        # maximum tangential velocity
         self.Wcore = None                       # axial velocity at the core
@@ -130,12 +131,13 @@ class AxialVortex(MeanVecFieldCartesian):
         self.Wcore = self._getitem_corezone('W', 10).min()
 
         if verbose:
-            message_fmt = "Core specs: radius={r}mm, Tmax={t}, Wmin={w}"
-            print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore))
+            message_fmt = "Core specs: radius={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Vfree={vf:2.2f}"
+            print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore, vf=self.velocity_fs))
 
         char_dict = {"Tmax": self.Tmax,
                      "CoreRadius": self.core_radius,
-                     "Wcore": self.Wcore}
+                     "Wcore": self.Wcore,
+                     "Vfree": self.velocity_fs}
         return char_dict
 
 
@@ -406,7 +408,6 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.xlim(xlims)
         plt.ylim(ylims)
         plt.show()
-
 
 
     def _multi_contour_plot(self, components, titles=None, shape=None):
