@@ -17,10 +17,12 @@ def test_plots(experiment_id):
                                   min_points=20,
                                   force_recalc=False)
     av = exp[0].axial_vortex
-    av.stream_plot()
+    #av.stream_plot()
+    av.contour_plot('num')
+    av.contour_plot('ctke')
     av.contour_plot(['R', 'T', 'W'])
     av.contour_plot(['rr', 'tt', 'ww'])
-    av.contour_plot(['rt', 'rw', 'tw'])
+    #av.contour_plot(['rt', 'rw', 'tw'])
     av.scatter_plot('r_mesh', 'T', 'ctke', cmap=cm.jet,
                    title="Tangential Velocity and Turbulent Kinetic Energy",
                    x_label="Distance to vortex core (mm)",
