@@ -13,7 +13,7 @@ from py.utils.cart2cyl_vector import cart2cyl_vector
 
 class AxialVortex(MeanVecFieldCartesian):
 
-    def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None):
+    def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None, min_points=20):
         """
         Built to extend the cartesian version of this class. Since all PIV data is
         reasonably always going to be taken raw in cartesian coordinates, there is no
@@ -35,7 +35,8 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         # invoke the parent class init
-        MeanVecFieldCartesian.__init__(self, name_tag, v3d_paths, velocity_fs)
+        MeanVecFieldCartesian.__init__(self, name_tag=name_tag, v3d_paths=v3d_paths,
+                                       velocity_fs=velocity_fs, min_points=min_points)
         name_tag = name_tag
 
         # add vortex cylindrical specific attributes

@@ -6,7 +6,7 @@ from py.managers.Experiment import Experiment
 from build_axial_vortex import build_axial_vortex
 
 
-def build_experiments(experiment_table_path, experiment_directory_path, ids=None):
+def build_experiments(experiment_table_path, experiment_directory_path, ids=None, min_points=20):
     """
     Constructs an Experiment instance with all useful attributes of the experiment. Some of these
     attributes are read from ancillary data in the `dat` folder.
@@ -28,18 +28,20 @@ def build_experiments(experiment_table_path, experiment_directory_path, ids=None
             # build the experiment object
             kwargs = row.to_dict()
             exp_dir = os.path.join(experiment_directory_path, "1")
-            exp = Experiment(experiment_dir=exp_dir, **kwargs)
+            exp = Experiment(**kwargs)
 
             # now build up the vortex associated with it, and add it to the experiment
             name_tag = "ID-{0}_Z-{1}_Vfs-{2}".format(row['experiment_id'],
                                                      row['z_location'],
                                                      row['v_fs_mean'])
 
-            av = build_axial_vortex(exp_dir, "../pickles",
+            av = build_axial_vortex(v3d_dir=exp_dir,
+                                    pkl_dir="../pickles",
                                     name_tag=name_tag,
                                     include_dynamic=False,
                                     velocity_fs=row['v_fs_mean'],
-                                    force_recalc=False)
+                                    force_recalc=False,
+                                    min_points=min_points)
             exp.ingest_axial_vortex(av)
             experiments.append(exp)
 

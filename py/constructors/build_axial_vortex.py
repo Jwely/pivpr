@@ -5,7 +5,7 @@ from py.managers import AxialVortex
 
 
 def build_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
-                       velocity_fs=None, force_recalc=False):
+                       velocity_fs=None, force_recalc=False, min_points=20):
     """
     Returns an AxialVortex instance. Manages pickling of classes to allow one-time-computation
     as often as possible, unless the user overrides it with force_recalc=True.
@@ -35,7 +35,8 @@ def build_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
 
     # build list of all v3d files in directory from which to create the AxialVortex
     v3d_paths = [os.path.join(v3d_dir, fname) for fname in os.listdir(v3d_dir) if fname.endswith(".v3d")]
-    av_instance = AxialVortex(name_tag=name_tag, v3d_paths=v3d_paths, velocity_fs=velocity_fs)
+    av_instance = AxialVortex(name_tag=name_tag, v3d_paths=v3d_paths,
+                              velocity_fs=velocity_fs, min_points=min_points)
 
     # find the core and build cylindrical coordinate data around it
     av_instance.find_core()
