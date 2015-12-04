@@ -42,10 +42,10 @@ class AxialVortex(MeanVecFieldCartesian):
         # vortex cylindrical specific attributes
         self.core_location = (None, None)       # position of core
         self.core_index = (None, None)          # fractional index position of core
-        self.core_radius = None         # distance between core and vmax_tangential location (mm)
-        self.vmax_tangential = None     # maximum tangential velocity
-        self.vmax_axial = None          # maximum axial velocity
-        self.vcore_axial = None         # axial velocity at the core
+        self.core_radius = None                 # distance between core and Tmax location (mm)
+        self.Tmax = None                        # maximum tangential velocity
+        self.Wcore = None                       # axial velocity at the core
+        self.circulation_strength = None        # -flag
 
         # update the coordinate meshgrid
         self.meshgrid.update({"r_mesh": None,   # radial meshgrid
@@ -95,7 +95,51 @@ class AxialVortex(MeanVecFieldCartesian):
         return new_instance
 
 
-    def find_core(self, crange=40):
+    def _getitem_corezone(self, component, core_distance=50):
+        """
+        Gets a component, but subset to within :param core_distance: mm from the core.
+        this is nice for finding minimums and maximums and taking statistics without including
+        data at the edges of the observation are where spurious values are common.
+
+        Note, this function returns the full component matrix, but with an updated mask
+
+        :param component:       component to subset
+        :param core_distance:   max distance (mm) to keep unmasked.
+        :return:
+        """
+
+        distance_mask = self['r_mesh'] > core_distance
+        core_component = np.ma.masked_array(self[component], mask=distance_mask)
+        return core_component
+
+
+    def _characterize(self, verbose=True):
+        """
+        Characterizes this vortex with a variety of scalar metrics such as the radius,
+        the maximum tangential velocity, the maximum axial velocities, axial velocities at
+        the very center of the core, etc.
+
+        :param verbose: prints outputs
+        :return characteristics_dict:
+        """
+
+        sub_t = self._getitem_corezone('T')
+        self.Tmax = np.ma.max(sub_t)
+        Tmax_location = np.unravel_index(sub_t.argmax(), sub_t.shape)
+        self.core_radius = self['r_mesh'][Tmax_location]
+        self.Wcore = self._getitem_corezone('W', 10).min()
+
+        if verbose:
+            message_fmt = "Core specs: radius={r}mm, Tmax={t}, Wmin={w}"
+            print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore))
+
+        char_dict = {"Tmax": self.Tmax,
+                     "CoreRadius": self.core_radius,
+                     "Wcore": self.Wcore}
+        return char_dict
+
+
+    def _find_core(self, crange=40):
         """
         Attempts to find the core near the center of the matrix. The core is found by
         searching for the minimum value of in_plane velocities within :param crange:
@@ -137,7 +181,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if core_location_tuple is not None:
             xc, yc = core_location_tuple
         else:
-            xc, yc = self.find_core()
+            xc, yc = self._find_core()
 
         # set up empty matrices
         depth = len(self.constituent_vel_matrix_list)
@@ -176,23 +220,9 @@ class AxialVortex(MeanVecFieldCartesian):
         self['rw'] = np.ma.mean(r_set_p * w_set_p, axis=2)
         self['tw'] = np.ma.mean(t_set_p * w_set_p, axis=2)
 
-
-    def getitem_corezone(self, component, core_distance=50):
-        """
-        Gets a component, but subset to within :param core_distance: mm from the core.
-        this is nice for finding minimums and maximums and taking statistics without including
-        data at the edges of the observation are where spurious values are common.
-
-        Note, this function returns the full component matrix, but with an updated mask
-
-        :param component:       component to subset
-        :param core_distance:   max distance (mm) to keep unmasked.
-        :return:
-        """
-
-        distance_mask = self['r_mesh'] > core_distance
-        core_component = np.ma.masked_array(self[component], mask=distance_mask)
-        return core_component
+        # now characterize the vortex
+        characteristics = self._characterize(verbose=True)
+        return characteristics
 
 
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=100):
@@ -448,7 +478,7 @@ if __name__ == "__main__":
     mvf.to_pickle(small_pkl, include_dynamic=True)
 
     mvf = AxialVortex().from_pickle(small_pkl)
-    mvf.find_core()
+    mvf._find_core()
     mvf.build_cylindrical()
 
     mvf.stream_plot()
