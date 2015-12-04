@@ -364,10 +364,10 @@ class AxialVortex(MeanVecFieldCartesian):
         if self.core_location[0] is not None:
             ax.scatter(*self.core_location, marker='+', s=200, c='black')
 
-        plt.show(fig)
-        xlims, ylims = self._get_plot_lims(50, 60)
+        xlims, ylims = self._get_plot_lims()
         plt.xlim(xlims)
         plt.ylim(ylims)
+        plt.show(fig)
 
 
     def _get_vrange(self, component, low_percentile=2, high_percentile=99.5):
@@ -441,10 +441,11 @@ class AxialVortex(MeanVecFieldCartesian):
             if self.core_location[0] is not None:
                 plt.scatter(*self.core_location, marker='+', s=100, c='white')
 
+            xlims, ylims = self._get_plot_lims()
+            plt.xlim(xlims)
+            plt.ylim(ylims)
+
         # show the figure
-        xlims, ylims = self._get_plot_lims()
-        plt.xlim(xlims)
-        plt.ylim(ylims)
         plt.show(fig)
 
 
