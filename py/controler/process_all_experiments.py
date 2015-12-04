@@ -13,4 +13,4 @@ def process_all_experiments(force_recalc=True):
 
 
 if __name__ == "__main__":
-    process_all_experiments(force_recalc=False)
+    process_all_experiments(force_recalc=True)

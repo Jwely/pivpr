@@ -36,7 +36,7 @@ def experiments(experiment_table_path, experiment_directory_path, ids=None,
         if row['experiment_id'] in ids:
             # build the experiment object
             kwargs = row.to_dict()
-            exp_dir = os.path.join(experiment_directory_path, "1")
+            exp_dir = os.path.join(experiment_directory_path, str(row['experiment_id']))
             exp = Experiment(**kwargs)
 
             # now build up the vortex associated with it, and add it to the experiment
