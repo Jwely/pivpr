@@ -1,6 +1,6 @@
 __author__ = 'Jwely'
 
-from py.constructors import build_axial_vortex
+from py import constructor
 
 # some of my favorite colormaps for quick reference
 from matplotlib import cm
@@ -12,6 +12,7 @@ cm.jet               # default colormap
 cm.nipy_spectral     # qualitative spectrum colormap
 '''
 
+
 def test_data():
 
     kwargs = {"v3d_dir": "../../data_test",
@@ -21,7 +22,7 @@ def test_data():
               "velocity_fs": 15.22,
               "force_recalc": False}
 
-    av = build_axial_vortex(**kwargs)
+    av = constructor.axial_vortex(**kwargs)
     #av.stream_plot()
     av.contour_plot('T')
     #av.contour_plot(['R', 'rr', 'T', 'tt'], shape=(2, 2))

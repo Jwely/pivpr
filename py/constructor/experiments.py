@@ -2,19 +2,28 @@ __author__ = 'Jwely'
 
 import pandas as pd
 import os
-from py.managers.Experiment import Experiment
-from build_axial_vortex import build_axial_vortex
+from py.manager.Experiment import Experiment
+from axial_vortex import axial_vortex
 
 
-def build_experiments(experiment_table_path, experiment_directory_path, ids=None, min_points=20):
+def experiments(experiment_table_path, experiment_directory_path, ids=None,
+                      min_points=20, force_recalc=False):
     """
     Constructs an Experiment instance with all useful attributes of the experiment. Some of these
     attributes are read from ancillary data in the `dat` folder.
 
-    :param experiment_table_path:
-    :param experiment_directory_path:
+    :param experiment_table_path:       filepath to `experiment_table.csv` usually in `dat` folder
+    :param experiment_directory_path:   path to directory with all exp data `data_full`
     :param ids:                         list of run ID numbers to use
-    :return:
+    :param min_points:                  when building the experiments AxialVortex data, cells
+                                        with fewer good samples than min_points will be masked and
+                                        treated as NoData. A higher min_point requirement reduces
+                                        the overall size of the dataset, but improves quality
+    :param force_recalc:                forces re-computation from raw data of all derived values.
+                                        if left False, data may be loaded from a previous binary file
+                                        instead of crecomputed.
+    :return experiments:                a list full of Experiment instances, without dynamic data.
+                                        probably pretty memory intensive.
     """
 
     dataframe = pd.read_csv(experiment_table_path)
@@ -35,12 +44,12 @@ def build_experiments(experiment_table_path, experiment_directory_path, ids=None
                                                      row['z_location'],
                                                      row['v_fs_mean'])
 
-            av = build_axial_vortex(v3d_dir=exp_dir,
+            av = axial_vortex(v3d_dir=exp_dir,
                                     pkl_dir="../pickles",
                                     name_tag=name_tag,
                                     include_dynamic=False,
                                     velocity_fs=row['v_fs_mean'],
-                                    force_recalc=False,
+                                    force_recalc=force_recalc,
                                     min_points=min_points)
             exp.ingest_axial_vortex(av)
             experiments.append(exp)
@@ -50,7 +59,7 @@ def build_experiments(experiment_table_path, experiment_directory_path, ids=None
 
 if __name__ == "__main__":
 
-    build_experiments("dat/experiment_table.csv", "../../data_full")
+    experiments("dat/experiment_table.csv", "../../data_full")
 
 
 

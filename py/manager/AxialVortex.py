@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 
-from py.managers.MeanVecFieldCartesian import MeanVecFieldCartesian
+from py.manager.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.utils.cart2cyl_vector import cart2cyl_vector
 
 
@@ -39,10 +39,15 @@ class AxialVortex(MeanVecFieldCartesian):
                                        velocity_fs=velocity_fs, min_points=min_points)
         name_tag = name_tag
 
-        # add vortex cylindrical specific attributes
+        # vortex cylindrical specific attributes
         self.core_location = (None, None)       # position of core
         self.core_index = (None, None)          # fractional index position of core
+        self.core_radius = None         # distance between core and vmax_tangential location (mm)
+        self.vmax_tangential = None     # maximum tangential velocity
+        self.vmax_axial = None          # maximum axial velocity
+        self.vcore_axial = None         # axial velocity at the core
 
+        # update the coordinate meshgrid
         self.meshgrid.update({"r_mesh": None,   # radial meshgrid
                               "t_mesh": None})  # tangential meshgrid
 

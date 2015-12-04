@@ -49,12 +49,6 @@ class Experiment:
         # attributes ingested by function call
         self.axial_vortex = None        # will be an actual AxialVortex instance
 
-        # calculated and derived attributes from the axial vortex
-        self.core_radius = None         # distance between core and vmax_tangential location (mm)
-        self.vmax_tangential = None     # maximum tangential velocity
-        self.vmax_axial = None          # maximum axial velocity
-        self.vcore_axial = None         # axial velocity at the core
-
 
     def ingest_axial_vortex(self, axial_vortex_instance):
         """

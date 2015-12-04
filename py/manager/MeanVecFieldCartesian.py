@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 
-from py.managers.VecFieldCartesian import VecFieldCartesian
+from py.manager.VecFieldCartesian import VecFieldCartesian
 from py.utils import Timer
 
 
@@ -84,33 +84,6 @@ class MeanVecFieldCartesian:
             raise AttributeError("instance does not accept __setitem__ for '{0}'".format(key))
 
 
-    def ingest_paths(self, filepath_list):
-        """
-        Creates VecField3d objects from each filepath in the list
-        :param filepath_list:   list of filepaths to ingest
-        :param min_points:      grid spaces with fewer than this many good values will be set to no data
-
-        """
-        t = Timer()
-
-        # grab the first one and inherit its dimensional information
-        first_vf = VecFieldCartesian(filepath_list.pop(0), velocity_fs=self.velocity_fs)
-        self.x_set = first_vf.x_set
-        self.y_set = first_vf.y_set
-        self.dims = first_vf.dims
-        self.meshgrid = first_vf.meshgrid
-        self.constituent_vel_matrix_list.append(first_vf.vel_matrix)
-
-        for path in filepath_list:
-            next_vf = VecFieldCartesian(path, velocity_fs=self.velocity_fs)
-            assert next_vf.dims == first_vf.dims, "Inconsistent dimensions detected!"
-            self.constituent_vel_matrix_list.append(next_vf.vel_matrix)
-        print("loaded {0} files in {1} s".format(len(filepath_list) + 1, t.finish()))
-
-        # now take statistics on the set
-        self._average_cartesian(self.min_points)
-
-
     def _average_cartesian(self, min_points=None):
         """
         Populates the  U, V, W, u, v, w, uu, vv, ww, uv, uw, and vw  values of the velocity matrix.
@@ -158,6 +131,7 @@ class MeanVecFieldCartesian:
             v_set_p[:, :, i] = v_set[:, :, i] - self['V']
             w_set_p[:, :, i] = w_set[:, :, i] - self['W']
 
+        # now just combine the components in all the desired ways!
         self['u'] = np.ma.masked_array(np.ma.mean(abs(u_set_p), axis=2), mask=mpm)
         self['v'] = np.ma.masked_array(np.ma.mean(abs(v_set_p), axis=2), mask=mpm)
         self['w'] = np.ma.masked_array(np.ma.mean(abs(w_set_p), axis=2), mask=mpm)
@@ -171,6 +145,31 @@ class MeanVecFieldCartesian:
         self['uw'] = np.ma.masked_array(np.ma.mean(u_set_p * w_set_p, axis=2), mask=mpm)
         self['vw'] = np.ma.masked_array(np.ma.mean(v_set_p * w_set_p, axis=2), mask=mpm)
         self['uvw'] = np.ma.masked_array(np.ma.mean(u_set_p * v_set_p * w_set_p, axis=2), mask=mpm)
+
+
+    def ingest_paths(self, filepath_list):
+        """
+        Creates VecField3d objects from each filepath in the list
+        :param filepath_list:   list of filepaths to ingest
+        """
+        t = Timer()
+
+        # grab the first one and inherit its dimensional information
+        first_vf = VecFieldCartesian(filepath_list.pop(0), velocity_fs=self.velocity_fs)
+        self.x_set = first_vf.x_set
+        self.y_set = first_vf.y_set
+        self.dims = first_vf.dims
+        self.meshgrid = first_vf.meshgrid
+        self.constituent_vel_matrix_list.append(first_vf.vel_matrix)
+
+        for path in filepath_list:
+            next_vf = VecFieldCartesian(path, velocity_fs=self.velocity_fs)
+            assert next_vf.dims == first_vf.dims, "Inconsistent dimensions detected!"
+            self.constituent_vel_matrix_list.append(next_vf.vel_matrix)
+        print("loaded {0} files in {1} s".format(len(filepath_list) + 1, t.finish()))
+
+        # now take statistics on the set
+        self._average_cartesian(self.min_points)
 
 
 
