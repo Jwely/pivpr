@@ -15,8 +15,12 @@ def main():
     pip.main(["install", "--upgrade", "pip"])
     pip.main(["install", os.path.join(wheel_dir, "numpy-1.9.3+mkl-cp27-none-win_amd64.whl")])
     pip.main(["install", "pandas"])
-    pip.main(["install", "openpiv"])
-    pip.main(["install", "plotly"])
+    #pip.main(["install", "openpiv"])       didnt end up using
+    #pip.main(["install", "plotly"])        didn't end up using
+
+
+if __name__ == "__main__":
+    main()
 
 
 
