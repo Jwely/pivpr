@@ -85,14 +85,14 @@ class AxialVortex(MeanVecFieldCartesian):
             print("Saved to {0}".format(pickle_path))
 
 
-    @staticmethod
-    def from_pickle(pickle_path):
+    def from_pickle(self, pickle_path):
         """ loads previous saved state from a .pkl file and returns a MeanVecFieldCartesian instance """
 
         with open(pickle_path, 'rb') as f:
             new_instance = cPickle.load(f)
 
         print("loaded pkl from {0}".format(pickle_path))
+        new_instance.characterize()
         return new_instance
 
 
@@ -114,7 +114,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return core_component
 
 
-    def _characterize(self, verbose=True):
+    def characterize(self, verbose=True):
         """
         Characterizes this vortex with a variety of scalar metrics such as the radius,
         the maximum tangential velocity, the maximum axial velocities, axial velocities at
@@ -223,7 +223,7 @@ class AxialVortex(MeanVecFieldCartesian):
         self['tw'] = np.ma.mean(t_set_p * w_set_p, axis=2)
 
         # now characterize the vortex
-        characteristics = self._characterize(verbose=True)
+        characteristics = self.characterize(verbose=True)
         return characteristics
 
 
@@ -365,12 +365,12 @@ class AxialVortex(MeanVecFieldCartesian):
             ax.scatter(*self.core_location, marker='+', s=200, c='black')
 
         plt.show(fig)
-        xlims, ylims = self._get_plot_lims(50,60)
+        xlims, ylims = self._get_plot_lims(50, 60)
         plt.xlim(xlims)
         plt.ylim(ylims)
 
 
-    def _get_vrange(self, component, low_percentile=3, high_percentile=97):
+    def _get_vrange(self, component, low_percentile=2, high_percentile=99.5):
         """
         Gets the percentile range for color bar scaling on a given component matrix. Used
         to ensure spurious high and low values do not over stretch the color ramps on plots.
@@ -442,6 +442,9 @@ class AxialVortex(MeanVecFieldCartesian):
                 plt.scatter(*self.core_location, marker='+', s=100, c='white')
 
         # show the figure
+        xlims, ylims = self._get_plot_lims()
+        plt.xlim(xlims)
+        plt.ylim(ylims)
         plt.show(fig)
 
 
