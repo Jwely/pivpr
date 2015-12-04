@@ -8,7 +8,9 @@ the center of the vortex.
 ## to-do
 
 - [x] create controler scripts to construct AxialVortex instances and generate output plots procedurally (image format?)
-- [ ] set plotting methods to auto-bound image extents as function of distance from vortex core
+- [x] set plotting methods to auto-bound image extents as function of distance from vortex core
 - [x] move vortex specific methods from MeanVecFieldCylindrical to AxialVortex
 - [x] finish scatter plotting methods
-- [ ] create new experiment based top level class that includes all experimental attributes
+- [x] create new experiment based top level class that includes all experimental attributes
+- [ ] add circles on heatmaps to show calculated extents of the core
+- [ ] add line on scaterplots to show boundary of the core
