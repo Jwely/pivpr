@@ -20,7 +20,7 @@ def test_data():
               "name_tag": "test_data",
               "include_dynamic": False,
               "velocity_fs": 15.22,
-              "force_recalc": True}
+              "force_recalc": False}
 
     av = constructor.axial_vortex(**kwargs)
     #av.stream_plot()
