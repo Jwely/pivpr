@@ -141,7 +141,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return char_dict
 
 
-    def _find_core(self, crange=40):
+    def _find_core(self, crange=20):
         """
         Attempts to find the core near the center of the matrix. The core is found by
         searching for the minimum value of in_plane velocities within :param crange:
