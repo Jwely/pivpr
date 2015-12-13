@@ -15,7 +15,7 @@ def example_plots(experiment_id):
                                   min_points=20,
                                   force_recalc=False)
     av = exp[0].axial_vortex
-    av.stream_plot()
+    #av.stream_plot()
     for component in ['num', 'T', 'R', 'W', 'rr', 'tt', 'ww', 'ctke', 'rt', 'rw', 'tw']:
         av.contour_plot(component)
 
@@ -27,4 +27,4 @@ def example_plots(experiment_id):
 
 
 if __name__ == "__main__":
-    example_plots(59)
+    example_plots(58)

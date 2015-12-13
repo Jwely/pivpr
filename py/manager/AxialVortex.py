@@ -386,9 +386,9 @@ class AxialVortex(MeanVecFieldCartesian):
         :param high_percentile:     high percentile value marking warmest color
         :return:
         """
-
-        vmin = np.percentile(self._getitem_corezone(component), low_percentile)
-        vmax = np.percentile(self._getitem_corezone(component), high_percentile)
+        comp = self._getitem_corezone(component).astype('float')
+        vmin = np.nanpercentile(comp.filled(np.nan), low_percentile)
+        vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
         return vmin, vmax
 
 
@@ -397,7 +397,9 @@ class AxialVortex(MeanVecFieldCartesian):
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component)
 
-        cf = plt.contourf(self['x_mesh'], self['y_mesh'], self[component], 256,
+        cf = plt.contourf(self['x_mesh'], self['y_mesh'],
+                          self._getitem_corezone(component, core_distance=100),
+                          512,
                           cmap=cm.jet, vmin=vmin, vmax=vmax)
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
