@@ -109,6 +109,9 @@ class AxialVortex(MeanVecFieldCartesian):
         :return:
         """
 
+        if self[component] is None:
+            raise Exception("cannot find component '{0}'".format(component))
+
         distance_mask = self['r_mesh'] > core_distance
         core_component = np.ma.masked_array(self[component], mask=distance_mask)
         return core_component
@@ -371,7 +374,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.show(fig)
 
 
-    def _get_vrange(self, component, low_percentile=2, high_percentile=99.5):
+    def _get_vrange(self, component, low_percentile=1, high_percentile=99.9):
         """
         Gets the percentile range for color bar scaling on a given component matrix. Used
         to ensure spurious high and low values do not over stretch the color ramps on plots.
@@ -383,8 +386,9 @@ class AxialVortex(MeanVecFieldCartesian):
         :param high_percentile:     high percentile value marking warmest color
         :return:
         """
-        vmin = np.percentile(self[component], low_percentile)
-        vmax = np.percentile(self[component], high_percentile)
+
+        vmin = np.percentile(self._getitem_corezone(component), low_percentile)
+        vmax = np.percentile(self._getitem_corezone(component), high_percentile)
         return vmin, vmax
 
 
