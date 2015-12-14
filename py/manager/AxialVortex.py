@@ -369,6 +369,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         if outpath:
             plt.savefig(outpath)
+            print("saved figure to {0}".format(outpath))
         else:
             plt.show()
         return
@@ -403,8 +404,10 @@ class AxialVortex(MeanVecFieldCartesian):
         xlims, ylims = self._get_plot_lims()
         plt.xlim(xlims)
         plt.ylim(ylims)
+
         if outpath:
             plt.savefig(outpath)
+            print("saved figure to {0}".format(outpath))
         else:
             plt.show(fig)
         return
@@ -456,6 +459,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         if outpath:
             plt.savefig(outpath)
+            print("saved figure to {0}".format(outpath))
         else:
             plt.show()
         return
@@ -500,12 +504,13 @@ class AxialVortex(MeanVecFieldCartesian):
 
         if outpath:
             plt.savefig(outpath)
+            print("saved figure to {0}".format(outpath))
         else:
             plt.show(fig)
         return
 
 
-    def contour_plot(self, components, titles=None, shape=None):
+    def contour_plot(self, components, titles=None, shape=None, outpath=None):
         """
         Creates a contour plot, accepts multiple plots in a subfigure according to shape layout
 
@@ -519,10 +524,10 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # if there is just one component to plot
         if isinstance(components, str):
-            self._single_contour_plot(components, titles)
+            self._single_contour_plot(components, titles, outpath)
 
         elif isinstance(components, list):
-            self._multi_contour_plot(components, titles, shape)
+            self._multi_contour_plot(components, titles, shape, outpath)
 
 
 
