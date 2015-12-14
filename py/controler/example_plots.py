@@ -23,6 +23,12 @@ def example_plots(experiment_id):
     av.contour_plot('num', titles="Number of samples",
                     outpath=os.path.join(fig_dir, "example_num_contour.png"))
 
+    av.contour_plot('U', titles="Stable Horizontal Velocity (U)",
+                    outpath=os.path.join(fig_dir, "example_U_contour.png"))
+
+    av.contour_plot('V', titles="Stable Vertical Velocity (V)",
+                    outpath=os.path.join(fig_dir, "example_V_contour.png"))
+
     av.contour_plot('T', titles="Stable Tangential Velocity (T)",
                     outpath=os.path.join(fig_dir, "example_T_contour.png"))
 
@@ -47,7 +53,7 @@ def example_plots(experiment_id):
     av.contour_plot('rw', titles="Radial/Axial Reynolds Stress (rw)",
                     outpath=os.path.join(fig_dir, "example_rw_contour.png"))
 
-    av.contour_plot('tw', titles="Tangential/Axial Reynolds Stress (rw)",
+    av.contour_plot('tw', titles="Tangential/Axial Reynolds Stress (tw)",
                     outpath=os.path.join(fig_dir, "example_tw_contour.png"))
 
     av.contour_plot('ctke', titles="Turbulent Kinetic Energy (k)",
