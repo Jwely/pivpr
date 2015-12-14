@@ -303,7 +303,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
     def scatter_plot(self, component_x, component_y, component_c=None, title=None,
                          x_label=None, y_label=None, c_label=None, cmap=cm.hsv,
-                         xrange=None, yrange=None, tight=False, figsize=None):
+                         xrange=None, yrange=None, tight=False, figsize=None, outpath=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -346,7 +346,8 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.scatter(x, y, marker='x', color='black')
 
-        # allow manual specification of ranges
+
+        # apply manual specifications of x and y range, otherwise guess.
         if yrange is None:
             vmin, vmax = self._get_vrange(component_y, 0, 100)
             plt.ylim(vmin - 0.1, vmax * 1.1)
@@ -365,10 +366,16 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title(title)
-        plt.show()
+
+        if outpath:
+            plt.savefig(outpath)
+        else:
+            plt.show()
+        return
 
 
-    def stream_plot(self, title=None):
+
+    def stream_plot(self, title=None, outpath=None):
         """
         Renders a stream plot of the data to the screen.
         :param title:   A custom title for the stream plot
@@ -396,7 +403,13 @@ class AxialVortex(MeanVecFieldCartesian):
         xlims, ylims = self._get_plot_lims()
         plt.xlim(xlims)
         plt.ylim(ylims)
-        plt.show(fig)
+        if outpath:
+            plt.savefig(outpath)
+        else:
+            plt.show(fig)
+        return
+
+
 
 
     def _get_vrange(self, component, low_percentile=1, high_percentile=99.9):
@@ -417,7 +430,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return vmin, vmax
 
 
-    def _single_contour_plot(self, component, title=None):
+    def _single_contour_plot(self, component, title=None, outpath=None):
         """ Handles the instances in which only a single contour plot is desired """
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component)
@@ -440,10 +453,15 @@ class AxialVortex(MeanVecFieldCartesian):
         xlims, ylims = self._get_plot_lims()
         plt.xlim(xlims)
         plt.ylim(ylims)
-        plt.show()
+
+        if outpath:
+            plt.savefig(outpath)
+        else:
+            plt.show()
+        return
 
 
-    def _multi_contour_plot(self, components, titles=None, shape=None):
+    def _multi_contour_plot(self, components, titles=None, shape=None, outpath=None):
         """ Manages multiple user plots """
 
         # determine the shape of the subplots
@@ -479,7 +497,12 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # show the figure
         plt.subplots_adjust(left=0.03, right=0.97, wspace=0.1, hspace=0.2)
-        plt.show(fig)
+
+        if outpath:
+            plt.savefig(outpath)
+        else:
+            plt.show(fig)
+        return
 
 
     def contour_plot(self, components, titles=None, shape=None):
