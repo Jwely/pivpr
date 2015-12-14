@@ -264,7 +264,7 @@ class AxialVortex(MeanVecFieldCartesian):
     def scatter_plot_qual(self, component_x, component_y, title=None, x_label=None, y_label=None):
         """
         prints quick simple scatter plot of component_x vs component_y with the points colored
-        acording to the number of samples making up data from that point. Useful for evaluating
+        according to the number of samples making up data from that point. Useful for evaluating
         trends and differentiating between real trends and potentially spurious features.
 
         :param component_x:     component to make the X axis
@@ -316,6 +316,10 @@ class AxialVortex(MeanVecFieldCartesian):
         :param y_label:         custom y axis label
         :param c_label:         custom color bar label
         :param cmap:            custom colormap for color bar
+        :param xrange:          custom x range tuple for x axis
+        :param yrange:          custom y range tuple for y axis
+        :param tight:           set true to squeeze the figures margins and decrease whitespace
+        :param figsize:         figure size in inches at 120 dpi.
         :return:
         """
 
