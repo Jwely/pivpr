@@ -5,6 +5,11 @@ import os
 
 import matplotlib.pyplot as plt
 from matplotlib import cm
+
+# this prevents plt.tight_layout() from crowding axis labels off the edges of the plot.
+from matplotlib import rcParams
+rcParams.update({'figure.autolayout': True})
+
 import numpy as np
 
 from py.manager.MeanVecFieldCartesian import MeanVecFieldCartesian
@@ -297,7 +302,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
     def scatter_plot(self, component_x, component_y, component_c=None, title=None,
-                         x_label=None, y_label=None, c_label=None, cmap=cm.hsv):
+                         x_label=None, y_label=None, c_label=None, cmap=cm.hsv,
+                         xrange=None, yrange=None, tight=False, figsize=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -319,24 +325,39 @@ class AxialVortex(MeanVecFieldCartesian):
             x_label = component_x
         if y_label is None:
             y_label = component_y
+        if figsize is None:
+            figsize = (12, 6)
 
         x = self[component_x].flatten()
         y = self[component_y].flatten()
 
-        fig, ax = plt.subplots()
+
+        fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
         if component_c is not None:
             c = self[component_c].flatten()
             vmin, vmax = self._get_vrange(component_c)
             plt.scatter(x, y, marker='x', c=c, cmap=cmap, vmax=vmax, vmin=vmin)
-            cb = plt.colorbar(orientation='horizontal')
+            cb = plt.colorbar(orientation='vertical')
             cb.set_label(c_label)
         else:
             plt.scatter(x, y, marker='x', color='black')
 
-        vmin, vmax = self._get_vrange(component_y)
+        # allow manual specification of ranges
+        if yrange is None:
+            vmin, vmax = self._get_vrange(component_y, 0, 100)
+            plt.ylim(vmin - 0.1, vmax * 1.1)
+        else:
+            plt.ylim(yrange[0], yrange[1])
 
-        plt.ylim(vmin - 0.1, vmax * 2)
-        plt.tight_layout()
+        if xrange is None:
+            vmin, vmax = self._get_vrange(component_x, 0, 100)
+            plt.xlim(vmin - 0.1, vmax * 1.1)
+        else:
+            plt.xlim(xrange[0], xrange[1])
+
+        if tight:
+            plt.tight_layout()
+
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.title(title)
