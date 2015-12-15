@@ -78,14 +78,14 @@ end
 end
 end
 %Output Image File
-image_num=1;
-path='C:\Users\Jeff\Desktop\'; cd(path);
-filename1=strcat('La',image_num);
-filename2=strcat('Lb',image_num);
-filename3=strcat('Ra',image_num);
-filename4=strcat('Rb',image_num);
+image_num='1';
+path='E:\Data2\doans\'; cd(path);
+filename1=strcat('E:\Data2\doans\La',image_num, '.tif');
+filename2=strcat('E:\Data2\doans\Lb',image_num, '.tif');
+filename3=strcat('E:\Data2\doans\Ra',image_num, '.tif');
+filename4=strcat('E:\Data2\doans\Rb',image_num, '.tif');
 
-%imwrite(final_pic1,filename1,'tif');
-%imwrite(final_pic2,filename2,'tif');
-%imwrite(final_pic3,filename3,'tif');
-%imwrite(final_pic4,filename4,'tif');
+imwrite(final_pic1,filename1,'tif');
+imwrite(final_pic2,filename2,'tif');
+imwrite(final_pic3,filename3,'tif');
+imwrite(final_pic4,filename4,'tif');
