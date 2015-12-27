@@ -19,7 +19,7 @@ def test_plots(experiment_ids):
                                       force_recalc=False)
         av = exp[0].axial_vortex
         #av.stream_plot()
-        av.contour_plot('num')
+        av.quiver_plot()
         #av.contour_plot('P')
         #av.contour_plot('ctke')
         #av.contour_plot(['R', 'T', 'W'])
@@ -33,7 +33,7 @@ def test_plots(experiment_ids):
 
 
 if __name__ == "__main__":
-    test_plots([51])
+    test_plots([55])
 
     import time
     time.sleep(100)

@@ -5,4 +5,4 @@
 *.pyc
 *.pkl
 data_full/*/*.v3d
-py/autofigs
+py/final_figures

@@ -375,6 +375,39 @@ class AxialVortex(MeanVecFieldCartesian):
         return
 
 
+    def quiver_plot(self, title=None, outpath=None):
+        """
+        creates a quiver plot of the vector field
+        """
+
+        if title is None:
+            title = "Quiver plot"
+
+        plt.figure()
+        plt.quiver(self['x_mesh'], self['y_mesh'],
+                   self['U'], self['V'], #self['P'],
+                   #cmap=cm.jet,
+                   color='blue',
+                   scale=400,
+                   width=0.001,
+                   headwidth=2,
+                   headlength=1,
+                   minshaft=1)
+
+        plt.title(title)
+        plt.tight_layout()
+        xlims, ylims = self._get_plot_lims()
+        plt.xlim(xlims)
+        plt.ylim(ylims)
+        plt.xlabel("X (mm)")
+        plt.ylabel("Y (mm)")
+
+        if outpath:
+            plt.savefig(outpath)
+            print("saved figure to {0}".format(outpath))
+        else:
+            plt.show()
+
 
     def stream_plot(self, title=None, outpath=None):
         """
@@ -411,8 +444,6 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.show(fig)
         return
-
-
 
 
     def _get_vrange(self, component, low_percentile=1, high_percentile=99.9):
