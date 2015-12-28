@@ -396,7 +396,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         plt.title(title)
         plt.tight_layout()
-        xlims, ylims = self._get_plot_lims()
+        xlims, ylims = self._get_plot_lims(50, 50)
         plt.xlim(xlims)
         plt.ylim(ylims)
         plt.xlabel("X (mm)")
