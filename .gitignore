@@ -1,3 +1,5 @@
+
+
 /matlab/mats/*
 /plots/*
 /.idea/*
@@ -6,3 +8,24 @@
 *.pkl
 data_full/*/*.v3d
 py/final_figures
+
+# general extensions
+*.aux
+*.bbl
+*.blg
+*.lof
+*.lot
+*.log
+*.synctex.gz
+*.toc
+*.out
+
+# ignore the constantly updating main pdf
+texdocs/main.pdf
+
+# html versions
+texdocs/psheader.txt
+texdocs/main_html
+
+# lets ignore all files in the references for now
+texdocs/references
