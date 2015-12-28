@@ -12,7 +12,7 @@ class ExamplePlots55(FinalFigure):
 
     def __init__(self):
         # invoke parent class init
-        FinalFigure.__init__(self, experiment_ids=[55], sub_dir="examples")
+        FinalFigure.__init__(self, experiment_ids=[55], sub_dir="example_vortex_figs")
 
 
     def generate(self):

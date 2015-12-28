@@ -20,7 +20,7 @@ class FinalFigure:
             experiment_ids = [experiment_ids]
 
         self.experiment_number = experiment_ids
-        self.fig_dir = os.path.abspath("../final_figures/{0}".format(sub_dir))
+        self.fig_dir = os.path.abspath("../../texdocs/figs/{0}".format(sub_dir))
         self.experiments = constructor.experiments(
             experiment_table_path="../constructor/dat/experiment_table.csv",
             experiment_directory_path="../../data_full",
