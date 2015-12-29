@@ -2,6 +2,7 @@ __author__ = 'Jwely'
 
 import cPickle
 import os
+import math
 
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -54,8 +55,11 @@ class AxialVortex(MeanVecFieldCartesian):
         self.circulation_strength = None        # -flag
 
         # update the coordinate meshgrid
-        self.meshgrid.update({"r_mesh": None,   # radial meshgrid
-                              "t_mesh": None})  # tangential meshgrid
+        self.meshgrid.update({"r_mesh": None,       # radial meshgrid
+                              "t_mesh": None,       # tangential meshgrid (-pi to pi about right horizontal)
+                              "hv_mesh": None,      # tangential meshgrid (0 near horizontal, pi/2 for vertical)
+                              "t_meshd": None,      # t_mesh converted to degrees
+                              "hv_meshd": None})    # hv_mesh converted to degrees
 
         # add to the velocity matrix and flattened version
         self.vel_matrix.update({'R': None,  # mean radial velocity around vortex core
@@ -101,7 +105,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return new_instance
 
 
-    def _getitem_corezone(self, component, core_distance=50):
+    def _getitem_by_rt(self, component, min_r=0, max_r=50, min_t= -math.pi, max_t= math.pi):
         """
         Gets a component, but subset to within :param core_distance: mm from the core.
         this is nice for finding minimums and maximums and taking statistics without including
@@ -117,7 +121,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if self[component] is None:
             raise Exception("cannot find component '{0}'".format(component))
 
-        distance_mask = self['r_mesh'] > core_distance
+        distance_mask = self['r_mesh'] > max_r
         core_component = np.ma.masked_array(self[component], mask=distance_mask)
         return core_component
 
@@ -132,11 +136,11 @@ class AxialVortex(MeanVecFieldCartesian):
         :return characteristics_dict:
         """
 
-        sub_t = self._getitem_corezone('T')
+        sub_t = self._getitem_by_rt('T')
         self.Tmax = np.ma.max(sub_t)
         Tmax_location = np.unravel_index(sub_t.argmax(), sub_t.shape)
         self.core_radius = self['r_mesh'][Tmax_location]
-        self.Wcore = self._getitem_corezone('W', 10).min()
+        self.Wcore = self._getitem_by_rt('W', 10).min()
 
         if verbose:
             message_fmt = "Core specs: radius={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Vfree={vf:2.2f}"
@@ -205,6 +209,12 @@ class AxialVortex(MeanVecFieldCartesian):
         # build the cylindrical meshgrids
         self.meshgrid['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
         self.meshgrid['t_mesh'] = np.arctan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
+        self.meshgrid['hv_mesh'] = abs(self.meshgrid['t_mesh'])
+        self.meshgrid['hv_mesh'][self.meshgrid['hv_mesh'] > (math.pi / 2)] = self.meshgrid['hv_mesh'] - math.pi / 2
+
+        self.meshgrid['t_meshd'] = self.meshgrid['t_mesh'] * 180 / math.pi      # degrees version
+        self.meshgrid['hv_meshd'] = self.meshgrid['hv_mesh'] * 180 / math.pi    # degrees version
+
 
         # build a 3d matrix from constituent datasets
         for i, cvm in enumerate(self.constituent_vel_matrix_list):
@@ -458,7 +468,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :param high_percentile:     high percentile value marking warmest color
         :return:
         """
-        comp = self._getitem_corezone(component).astype('float')
+        comp = self._getitem_by_rt(component).astype('float')
         vmin = np.nanpercentile(comp.filled(np.nan), low_percentile)
         vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
         return vmin, vmax
@@ -470,9 +480,9 @@ class AxialVortex(MeanVecFieldCartesian):
         vmin, vmax = self._get_vrange(component)
 
         cf = plt.contourf(self['x_mesh'], self['y_mesh'],
-                          self._getitem_corezone(component, core_distance=100),
+                          self._getitem_by_rt(component, max_r=100),
                           512,
-                          cmap=cm.jet, vmin=vmin, vmax=vmax)
+                          cmap=cm.Greys, vmin=vmin, vmax=vmax)
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
         plt.title(title)
@@ -514,8 +524,10 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.subplot(nrows, ncols, i + 1)
             vmin, vmax = self._get_vrange(component)
 
-            cf = plt.contourf(self['x_mesh'], self['y_mesh'], self[component], 256,
-                              cmap=cm.jet, vmin=vmin, vmax=vmax)
+            cf = plt.contourf(self['x_mesh'], self['y_mesh'],
+                              self._getitem_by_rt(component, max_r=100),
+                              512,
+                              cmap=cm.Greys, vmin=vmin, vmax=vmax)
 
             plt.colorbar(cf)
             plt.xlabel("X position (mm)")
