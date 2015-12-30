@@ -16,6 +16,7 @@ CONTOUR_DEFAULT_RRANGE = (0, 100)   # default radius range to subset contour plo
 
 SCATTER_DEFAULT_CMAP = cm.jet       # default colormap to use on scatter plots with third variable
 SCATTER_DEFAULT_RLIM = 100          # default plot
+VRANGE_DEFAULT = (1, 99.9)          # default percentile values for defining color ramp boundaries
 
 
 
