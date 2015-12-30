@@ -16,7 +16,7 @@ def test_plots(experiment_ids):
                                       experiment_directory_path="../../data_full",
                                       ids=[experiment_id],
                                       min_points=20,
-                                      force_recalc=True)
+                                      force_recalc=False)
         av = exp[0].axial_vortex
         #av.stream_plot()
         #av.quiver_plot()
