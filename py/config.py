@@ -9,6 +9,8 @@ from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 print("configured tight layout!")
 
+# when pickling, save only these dynamic components (saves disk space), discard the others
+DYNAMIC_INCLUDES = ['ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
 
 # statistics variables
 DEFAULT_MIN_POINTS = 20             # minimum number of points required to consider a data point as good

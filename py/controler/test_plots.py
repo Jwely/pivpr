@@ -16,19 +16,17 @@ def test_plots(experiment_ids):
                                       experiment_directory_path="../../data_full",
                                       ids=[experiment_id],
                                       min_points=20,
-                                      force_recalc=False)
+                                      force_recalc=True)
         av = exp[0].axial_vortex
         #av.stream_plot()
         #av.quiver_plot()
-        #av.contour_plot('P')
+        for component in ['num','r','t','w','rt','rw','tw','ctke']:
+            av.contour_plot(component)
         #av.contour_plot('t_meshd')
         #av.contour_plot('hv_meshd')
-        #v.contour_plot(['R', 'T', 'W'])
-        #av.contour_plot(['rr', 'tt', 'ww'])
-        #av.contour_plot(['rt', 'rw', 'tw'])
-        av.scatter_plot('r_mesh', 'ctke', 'num', cmap=cm.jet,
-                       x_label="Distance to vortex core (mm)",
-                       c_label="angle from right horizontal")
+        #av.scatter_plot('r_mesh', 'ctke', 'num', cmap=cm.jet,
+                       #x_label="Distance to vortex core (mm)",
+                       #c_label="angle from right horizontal")
 
 
 if __name__ == "__main__":

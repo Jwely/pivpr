@@ -19,7 +19,7 @@ class VecFieldCartesian:
     def __init__(self, filepath, velocity_fs=None):
         """
         All meaningful attributes of a VecField3d object are constructed upon __init__.
-        The "output" attribute is the vel_matrix.
+        The "output" attribute is the mean_set.
 
         :param filepath:        local filepath to a .v3d file
         :param velocity_fs:     free stream velocity, values more than 125% this value will be masked
@@ -47,12 +47,12 @@ class VecFieldCartesian:
         # Build up the attributes
         self._read_v3d()                    # parse the .v3d file, populates the dataframe
         self._get_meshgrid()                # populate self.dims, self.meshgrid
-        self._table_to_matrix()             # populate self.vel_matrix
+        self._table_to_matrix()             # populate self.mean_set
         print("loaded {0} in {1} s".format(filepath, t.finish()))
 
 
     def __getitem__(self, item):
-        """ allows components of the vel_matrix to be accessed more simply through instance[key] """
+        """ allows components of the mean_set to be accessed more simply through instance[key] """
         if item in self.vel_matrix.keys():
             return self.vel_matrix[item]
 
@@ -121,7 +121,7 @@ class VecFieldCartesian:
 
 
     def show_heatmap(self, component):
-        """ prints a quick simple heads up heatmap of input component of the vel_matrix attribute"""
+        """ prints a quick simple heads up heatmap of input component of the mean_set attribute"""
         fig, ax = plt.subplots()
         heatmap = ax.pcolor(self[component])    # see __getitem__
         plt.title(component)

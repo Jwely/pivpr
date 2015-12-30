@@ -23,7 +23,6 @@ class MeanVecFieldCartesian:
         self.v3d_paths = v3d_paths
         self.min_points = min_points
         self.velocity_fs = velocity_fs
-        self.constituent_vel_matrix_list = []    # empty list for constituent VecFieldCartesian instances
 
         # attributes that will be inherited from the constituent VecField instances
         self.x_set = None
@@ -33,28 +32,28 @@ class MeanVecFieldCartesian:
                          "y_mesh": None}
 
         # dictionary of matrices by key symbol. Capitols are averages, lowercase are fluctuations
-        self.vel_matrix = {'U': None,       # x direction mean velocity
-                           'V': None,       # y direction mean velocity
-                           'W': None,       # z direction mean velocity
-                           'P': None,       # in-plane velocities (U and V components, not W)
-                           'M': None,       # velocity magnitude (all three components)
+        self.mean_set = {'U': None,       # x direction mean velocity
+                         'V': None,       # y direction mean velocity
+                         'W': None,       # z direction mean velocity
+                         'P': None,       # in-plane velocities (U and V components, not W)
+                         'M': None,       # velocity magnitude (all three components)
 
-                           'u': None,       # mean absolute fluctuation in U
-                           'v': None,       # mean absolute fluctuation in V
-                           'w': None,       # mean absolute fluctuation in W
+                         'u': None,       # mean absolute fluctuation in U
+                         'v': None,       # mean absolute fluctuation in V
+                         'w': None,       # mean absolute fluctuation in W
 
-                           'uu': None,      # turbulent energy in u (u' * u') bar
-                           'vv': None,      # turbulent energy in v (v' * v') bar
-                           'ww': None,      # turbulent energy in w (w' * w') bar
-                           'ctke': None,    # cartesian turbulent kinetic energy (TKE)
+                         'uu': None,      # turbulent energy in u (u' * u') bar
+                         'vv': None,      # turbulent energy in v (v' * v') bar
+                         'ww': None,      # turbulent energy in w (w' * w') bar
+                         'ctke': None,    # cartesian turbulent kinetic energy (TKE)
 
-                           'uv': None,      # reynolds stress in u/v
-                           'uw': None,      # reynolds stress in u/w
-                           'vw': None,      # reynolds stress in v/w
+                         'uv': None,      # reynolds stress in u/v
+                         'uw': None,      # reynolds stress in u/w
+                         'vw': None,      # reynolds stress in v/w
 
-                           'num': None}     # number of good data points making up stats for other values
+                         'num': None}     # number of good data points making up stats for other values
 
-        # the same as vel_matrix, except every every time slice is included for an n+1 dimensional matrix
+        # the same as mean_set, except every every time slice is included for an n+1 dimensional matrix
         self.dynamic_set = {'U': None,       # x direction mean velocity
                             'V': None,       # y direction mean velocity
                             'W': None,       # z direction mean velocity
@@ -81,12 +80,12 @@ class MeanVecFieldCartesian:
 
     def __getitem__(self, key):
         """ allows components of the instance to be accessed more simply through instance[key] """
-        if key in self.vel_matrix.keys():
-            return self.vel_matrix[key]
+        if key in self.mean_set.keys():
+            return self.mean_set[key]
 
         # allows 'uv' to be returned for input key 'vu', which is nice.
-        elif key[::-1] in self.vel_matrix.keys():
-            return self.vel_matrix[key[::-1]]
+        elif key[::-1] in self.mean_set.keys():
+            return self.mean_set[key[::-1]]
 
         elif key in self.meshgrid.keys():
             return self.meshgrid[key]
@@ -94,10 +93,10 @@ class MeanVecFieldCartesian:
 
     def __setitem__(self, key, value):
         """ allows components of the instance to be set more briefly """
-        if key in self.vel_matrix.keys():
-            self.vel_matrix[key] = value
-        elif key[::-1] in self.vel_matrix.keys():
-            self.vel_matrix[key[::-1]] = value
+        if key in self.mean_set.keys():
+            self.mean_set[key] = value
+        elif key[::-1] in self.mean_set.keys():
+            self.mean_set[key[::-1]] = value
         else:
             raise AttributeError("instance does not accept __setitem__ for '{0}'".format(key))
 
@@ -137,7 +136,7 @@ class MeanVecFieldCartesian:
 
 
     def _get_average_and_fluctuating(self, min_points):
-        """  populates all the components in the matrices dynamic_set and vel_matrix """
+        """  populates all the components in the matrices dynamic_set and mean_set """
 
         if min_points is None:
             min_points = DEFAULT_MIN_POINTS
@@ -148,26 +147,24 @@ class MeanVecFieldCartesian:
 
         # take averages
         for component in ['U', 'V', 'W', 'M', 'P']:
-            self.vel_matrix[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
+            self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
 
         # find dynamic set fluctuations by subtracting out averages
         for i in range(0, self.dims[-1]):       # cant figure out fully vectorized element wise subtraction
-            self.dynamic_set['u'][:, :, i] = self.dynamic_set['U'][:, :, i] - self.vel_matrix['U']
-            self.dynamic_set['v'][:, :, i] = self.dynamic_set['V'][:, :, i] - self.vel_matrix['V']
-            self.dynamic_set['w'][:, :, i] = self.dynamic_set['W'][:, :, i] - self.vel_matrix['W']
+            self.dynamic_set['u'][:, :, i] = self.dynamic_set['U'][:, :, i] - self.mean_set['U']
+            self.dynamic_set['v'][:, :, i] = self.dynamic_set['V'][:, :, i] - self.mean_set['V']
+            self.dynamic_set['w'][:, :, i] = self.dynamic_set['W'][:, :, i] - self.mean_set['W']
 
         # find dynamic reynolds stresses and turbulence
         for component in ['uu', 'vv', 'ww', 'uv', 'uw', 'vw']:
             self.dynamic_set[component] = self.dynamic_set[component[0]] * self.dynamic_set[component[1]]
 
         # get total cartesian turbulent kinetic energy
-        self.dynamic_set['ctke'] = (self.dynamic_set['uu'] ** 2 +
-                                    self.dynamic_set['vv'] ** 2 +
-                                    self.dynamic_set['ww'] ** 2) / 2
+        self.dynamic_set['ctke'] = (self.dynamic_set['uu'] + self.dynamic_set['vv'] + self.dynamic_set['ww']) / 2
 
         # and now take the time averaged versions of each member of the dynamic set
         for component in ['u', 'v', 'w', 'uu', 'vv', 'ww', 'ctke', 'uv', 'uw', 'vw']:
-            self.vel_matrix[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
+            self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
 
 
 if __name__ == "__main__":

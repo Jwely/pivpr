@@ -54,23 +54,22 @@ class AxialVortex(MeanVecFieldCartesian):
         self.meshgrid.update({"r_mesh": None,       # radial meshgrid
                               "t_mesh": None,       # tangential meshgrid (-pi to pi about right horizontal)
                               "hv_mesh": None,      # tangential meshgrid (0 near horizontal, pi/2 for vertical)
-                              "t_meshd": None,      # t_mesh converted to degrees (0 - 360)
-                              "hv_meshd": None})    # hv_mesh converted to degrees (0 - 180)
+                              "t_meshd": None,      # t_mesh converted to degrees (-180 to 180)
+                              "hv_meshd": None})    # hv_mesh converted to degrees (0 to 90)
 
         # add to the velocity matrix and flattened version
-        self.vel_matrix.update({'R': None,  # mean radial velocity around vortex core
-                                'T': None,  # mean tangential velocity around vortex core
+        self.mean_set.update({'R': None,  # mean radial velocity around vortex core
+                              'T': None,  # mean tangential velocity around vortex core
 
-                                'r': None,  # fluctuation in R
-                                't': None,  # fluctuation in T
+                              'r': None,  # fluctuation in R
+                              't': None,  # fluctuation in T
 
-                                'rr': None,  # turbulent energy in r (r' * r') bar
-                                'tt': None,  # turbulent energy in t (t' * t') bar
+                              'rr': None,  # turbulent energy in r (r' * r') bar
+                              'tt': None,  # turbulent energy in t (t' * t') bar
 
-                                'rt': None,  # reynolds stress in r/t
-                                'rw': None,  # reynolds stress in r/w
-                                'tw': None,  # reynolds stress in t/w
-                                'yrs': None})  # total cylindrical reynolds stress
+                              'rt': None,  # reynolds stress in r/t
+                              'rw': None,  # reynolds stress in r/w
+                              'tw': None})  # reynolds stress in t/w
 
         self.dynamic_set.update({'R': None,  # mean radial velocity around vortex core
                                  'T': None,  # mean tangential velocity around vortex core
@@ -91,8 +90,11 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # delete the constituent objects with hundreds of additional matrices to reduce pkl size
         if not include_dynamic:
-            del self.constituent_vel_matrix_list
-            self.constituent_vel_matrix_list = None
+            del self.dynamic_set
+        else:
+            for key in self.dynamic_set.keys():
+                if key not in DYNAMIC_INCLUDES:
+                    self.dynamic_set[key] = None
 
         # create the directory and write the pkl file.
         if not os.path.exists(os.path.dirname(pickle_path)):
@@ -252,11 +254,14 @@ class AxialVortex(MeanVecFieldCartesian):
 
         self._get_cylindrical_meshgrids(core_location_tuple)
 
+        # use the num attribute to get the minimum point mask
+        mpm = self['num'].mask
+
         # set up empty matrices
         new_keys = ['R', 'T', 'r', 't', 'rr', 'tt', 'rt', 'rw', 'tw']
         for key in new_keys:
             self.dynamic_set[key] = np.ma.zeros(self.dims)
-            self.vel_matrix[key] = np.ma.zeros(self.dims)
+            self.mean_set[key] = np.ma.zeros(self.dims)
 
         # populate the dynamic set first with the cylindrical conversions of
         for i in range(self.dims[-1]):
@@ -265,18 +270,23 @@ class AxialVortex(MeanVecFieldCartesian):
                                 self.dynamic_set['V'][:, :, i],
                                 self.meshgrid['t_mesh'])
 
-            self.dynamic_set['r'][:, :, i], self.dynamic_set['t'][:, :, i] = \
-                cart2cyl_vector(self.dynamic_set['u'][:, :, i],
-                                self.dynamic_set['v'][:, :, i],
-                                self.meshgrid['t_mesh'])
+        # now average the radial and tangential components
+        self.mean_set['R'] = masked_rms(self.dynamic_set['R'], axis=2, mask=mpm)
+        self.mean_set['T'] = masked_rms(self.dynamic_set['T'], axis=2, mask=mpm)
+
+        # find dynamic set fluctuations by subtracting out averages
+        for i in range(0, self.dims[-1]):       # cant figure out fully vectorized element wise subtraction
+            self.dynamic_set['r'][:, :, i] = self.dynamic_set['R'][:, :, i] - self.mean_set['R']
+            self.dynamic_set['t'][:, :, i] = self.dynamic_set['T'][:, :, i] - self.mean_set['T']
+
+        self.mean_set['r'] = masked_rms(self.dynamic_set['r'], axis=2, mask=mpm)
+        self.mean_set['t'] = masked_rms(self.dynamic_set['t'], axis=2, mask=mpm)
 
         # find dynamic reynolds stresses and turbulence
         for component in ['rr', 'tt', 'rt', 'rw', 'tw']:
             self.dynamic_set[component] = self.dynamic_set[component[0]] * self.dynamic_set[component[1]]
+            self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
 
-        # use the num attribute to get the minimum point mask, take time averages of all new components
-        for component in new_keys:
-            self.vel_matrix[component] = masked_rms(self.dynamic_set[component], axis=2, mask=self['num'].mask)
 
         # now characterize the vortex with some important but simple statistics
         characteristics = self.characterize(verbose=True)
@@ -520,7 +530,18 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
     def contour_plot(self, component, title=None, outpath=None):
-        """ Handles the instances in which only a single contour plot is desired """
+        """
+        creates a contour plot of input component
+
+        :param component:   component to plot, any member of the meshgrid or the mean_set
+        :param title:       custom title to place on the contour plot
+        :param outpath:     an output path to save a png file of this plot
+        :return:
+        """
+
+        if title is None:
+            title = component
+
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component)
 
