@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 # local imports
 from py.manager.MeanVecFieldCartesian import MeanVecFieldCartesian
-from py.utils import cart2cyl_vector, masked_rms
+from py.utils import cart2cyl_vector, masked_rms, masked_mean
 from py.config import *
 
 
@@ -271,8 +271,8 @@ class AxialVortex(MeanVecFieldCartesian):
                                 self.meshgrid['t_mesh'])
 
         # now average the radial and tangential components
-        self.mean_set['R'] = masked_rms(self.dynamic_set['R'], axis=2, mask=mpm)
-        self.mean_set['T'] = masked_rms(self.dynamic_set['T'], axis=2, mask=mpm)
+        self.mean_set['R'] = masked_mean(self.dynamic_set['R'], axis=2, mask=mpm)
+        self.mean_set['T'] = masked_mean(self.dynamic_set['T'], axis=2, mask=mpm)
 
         # find dynamic set fluctuations by subtracting out averages
         for i in range(0, self.dims[-1]):       # cant figure out fully vectorized element wise subtraction
@@ -350,6 +350,11 @@ class AxialVortex(MeanVecFieldCartesian):
         if c_label is None:
             c_label = component_c
         x_label = "Time in seconds"
+
+        #y_set = nump
+        #for i in range(self.dims[-1]):
+            #y_set.append(self._getitem_by_rt(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric))
+
 
 
 

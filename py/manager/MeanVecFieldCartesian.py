@@ -2,8 +2,10 @@ __author__ = 'Jwely'
 
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+
 from py.manager.VecFieldCartesian import VecFieldCartesian
-from py.utils import Timer, masked_rms
+from py.utils import Timer, masked_rms, masked_mean
 from py.config import *
 
 
@@ -118,7 +120,7 @@ class MeanVecFieldCartesian:
 
         # fill the dynamic data matrix with zeros
         for key in self.dynamic_set.keys():
-            self.dynamic_set[key] = np.ma.zeros(self.dims)
+            self.dynamic_set[key] = np.ma.zeros(self.dims, 'float')
 
         # populate some attributes of the dynamic set then delete the vector field instance
         for i, filepath in enumerate(filepath_list):
@@ -126,8 +128,8 @@ class MeanVecFieldCartesian:
             self.dynamic_set['U'][:, :, i] = cvm['U']
             self.dynamic_set['V'][:, :, i] = cvm['V']
             self.dynamic_set['W'][:, :, i] = cvm['W']
-            self.dynamic_set['M'][:, :, i] = (cvm['U'] ** 2 + cvm['V'] ** 2 + cvm['W'] ** 2) ** 0.5   # magnitudes
-            self.dynamic_set['P'][:, :, i] = (cvm['U'] ** 2 + cvm['V'] ** 2) ** 0.5                   # in plane mags
+            self.dynamic_set['M'][:, :, i] = (cvm['U'] ** 2 + cvm['V'] ** 2 + cvm['W'] ** 2) ** 0.5  # magnitudes
+            self.dynamic_set['P'][:, :, i] = (cvm['U'] ** 2 + cvm['V'] ** 2) ** 0.5                  # in plane mags
             del cvm
 
         # now extract the average and fluctuating components from the dynamic data set.
@@ -147,7 +149,7 @@ class MeanVecFieldCartesian:
 
         # take averages
         for component in ['U', 'V', 'W', 'M', 'P']:
-            self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
+            self.mean_set[component] = masked_mean(self.dynamic_set[component], axis=2, mask=mpm)
 
         # find dynamic set fluctuations by subtracting out averages
         for i in range(0, self.dims[-1]):       # cant figure out fully vectorized element wise subtraction
@@ -156,24 +158,37 @@ class MeanVecFieldCartesian:
             self.dynamic_set['w'][:, :, i] = self.dynamic_set['W'][:, :, i] - self.mean_set['W']
 
         # find dynamic reynolds stresses and turbulence
-        for component in ['uu', 'vv', 'ww', 'uv', 'uw', 'vw']:
-            self.dynamic_set[component] = self.dynamic_set[component[0]] * self.dynamic_set[component[1]]
+        for components in ['uu', 'vv', 'ww', 'uv', 'uw', 'vw']:
+            self.dynamic_set[components] = self.dynamic_set[components[0]] * self.dynamic_set[components[1]]
 
         # get total cartesian turbulent kinetic energy
-        self.dynamic_set['ctke'] = (self.dynamic_set['uu'] + self.dynamic_set['vv'] + self.dynamic_set['ww']) / 2
+        self.dynamic_set['ctke'] = 0.5 * (self.dynamic_set['uu'] + self.dynamic_set['vv'] + self.dynamic_set['ww'])
 
         # and now take the time averaged versions of each member of the dynamic set
         for component in ['u', 'v', 'w', 'uu', 'vv', 'ww', 'ctke', 'uv', 'uw', 'vw']:
             self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
 
 
+    def show_heatmap(self, component):
+        """ prints a quick simple heads up heatmap of input component of the mean_set attribute"""
+        fig, ax = plt.subplots()
+        plt.pcolor(self[component])    # see __getitem__
+        plt.colorbar()
+        plt.title(component)
+        plt.show()
+
+
 if __name__ == "__main__":
 
-    directory = "../../data_test"
+    directory = "../../data_full/55"
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
 
-    mvf = MeanVecFieldCartesian("Station_1", paths[0:5], min_points=1)
-    print mvf['U'].count()
+    mvf = MeanVecFieldCartesian("Station_1", paths[0:20], min_points=5)
+    mvf.show_heatmap('U')
+    mvf.show_heatmap('u')
+    mvf.show_heatmap('W')
+    mvf.show_heatmap('w')
+    mvf.show_heatmap('ctke')
 
 
 

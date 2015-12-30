@@ -20,7 +20,7 @@ def test_plots(experiment_ids):
         av = exp[0].axial_vortex
         #av.stream_plot()
         #av.quiver_plot()
-        for component in ['num','r','t','w','rt','rw','tw','ctke']:
+        for component in ['U','V','W','u','v','uu','vv','ww','ctke']:
             av.contour_plot(component)
         #av.contour_plot('t_meshd')
         #av.contour_plot('hv_meshd')
