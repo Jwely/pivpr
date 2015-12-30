@@ -10,9 +10,12 @@ rcParams.update({'figure.autolayout': True})
 print("configured tight layout!")
 
 # global variables
-CONTOUR_DEFAULT_LEVELS = 16
-CONTOUR_DEFAULT_CMAP = cm.Greys
-CONTOUR_DEFAULT_RRANGE = (0, 100)
-SCATTER_DEFAULT_CMAP = cm.jet
+CONTOUR_DEFAULT_LEVELS = 32         # number of discreet colors to use on contour plots
+CONTOUR_DEFAULT_CMAP = cm.Greys     # default color ramp to use on contour plots
+CONTOUR_DEFAULT_RRANGE = (0, 100)   # default radius range to subset contour plots by
+
+SCATTER_DEFAULT_CMAP = cm.jet       # default colormap to use on scatter plots with third variable
+SCATTER_DEFAULT_RLIM = 100          # default plot
+
 
 

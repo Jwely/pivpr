@@ -278,6 +278,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :param y_core_dist:  maximum y distance from core to show on plot
         :return:
         """
+
         if self.core_location[0] is None:
             self.core_location = (len(self.x_set) / 2, len(self.y_set) / 2)
             raise Warning("core location not set! using image center instead!")
@@ -294,44 +295,17 @@ class AxialVortex(MeanVecFieldCartesian):
         return xlim, ylim
 
 
-    def scatter_plot_qual(self, component_x, component_y, title=None, x_label=None, y_label=None):
+    def scatter_plot_qual(self, component_x, component_y):
         """
-        prints quick simple scatter plot of component_x vs component_y with the points colored
+        Prints quick simple scatter plot of component_x vs component_y with the points colored
         according to the number of samples making up data from that point. Useful for evaluating
         trends and differentiating between real trends and potentially spurious features.
 
-        :param component_x:     component to make the X axis
-        :param component_y:     component to make the Y axis
-        :param title:           custom title
-        :param x_label:         custom x axis label
-        :param y_label:         custom y axis label
+        params are exactly as scatter_plot()
         """
 
-        if title is None:
-            title = "{0} vs {1}".format(component_y, component_x)
-        if x_label is None:
-            x_label = component_x
-        if y_label is None:
-            y_label = component_y
-
-        x = self[component_x].flatten()
-        y = self[component_y].flatten()
-        c = self['num'].flatten()
-
-        fig, ax = plt.subplots()
-
-        plt.scatter(x, y, marker='x', c=c, cmap=cm.bone_r)
-        cb = plt.colorbar(orientation='horizontal')
-        cb.set_label("Quality of point (N good samples)")
-
-        vmin, vmax = self._get_vrange(component_y)
-
-        plt.ylim(vmin - 0.1, vmax * 2)
-        plt.tight_layout()
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.title(title)
-        plt.show()
+        self.scatter_plot(component_x, component_y, 'num', c_label="Number of Samples")
+        return
 
 
     def scatter_plot(self, component_x, component_y, component_c=None, title=None,
