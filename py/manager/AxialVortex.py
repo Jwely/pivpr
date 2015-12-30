@@ -1,20 +1,16 @@
 __author__ = 'Jwely'
 
+# general imports
 import cPickle
 import os
 import math
-
-import matplotlib.pyplot as plt
-from matplotlib import cm
-
-# this prevents plt.tight_layout() from crowding axis labels off the edges of the plot.
-from matplotlib import rcParams
-rcParams.update({'figure.autolayout': True})
-
 import numpy as np
+import matplotlib.pyplot as plt
 
+# local imports
 from py.manager.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.utils.cart2cyl_vector import cart2cyl_vector
+from py.config import *
 
 
 class AxialVortex(MeanVecFieldCartesian):
@@ -139,12 +135,8 @@ class AxialVortex(MeanVecFieldCartesian):
             angle_mask = np.logical_or(self['hv_meshd'] < t_range[0], t_range[1] < self['hv_meshd'])
 
         else:
-            # handles the intuitive case where mask is applied outside the range
             if t_range[1] > t_range[0]:
                 angle_mask = np.logical_or(self['t_meshd'] < t_range[0], t_range[1] < self['t_meshd'])
-
-            # handles the case where the range includes horizontal left (-180 to 180 crossover)
-            # masks out everything between the end points instead of outside of the end points
             else:
                 angle_mask = np.logical_and(t_range[0] < self['t_meshd'], self['t_meshd'] < t_range[1])
 
@@ -343,7 +335,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
     def scatter_plot(self, component_x, component_y, component_c=None, title=None,
-                         x_label=None, y_label=None, c_label=None, cmap=cm.hsv,
+                         x_label=None, y_label=None, c_label=None, cmap=None,
                          xrange=None, yrange=None, r_range=None, t_range=None, symmetric=None,
                          tight=False, figsize=None, outpath=None):
         """
@@ -373,6 +365,8 @@ class AxialVortex(MeanVecFieldCartesian):
             y_label = component_y
         if figsize is None:
             figsize = (12, 6)
+        if cmap is None:
+            cmap = SCATTER_DEFAULT_CMAP
 
         x = self._getitem_by_rt(component_x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
         y = self._getitem_by_rt(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
@@ -510,10 +504,10 @@ class AxialVortex(MeanVecFieldCartesian):
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component)
 
+        print globals()['CONTOUR_DEFAULT_LEVELS']
         cf = plt.contourf(self['x_mesh'], self['y_mesh'],
-                          self._getitem_by_rt(component, r_range=(0, 100)),
-                          512,
-                          cmap=cm.Greys, vmin=vmin, vmax=vmax)
+                          self._getitem_by_rt(component, CONTOUR_DEFAULT_RRANGE),
+                          CONTOUR_DEFAULT_LEVELS, cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
         plt.title(title)
@@ -556,10 +550,8 @@ class AxialVortex(MeanVecFieldCartesian):
             vmin, vmax = self._get_vrange(component)
 
             cf = plt.contourf(self['x_mesh'], self['y_mesh'],
-                              self._getitem_by_rt(component, r_range=(0, 100)),
-                              512,
-                              cmap=cm.Greys, vmin=vmin, vmax=vmax)
-
+                              self._getitem_by_rt(component, CONTOUR_DEFAULT_RRANGE),
+                              CONTOUR_DEFAULT_LEVELS, cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
             plt.colorbar(cf)
             plt.xlabel("X position (mm)")
             plt.ylabel("Y position (mm)")

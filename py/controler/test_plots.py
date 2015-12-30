@@ -20,7 +20,7 @@ def test_plots(experiment_ids):
         av = exp[0].axial_vortex
         #av.stream_plot()
         #av.quiver_plot()
-        #av.contour_plot('P')
+        av.contour_plot('P')
         av.contour_plot('t_meshd')
         av.contour_plot('hv_meshd')
         #v.contour_plot(['R', 'T', 'W'])
