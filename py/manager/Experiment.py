@@ -10,7 +10,9 @@ class Experiment:
                  v_fs_mean, v_fs_sigma, q, pres_atm, temp_tunnel, wet_bulb, dry_bulb):
         """
         Class to represent the entire state of an experiment. Create one with a
-        constructor
+        constructor. Unlike the other classes in the managers module, this class is specific
+        for my experiments (user: Jwely) and the documentation formats and variable names that I
+        used.
 
         :param experiment_id:   integer ID number 1 through 70 (integer)
         :param n_samples:       number of observations, usually 200 (integer)

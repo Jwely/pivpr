@@ -26,10 +26,9 @@ def test_plots(experiment_ids):
         #v.contour_plot(['R', 'T', 'W'])
         #av.contour_plot(['rr', 'tt', 'ww'])
         #av.contour_plot(['rt', 'rw', 'tw'])
-        av.scatter_plot_qual('r_mesh', 'ctke')
-        #av.scatter_plot('r_mesh', 'ctke', 'num', cmap=cm.jet,
-        #               x_label="Distance to vortex core (mm)",
-        #               c_label="angle from right horizontal")
+        av.scatter_plot('r_mesh', 'ctke', 'num', cmap=cm.jet,
+                       x_label="Distance to vortex core (mm)",
+                       c_label="angle from right horizontal")
 
 
 if __name__ == "__main__":
