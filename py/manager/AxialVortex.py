@@ -58,8 +58,8 @@ class AxialVortex(MeanVecFieldCartesian):
         self.meshgrid.update({"r_mesh": None,       # radial meshgrid
                               "t_mesh": None,       # tangential meshgrid (-pi to pi about right horizontal)
                               "hv_mesh": None,      # tangential meshgrid (0 near horizontal, pi/2 for vertical)
-                              "t_meshd": None,      # t_mesh converted to degrees
-                              "hv_meshd": None})    # hv_mesh converted to degrees
+                              "t_meshd": None,      # t_mesh converted to degrees (0 - 360)
+                              "hv_meshd": None})    # hv_mesh converted to degrees (0 - 180)
 
         # add to the velocity matrix and flattened version
         self.vel_matrix.update({'R': None,  # mean radial velocity around vortex core
@@ -105,25 +105,54 @@ class AxialVortex(MeanVecFieldCartesian):
         return new_instance
 
 
-    def _getitem_by_rt(self, component, min_r=0, max_r=50, min_t= -math.pi, max_t= math.pi):
+    def _getitem_by_rt(self, component, r_range=None, t_range=None, symmetric=None):
         """
-        Gets a component, but subset to within :param core_distance: mm from the core.
-        this is nice for finding minimums and maximums and taking statistics without including
-        data at the edges of the observation are where spurious values are common.
+        Subsets a specific component by radius and angle theta. Defaults to subset to 50mm from
+        the vortex core around the entire 360 degree range. Note that the t_range is counter clockwise
+        from the first tuple entry to the second: so (-90, 90) covers the right half of the vortex, while
+        (90, -90) will cover the left half of the vortex. If symmetric is set to True, the hv conversion
+        of theta will be used, which ranges from 0 to 90, where 0 is near horizontal (either way) and 90
+        is near vertical (either way). An input of (30, 60) will result in a set of four wedges coming out
+        of each quadrant of the vortex centered about the 45 degree line, like a beach ball.
 
-        Note, this function returns the full component matrix, but with an updated mask
+        :param component:   component to subset, all valid __getitem__ inputs will work here
+        :param r_range:     tuple of (min, max) radius range in mm from the core.
+        :param t_range:     tuple of (min, max) theta range in degrees about the core.
+        :param symmetric:   if True, the hv_mesh is used instead of t_mesh.
 
-        :param component:       component to subset
-        :param core_distance:   max distance (mm) to keep unmasked.
-        :return:
+        :return: a copy of the input component matrix, but with a new mask covering r,t input conditions
         """
 
-        if self[component] is None:
-            raise Exception("cannot find component '{0}'".format(component))
+        # set default values when None is passed
+        if r_range is None:
+            r_range = (0, 50)
+        if t_range is None:
+            t_range = (-180, 180)
+        if symmetric is None:
+            symmetric = False
 
-        distance_mask = self['r_mesh'] > max_r
-        core_component = np.ma.masked_array(self[component], mask=distance_mask)
-        return core_component
+        # apply the distance mask based on the radius range
+        distance_mask = np.logical_or(r_range[0] > self['r_mesh'], self['r_mesh'] > r_range[1])
+
+        # apply the angular mask based on the theta range and symmetric criteria
+        if symmetric:
+            angle_mask = np.logical_or(self['hv_meshd'] < t_range[0], t_range[1] < self['hv_meshd'])
+
+        else:
+            # handles the intuitive case where mask is applied outside the range
+            if t_range[1] > t_range[0]:
+                angle_mask = np.logical_or(self['t_meshd'] < t_range[0], t_range[1] < self['t_meshd'])
+
+            # handles the case where the range includes horizontal left (-180 to 180 crossover)
+            # masks out everything between the end points instead of outside of the end points
+            else:
+                angle_mask = np.logical_and(t_range[0] < self['t_meshd'], self['t_meshd'] < t_range[1])
+
+        combined_mask = np.ma.mask_or(distance_mask, angle_mask)
+
+        # take the subsets
+        rt_subset_component = np.ma.masked_array(self[component], mask=combined_mask)
+        return rt_subset_component
 
 
     def characterize(self, verbose=True):
@@ -140,7 +169,7 @@ class AxialVortex(MeanVecFieldCartesian):
         self.Tmax = np.ma.max(sub_t)
         Tmax_location = np.unravel_index(sub_t.argmax(), sub_t.shape)
         self.core_radius = self['r_mesh'][Tmax_location]
-        self.Wcore = self._getitem_by_rt('W', 10).min()
+        self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
 
         if verbose:
             message_fmt = "Core specs: radius={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Vfree={vf:2.2f}"
@@ -209,8 +238,10 @@ class AxialVortex(MeanVecFieldCartesian):
         # build the cylindrical meshgrids
         self.meshgrid['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
         self.meshgrid['t_mesh'] = np.arctan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
+
         self.meshgrid['hv_mesh'] = abs(self.meshgrid['t_mesh'])
-        self.meshgrid['hv_mesh'][self.meshgrid['hv_mesh'] > (math.pi / 2)] = self.meshgrid['hv_mesh'] - math.pi / 2
+        left_half = self.meshgrid['hv_mesh'] > (math.pi / 2)
+        self.meshgrid['hv_mesh'][left_half] = math.pi - self.meshgrid['hv_mesh'][left_half]
 
         self.meshgrid['t_meshd'] = self.meshgrid['t_mesh'] * 180 / math.pi      # degrees version
         self.meshgrid['hv_meshd'] = self.meshgrid['hv_mesh'] * 180 / math.pi    # degrees version
@@ -313,7 +344,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
     def scatter_plot(self, component_x, component_y, component_c=None, title=None,
                          x_label=None, y_label=None, c_label=None, cmap=cm.hsv,
-                         xrange=None, yrange=None, tight=False, figsize=None, outpath=None):
+                         xrange=None, yrange=None, r_range=None, t_range=None, symmetric=None,
+                         tight=False, figsize=None, outpath=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -342,13 +374,12 @@ class AxialVortex(MeanVecFieldCartesian):
         if figsize is None:
             figsize = (12, 6)
 
-        x = self[component_x].flatten()
-        y = self[component_y].flatten()
-
+        x = self._getitem_by_rt(component_x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        y = self._getitem_by_rt(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
         fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
         if component_c is not None:
-            c = self[component_c].flatten()
+            c = self._getitem_by_rt(component_c, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
             vmin, vmax = self._get_vrange(component_c)
             plt.scatter(x, y, marker='x', c=c, cmap=cmap, vmax=vmax, vmin=vmin)
             cb = plt.colorbar(orientation='vertical')
@@ -480,7 +511,7 @@ class AxialVortex(MeanVecFieldCartesian):
         vmin, vmax = self._get_vrange(component)
 
         cf = plt.contourf(self['x_mesh'], self['y_mesh'],
-                          self._getitem_by_rt(component, max_r=100),
+                          self._getitem_by_rt(component, r_range=(0, 100)),
                           512,
                           cmap=cm.Greys, vmin=vmin, vmax=vmax)
         cf.set_clim(vmin=vmin, vmax=vmax)
@@ -525,7 +556,7 @@ class AxialVortex(MeanVecFieldCartesian):
             vmin, vmax = self._get_vrange(component)
 
             cf = plt.contourf(self['x_mesh'], self['y_mesh'],
-                              self._getitem_by_rt(component, max_r=100),
+                              self._getitem_by_rt(component, r_range=(0, 100)),
                               512,
                               cmap=cm.Greys, vmin=vmin, vmax=vmax)
 

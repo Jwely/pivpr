@@ -52,6 +52,9 @@ class VecFieldCartesian:
         elif item in self.meshgrid.keys():
             return self.meshgrid[item]
 
+        else:
+            raise Warning("Component {0} does not exist!".format(item))
+
 
     def _read_v3d(self):
         """ parses the .v3d file into a pandas dataframe """
