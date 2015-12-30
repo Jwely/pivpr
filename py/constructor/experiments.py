@@ -7,7 +7,7 @@ from axial_vortex import axial_vortex
 
 
 def experiments(experiment_table_path, experiment_directory_path, ids=None,
-                      min_points=20, force_recalc=False):
+                min_points=20, force_recalc=False):
     """
     Constructs an Experiment instance with all useful attributes of the experiment. Some of these
     attributes are read from ancillary data in the `dat` folder.
