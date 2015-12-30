@@ -3,14 +3,8 @@ __author__ = 'Jwely'
 import os
 import numpy as np
 from py.manager.VecFieldCartesian import VecFieldCartesian
-from py.utils import Timer
+from py.utils import Timer, masked_rms
 from py.config import *
-
-
-def masked_rms(ndarray, axis, mask):
-    """ quick little function to shorten some often repeated function calls """
-    return np.ma.masked_array(np.ma.sqrt(np.ma.mean(ndarray ** 2, axis=axis)), mask=mask)
-
 
 
 class MeanVecFieldCartesian:
@@ -162,7 +156,7 @@ class MeanVecFieldCartesian:
             self.dynamic_set['v'][:, :, i] = self.dynamic_set['V'][:, :, i] - self.vel_matrix['V']
             self.dynamic_set['w'][:, :, i] = self.dynamic_set['W'][:, :, i] - self.vel_matrix['W']
 
-        # find dynamic reynolds stresses and turbulences
+        # find dynamic reynolds stresses and turbulence
         for component in ['uu', 'vv', 'ww', 'uv', 'uw', 'vw']:
             self.dynamic_set[component] = self.dynamic_set[component[0]] * self.dynamic_set[component[1]]
 
@@ -183,4 +177,7 @@ if __name__ == "__main__":
 
     mvf = MeanVecFieldCartesian("Station_1", paths[0:5], min_points=1)
     print mvf['U'].count()
+
+
+
 
