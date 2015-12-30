@@ -479,12 +479,11 @@ class AxialVortex(MeanVecFieldCartesian):
         return vmin, vmax
 
 
-    def _single_contour_plot(self, component, title=None, outpath=None):
+    def contour_plot(self, component, title=None, outpath=None):
         """ Handles the instances in which only a single contour plot is desired """
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component)
 
-        print globals()['CONTOUR_DEFAULT_LEVELS']
         cf = plt.contourf(self['x_mesh'], self['y_mesh'],
                           self._getitem_by_rt(component, CONTOUR_DEFAULT_RRANGE),
                           CONTOUR_DEFAULT_LEVELS, cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
@@ -509,73 +508,6 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.show()
         return
-
-
-    def _multi_contour_plot(self, components, titles=None, shape=None, outpath=None):
-        """ Manages multiple user plots """
-
-        # determine the shape of the subplots
-        if shape is None:
-            nrows = 1
-            ncols = len(components)
-        else:
-            nrows, ncols = shape
-
-        # create the figure
-        fig, ax = plt.subplots(nrows=nrows, ncols=ncols)
-        # add each component plot
-        for i, component in enumerate(components):
-
-            plt.subplot(nrows, ncols, i + 1)
-            vmin, vmax = self._get_vrange(component)
-
-            cf = plt.contourf(self['x_mesh'], self['y_mesh'],
-                              self._getitem_by_rt(component, CONTOUR_DEFAULT_RRANGE),
-                              CONTOUR_DEFAULT_LEVELS, cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
-            plt.colorbar(cf)
-            plt.xlabel("X position (mm)")
-            plt.ylabel("Y position (mm)")
-            plt.title(titles[i])
-
-            # plot the core location for reference
-            if self.core_location[0] is not None:
-                plt.scatter(*self.core_location, marker='+', s=100, c='white')
-
-            xlims, ylims = self._get_plot_lims()
-            plt.xlim(xlims)
-            plt.ylim(ylims)
-
-        # show the figure
-        plt.subplots_adjust(left=0.03, right=0.97, wspace=0.1, hspace=0.2)
-
-        if outpath:
-            plt.savefig(outpath)
-            print("saved figure to {0}".format(outpath))
-        else:
-            plt.show(fig)
-        return
-
-
-    def contour_plot(self, components, titles=None, shape=None, outpath=None):
-        """
-        Creates a contour plot, accepts multiple plots in a subfigure according to shape layout
-
-        :param components:  string or list of all components to plot
-        :param titles:      string or list of custom titles to plot
-        :param shape:       custom shape layout, defaults to multiple plots horizontally
-        """
-
-        if titles is None:
-            titles = components
-
-        # if there is just one component to plot
-        if isinstance(components, str):
-            self._single_contour_plot(components, titles, outpath)
-
-        elif isinstance(components, list):
-            self._multi_contour_plot(components, titles, shape, outpath)
-
-
 
 
 if __name__ == "__main__":
