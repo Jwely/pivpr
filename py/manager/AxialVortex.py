@@ -39,7 +39,7 @@ class AxialVortex(MeanVecFieldCartesian):
         # invoke the parent class init
         MeanVecFieldCartesian.__init__(self, name_tag=name_tag, v3d_paths=v3d_paths,
                                        velocity_fs=velocity_fs, min_points=min_points)
-        name_tag = name_tag
+        self.name_tag = name_tag
 
         # vortex cylindrical specific attributes
         self.core_location = (None, None)       # position of core
@@ -83,7 +83,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
                                  'rt': None,  # reynolds stress in r/t
                                  'rw': None,  # reynolds stress in r/w
-                                 'tw': None}) # reynolds stress in t/w
+                                 'tw': None})  # reynolds stress in t/w
 
 
     def to_pickle(self, pickle_path, include_dynamic=False):
@@ -103,7 +103,8 @@ class AxialVortex(MeanVecFieldCartesian):
             print("Saved to {0}".format(pickle_path))
 
 
-    def from_pickle(self, pickle_path):
+    @staticmethod
+    def from_pickle(pickle_path):
         """ loads previous saved state from a .pkl file and returns a MeanVecFieldCartesian instance """
 
         with open(pickle_path, 'rb') as f:
@@ -348,9 +349,9 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
     def scatter_plot(self, component_x, component_y, component_c=None, title=None,
-                         x_label=None, y_label=None, c_label=None, cmap=None,
-                         xrange=None, yrange=None, r_range=None, t_range=None, symmetric=None,
-                         tight=False, figsize=None, outpath=None):
+                     x_label=None, y_label=None, c_label=None, cmap=None,
+                     x_range=None, y_range=None, r_range=None, t_range=None, symmetric=None,
+                     tight=False, figsize=None, outpath=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -363,8 +364,8 @@ class AxialVortex(MeanVecFieldCartesian):
         :param y_label:         custom y axis label
         :param c_label:         custom color bar label
         :param cmap:            custom colormap for color bar
-        :param xrange:          custom x range tuple for x axis
-        :param yrange:          custom y range tuple for y axis
+        :param x_range:          custom x range tuple for x axis
+        :param y_range:          custom y range tuple for y axis
         :param tight:           set true to squeeze the figures margins and decrease whitespace
         :param figsize:         figure size in inches at 120 dpi.
         :return:
@@ -396,17 +397,17 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
         # apply manual specifications of x and y range, otherwise guess.
-        if yrange is None:
+        if y_range is None:
             vmin, vmax = self._get_vrange(component_y, 0, 100)
             plt.ylim(vmin - 0.1, vmax * 1.1)
         else:
-            plt.ylim(yrange[0], yrange[1])
+            plt.ylim(y_range[0], y_range[1])
 
-        if xrange is None:
+        if x_range is None:
             vmin, vmax = self._get_vrange(component_x, 0, 100)
             plt.xlim(vmin - 0.1, vmax * 1.1)
         else:
-            plt.xlim(xrange[0], xrange[1])
+            plt.xlim(x_range[0], x_range[1])
 
         if tight:
             plt.tight_layout()
