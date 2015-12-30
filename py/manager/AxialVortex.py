@@ -467,7 +467,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :param high_percentile:     high percentile value marking warmest color
         :return:
         """
-        
+
         if low_percentile is None:
             low_percentile = VRANGE_DEFAULT[0]
         if high_percentile is None:
