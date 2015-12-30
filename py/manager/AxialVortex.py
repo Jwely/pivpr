@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 # local imports
 from py.manager.MeanVecFieldCartesian import MeanVecFieldCartesian
-from py.utils.cart2cyl_vector import cart2cyl_vector
+from py.utils import cart2cyl_vector, masked_rms
 from py.config import *
 
 
@@ -71,6 +71,19 @@ class AxialVortex(MeanVecFieldCartesian):
                                 'rw': None,  # reynolds stress in r/w
                                 'tw': None,  # reynolds stress in t/w
                                 'yrs': None})  # total cylindrical reynolds stress
+
+        self.dynamic_set.update({'R': None,  # mean radial velocity around vortex core
+                                 'T': None,  # mean tangential velocity around vortex core
+
+                                 'r': None,  # fluctuation in R
+                                 't': None,  # fluctuation in T
+
+                                 'rr': None,  # turbulent energy in r (r' * r') bar
+                                 'tt': None,  # turbulent energy in t (t' * t') bar
+
+                                 'rt': None,  # reynolds stress in r/t
+                                 'rw': None,  # reynolds stress in r/w
+                                 'tw': None}) # reynolds stress in t/w
 
 
     def to_pickle(self, pickle_path, include_dynamic=False):
@@ -206,6 +219,29 @@ class AxialVortex(MeanVecFieldCartesian):
         return self.core_location
 
 
+    def _get_cylindrical_meshgrids(self, core_location_tuple=None):
+        """
+        Creates cylindrical meshgrids from a core location and the existing x,y meshgrids.
+        These meshgrids are simply stored as attributes of the axial vortex.
+
+        :param core_location_tuple: location of the core in (x,y) in units of millimeters
+        """
+
+        if core_location_tuple is None:
+            xc, yc = self._find_core()
+        else:
+            xc, yc = core_location_tuple
+
+        self.meshgrid['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
+        self.meshgrid['t_mesh'] = np.arctan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
+
+        self.meshgrid['hv_mesh'] = abs(self.meshgrid['t_mesh'])
+        left_half = self.meshgrid['hv_mesh'] > (math.pi / 2)
+        self.meshgrid['hv_mesh'][left_half] = math.pi - self.meshgrid['hv_mesh'][left_half]
+        self.meshgrid['t_meshd'] = self.meshgrid['t_mesh'] * 180 / math.pi      # degrees version
+        self.meshgrid['hv_meshd'] = self.meshgrid['hv_mesh'] * 180 / math.pi    # degrees version
+
+
     def build_cylindrical(self, core_location_tuple=None):
         """
         Converts cartesian coordinate attributes into cylindrical attributes, and
@@ -213,57 +249,35 @@ class AxialVortex(MeanVecFieldCartesian):
         :param core_location_tuple:   tuple (X mm, Y mm) of actual core location on the meshgrid
         """
 
-        if core_location_tuple is not None:
-            xc, yc = core_location_tuple
-        else:
-            xc, yc = self._find_core()
+        self._get_cylindrical_meshgrids(core_location_tuple)
 
         # set up empty matrices
-        depth = len(self.constituent_vel_matrix_list)
-        r_set = np.ma.zeros(self.dims + tuple([depth]))     # r matrix (3d)
-        t_set = np.ma.zeros(self.dims + tuple([depth]))     # t matrix (3d)
-        w_set = np.ma.zeros(self.dims + tuple([depth]))     # w matrix (3d)
-        r_set_p = np.ma.zeros(self.dims + tuple([depth]))   # r fluctuation matrix (3d)
-        t_set_p = np.ma.zeros(self.dims + tuple([depth]))   # t fluctuation matrix (3d)
-        w_set_p = np.ma.zeros(self.dims + tuple([depth]))   # w fluctuation matrix (3d)
+        new_keys = ['R', 'T', 'r', 't', 'rr', 'tt', 'rt', 'rw', 'tw']
+        for key in new_keys:
+            self.dynamic_set[key] = np.ma.zeros(self.dims)
+            self.vel_matrix[key] = np.ma.zeros(self.dims)
 
-        # build the cylindrical meshgrids
-        self.meshgrid['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
-        self.meshgrid['t_mesh'] = np.arctan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
+        # populate the dynamic set first with the cylindrical conversions of
+        for i in range(self.dims[-1]):
+            self.dynamic_set['R'][:, :, i], self.dynamic_set['T'][:, :, i] = \
+                cart2cyl_vector(self.dynamic_set['U'][:, :, i],
+                                self.dynamic_set['V'][:, :, i],
+                                self.meshgrid['t_mesh'])
 
-        self.meshgrid['hv_mesh'] = abs(self.meshgrid['t_mesh'])
-        left_half = self.meshgrid['hv_mesh'] > (math.pi / 2)
-        self.meshgrid['hv_mesh'][left_half] = math.pi - self.meshgrid['hv_mesh'][left_half]
+            self.dynamic_set['r'][:, :, i], self.dynamic_set['t'][:, :, i] = \
+                cart2cyl_vector(self.dynamic_set['u'][:, :, i],
+                                self.dynamic_set['v'][:, :, i],
+                                self.meshgrid['t_mesh'])
 
-        self.meshgrid['t_meshd'] = self.meshgrid['t_mesh'] * 180 / math.pi      # degrees version
-        self.meshgrid['hv_meshd'] = self.meshgrid['hv_mesh'] * 180 / math.pi    # degrees version
+        # find dynamic reynolds stresses and turbulence
+        for component in ['rr', 'tt', 'rt', 'rw', 'tw']:
+            self.dynamic_set[component] = self.dynamic_set[component[0]] * self.dynamic_set[component[1]]
 
+        # use the num attribute to get the minimum point mask, take time averages of all new components
+        for component in new_keys:
+            self.vel_matrix[component] = masked_rms(self.dynamic_set[component], axis=2, mask=self['num'].mask)
 
-        # build a 3d matrix from constituent datasets
-        for i, cvm in enumerate(self.constituent_vel_matrix_list):
-            r_set[:, :, i], t_set[:, :, i] = cart2cyl_vector(cvm['U'], cvm['V'], self['t_mesh'])
-            w_set[:, :, i] = cvm['W']
-
-        self['R'] = np.ma.mean(r_set, axis=2)
-        self['T'] = np.ma.mean(t_set, axis=2)
-
-        # now subtract out the averages for fluctuation measurements (time averaged)
-        for i, cvm in enumerate(self.constituent_vel_matrix_list):
-            r_set_p[:, :, i] = r_set[:, :, i] - self['R']
-            t_set_p[:, :, i] = t_set[:, :, i] - self['T']
-            w_set_p[:, :, i] = w_set[:, :, i] - self['W']
-
-        self['r'] = np.ma.mean(abs(r_set_p), axis=2)
-        self['t'] = np.ma.mean(abs(t_set_p), axis=2)
-
-        self['rr'] = np.ma.mean(r_set_p * r_set_p, axis=2)
-        self['tt'] = np.ma.mean(t_set_p * t_set_p, axis=2)
-
-        self['rt'] = np.ma.mean(r_set_p * t_set_p, axis=2)
-        self['rw'] = np.ma.mean(r_set_p * w_set_p, axis=2)
-        self['tw'] = np.ma.mean(t_set_p * w_set_p, axis=2)
-
-        # now characterize the vortex
+        # now characterize the vortex with some important but simple statistics
         characteristics = self.characterize(verbose=True)
         return characteristics
 
