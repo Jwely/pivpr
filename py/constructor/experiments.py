@@ -18,16 +18,16 @@ def experiments(experiment_table_path, experiment_directory_path, ids=None,
     :param min_points:                  when building the experiments AxialVortex data, cells
                                         with fewer good samples than min_points will be masked and
                                         treated as NoData. A higher min_point requirement reduces
-                                        the overall size of the dataset, but improves quality
+                                        the overall size of the data set, but improves quality
     :param force_recalc:                forces re-computation from raw data of all derived values.
                                         if left False, data may be loaded from a previous binary file
-                                        instead of crecomputed.
+                                        instead of re-computed.
     :return experiments:                a list full of Experiment instances, without dynamic data.
                                         probably pretty memory intensive.
     """
 
     dataframe = pd.read_csv(experiment_table_path)
-    experiments = []
+    experiments_list = []
 
     if ids is None:
         ids = range(0, len(dataframe) + 1)
@@ -45,20 +45,19 @@ def experiments(experiment_table_path, experiment_directory_path, ids=None,
                                                      row['v_fs_mean'])
 
             av = axial_vortex(v3d_dir=exp_dir,
-                                    pkl_dir="../pickles",
-                                    name_tag=name_tag,
-                                    include_dynamic=False,
-                                    velocity_fs=row['v_fs_mean'],
-                                    force_recalc=force_recalc,
-                                    min_points=min_points)
+                              pkl_dir="../pickles",
+                              name_tag=name_tag,
+                              include_dynamic=False,
+                              velocity_fs=row['v_fs_mean'],
+                              force_recalc=force_recalc,
+                              min_points=min_points)
             exp.ingest_axial_vortex(av)
-            experiments.append(exp)
+            experiments_list.append(exp)
 
-    return experiments
+    return experiments_list
 
 
 if __name__ == "__main__":
-
     experiments("dat/experiment_table.csv", "../../data_full")
 
 
