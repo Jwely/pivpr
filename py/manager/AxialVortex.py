@@ -308,6 +308,31 @@ class AxialVortex(MeanVecFieldCartesian):
         return
 
 
+    def scatter_plot_dynamic(self, component_y, component_c, title=None, y_label=None, c_label=None,
+                             r_range=None, t_range=None, symmetric=None, tight=False):
+        """
+        A scatter plot of component y where the x axis is locked as time.
+        :param component_y:
+        :param component_c:
+        :param title:
+        :return:
+        """
+
+        if title is None:
+            title = "{0} over time".format(component_y)
+        if y_label is None:
+            y_label = component_y
+        if c_label is None:
+            c_label = component_c
+        x_label = "Time in seconds"
+
+
+
+
+
+
+
+
     def scatter_plot(self, component_x, component_y, component_c=None, title=None,
                          x_label=None, y_label=None, c_label=None, cmap=None,
                          xrange=None, yrange=None, r_range=None, t_range=None, symmetric=None,

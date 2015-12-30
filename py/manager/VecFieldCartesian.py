@@ -90,15 +90,17 @@ class VecFieldCartesian:
         self.meshgrid['x_mesh'] = x_mesh
         self.meshgrid['y_mesh'] = y_mesh
 
-        for component in ['U', 'V', 'W']:
-            self.vel_matrix[component] = np.zeros(self.dims)
-
 
     def _table_to_matrix(self):
         """
         Fills matrix values for cartesian mesh. A little slow, but will work without any
         known information about the ordering of the input data.
         """
+
+        # set up empty matrices
+        for component in ['U', 'V', 'W']:
+            self.vel_matrix[component] = np.zeros(self.dims)
+
         for i, row in self.dataframe.iterrows():
             x_index = self.x_set.index(row['X mm'])
             y_index = self.y_set.index(row['Y mm'])
@@ -114,8 +116,7 @@ class VecFieldCartesian:
             high_thresh = 100
 
         for component in ['U', 'V', 'W']:
-            masked = np.ma.masked_array(self.vel_matrix[component],
-                                        mask=self.vel_matrix[component] > high_thresh)
+            masked = np.ma.masked_array(self.vel_matrix[component], mask=self.vel_matrix[component] > high_thresh)
             self.vel_matrix[component] = masked
 
 
@@ -129,12 +130,11 @@ class VecFieldCartesian:
 
 # testing area
 if __name__ == "__main__":
-    paths = [r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01000.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01001.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01002.v3d",
-             r"E:\Data2\Ely_May28th\Vector\1\Ely_May28th01003.v3d"]
+    paths = [r"..\..\data_test\Ely_May28th01000.v3d",
+             r"..\..\data_test\Ely_May28th01001.v3d",
+             r"..\..\data_test\Ely_May28th01002.v3d",
+             r"..\..\data_test\Ely_May28th01003.v3d"]
 
     for p in paths:
         v = VecFieldCartesian(p)
-        v.show_heatmap('W')
 

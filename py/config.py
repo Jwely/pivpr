@@ -9,6 +9,10 @@ from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 print("configured tight layout!")
 
+
+# statistics variables
+DEFAULT_MIN_POINTS = 20             # minimum number of points required to consider a data point as good
+
 # global plotting variables
 CONTOUR_DEFAULT_LEVELS = 32         # number of discreet colors to use on contour plots
 CONTOUR_DEFAULT_CMAP = cm.Greys     # default color ramp to use on contour plots (greyscale friendly)
