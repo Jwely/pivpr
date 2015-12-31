@@ -435,7 +435,7 @@ class AxialVortex(MeanVecFieldCartesian):
         y_sets, t_set = self._get_dynamic_subsets(component_y, **subset_kwargs)
 
         # now make the figure
-        fig = plt.figure(figsize=figsize, dpi=120, facecolor='w')
+        fig = plt.figure(figsize=figsize, dpi=200, facecolor='w')
 
         # first plot
         gs = plt.GridSpec(100, 100, bottom=0.15, left=0.02, right=0.98)

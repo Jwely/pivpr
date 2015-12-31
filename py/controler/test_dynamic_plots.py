@@ -20,17 +20,8 @@ def test_dynamic_plots(experiment_id):
                                   include_dynamic=True,
                                   force_recalc=False)
     av = exp[0].axial_vortex
-    # av.stream_plot()
-    # av.quiver_plot()
-    # for component in ['U','V','W','u','v','uu','vv','ww','ctke']:
-    # av.contour_plot(component)
-    # av.contour_plot('t_meshd')
-    # av.contour_plot('hv_meshd')
-    # av.scatter_plot('r_mesh', 'ctke', 'num', cmap=cm.jet,
-    # x_label="Distance to vortex core (mm)",
-    # c_label="angle from right horizontal")
 
-    # some ctke plots
+    # some plots!
     components = ['ctke', 'rt']
     r_ranges = [('0.0r', '0.6r'), ('0.6r', '1.4r'), ('1.4r', '2.0r'), ('2.0r', '3.0r')]
     t_ranges = [(0, 90), (0, 30), (30, 60), (60, 90)]
