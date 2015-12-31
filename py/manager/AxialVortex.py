@@ -435,7 +435,7 @@ class AxialVortex(MeanVecFieldCartesian):
         y_sets, t_set = self._get_dynamic_subsets(component_y, **subset_kwargs)
 
         # now make the figure
-        fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
+        fig = plt.figure(figsize=figsize, dpi=120, facecolor='w')
 
         # first plot
         gs = plt.GridSpec(100, 100, bottom=0.15, left=0.02, right=0.98)
@@ -453,17 +453,17 @@ class AxialVortex(MeanVecFieldCartesian):
                           linestyle=':', facecolor='none', label="Core Boundary")
         ax1.add_patch(circ)
         plt.title("Sample Area Average")
-        plt.legend()
+        plt.legend(loc=4)
         plt.xlabel('X position (mm)')
         plt.ylabel('Y position (mm)')
 
         # second dynamic plot
-        ax2 = fig.add_subplot(gs[:, 30:74])
-        boxplot = ax2.plot(t_set, y_sets['mean'], 'k-',
-                           t_set, y_sets['p05'], 'k:',
-                           t_set, y_sets['p95'], 'k:')
+        ax2 = fig.add_subplot(gs[:, 30:77])
+        ax2.plot(t_set, y_sets['mean'], 'k-', label='Mean')
+        ax2.plot(t_set, y_sets['p05'], 'k:', label='90% of Values')
+        ax2.plot(t_set, y_sets['p95'], 'k:')
         plt.grid()
-        plt.legend()
+        plt.legend(loc=1)
         plt.xlabel(x_label)
         plt.ylabel(y_label)
 
@@ -472,12 +472,14 @@ class AxialVortex(MeanVecFieldCartesian):
         ax3.psd(y_sets['mean'], NFFT=64, Fs=SAMPLING_RATE)
         plt.title("log PSD")
 
-        plt.title(title)
+
         if outpath:
             plt.savefig(outpath)
+            plt.close()
             print("saved figure to {0}".format(outpath))
         else:
             plt.show()
+            plt.close()
         return
 
 

@@ -4,7 +4,7 @@ from py import constructor
 from matplotlib import cm
 
 
-def test_plots(experiment_id):
+def test_dynamic_plots(experiment_id):
     """
     This is a scratch board is function for generating plots to your hearts content. mostly just
     used for testing and development
@@ -64,6 +64,6 @@ def test_plots(experiment_id):
 
 
 if __name__ == "__main__":
-    test_plots(55)
+    test_dynamic_plots(55)
 
     import time
