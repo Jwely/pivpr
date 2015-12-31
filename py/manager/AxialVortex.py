@@ -6,6 +6,7 @@ import os
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import spectrum
 
 # local imports
 from py.manager.MeanVecFieldCartesian import MeanVecFieldCartesian
@@ -117,6 +118,21 @@ class AxialVortex(MeanVecFieldCartesian):
         return new_instance
 
 
+    def _rrange_parser(self, r_range):
+        """ parses r_range to allow arguments of core radii """
+
+        # checks for string inputs for r_range and converts to units of mm one element at a time
+        r_range_list = list(r_range)
+        for i, r_element in enumerate(r_range_list):
+            if isinstance(r_element, str):
+                if "r" in r_element:
+                    r_range_list[i] = float(r_element.replace('r', '')) * self.core_radius
+                else:
+                    raise Exception("Str inputs only accepted with a trailing 'r'")
+        r_range = tuple(r_range_list)
+        return r_range
+
+
     def _getitem_by_rt(self, component, r_range=None, t_range=None, symmetric=None):
         """
         Subsets a specific component by radius and angle theta. Defaults to subset to 50mm from
@@ -128,7 +144,9 @@ class AxialVortex(MeanVecFieldCartesian):
         of each quadrant of the vortex centered about the 45 degree line, like a beach ball.
 
         :param component:   component to subset, all valid __getitem__ inputs will work here
-        :param r_range:     tuple of (min, max) radius range in mm from the core.
+        :param r_range:     tuple of (min, max) radius range in mm from the core. Supports string arguments
+                            followed with a "r" to indicate units of core radii; so ('0.9r', '1.1r') will
+                            set the r_range automatically to units of mm based on the calculated core radius.
         :param t_range:     tuple of (min, max) theta range in degrees about the core.
         :param symmetric:   if True, the hv_mesh is used instead of t_mesh.
 
@@ -136,12 +154,15 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         # set default values when None is passed
-        if r_range is None:
-            r_range = (0, 50)
         if t_range is None:
             t_range = (-180, 180)
         if symmetric is None:
             symmetric = False
+
+        if r_range is None:
+            r_range = (0, 50)
+        else:
+            r_range = self._rrange_parser(r_range)
 
         # apply the distance mask based on the radius range
         distance_mask = np.logical_or(r_range[0] > self['r_mesh'], self['r_mesh'] > r_range[1])
@@ -158,8 +179,14 @@ class AxialVortex(MeanVecFieldCartesian):
 
         combined_mask = np.ma.mask_or(distance_mask, angle_mask)
 
-        # take the subsets
-        rt_subset_component = np.ma.masked_array(self[component], mask=combined_mask)
+        # take the subsets, allow a string component or a custom input numpy array. (for dynamic data)
+        if isinstance(component, str):
+            rt_subset_component = np.ma.masked_array(self[component], mask=combined_mask)
+        elif 'numpy' in str(type(component)):
+            rt_subset_component = np.ma.masked_array(component, mask=combined_mask)
+        else:
+            raise Exception("Cannot understand input 'compnonet' of type {0}".format(type(component)))
+
         return rt_subset_component
 
 
@@ -287,7 +314,6 @@ class AxialVortex(MeanVecFieldCartesian):
             self.dynamic_set[component] = self.dynamic_set[component[0]] * self.dynamic_set[component[1]]
             self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
 
-
         # now characterize the vortex with some important but simple statistics
         characteristics = self.characterize(verbose=True)
         return characteristics
@@ -320,51 +346,143 @@ class AxialVortex(MeanVecFieldCartesian):
         return xlim, ylim
 
 
-    def scatter_plot_qual(self, component_x, component_y):
+    def _get_dynamic_subsets(self, component_y, r_range=None, t_range=None, symmetric=None):
         """
-        Prints quick simple scatter plot of component_x vs component_y with the points colored
-        according to the number of samples making up data from that point. Useful for evaluating
-        trends and differentiating between real trends and potentially spurious features.
+        Private method for building a subset of a dynamic data set for the purposes of scatter plotting in
+        the time domain. Invoked by `scatter_plot_dynamic`. Invokes _getitem_by_rt().
 
-        params are exactly as scatter_plot()
+        :param component_y:     component to plot on the y axis
+        :param r_range:         radial dimensions to subset by
+        :param t_range:         angular dimensions to subset by (theta)
+        :param symmetric:       bool. Subset symmetrically? see _getitem_by_rt()
+        :return: Two one dimensional vectors with y,t component set in that order.
         """
 
-        self.scatter_plot(component_x, component_y, 'num', c_label="Number of Samples")
-        return
+        # take care of default values
+        time_step = 1 / float(SAMPLING_RATE)  # convert sampling rate to time interval between points t = 1/f
+
+        # build up a y_set, c_set, t_set, all one dimensional arrays of the same
+        # length with scatter plot data and colors. allows subseting by radial and tangential dimension.
+        kwargs = {"r_range": r_range, "t_range": t_range, "symmetric": symmetric}
+        t_set = []
+        y_sets = {"mean": [],
+                  "median": [],
+                  "p95": [],
+                  "p05": []}
+
+        # get the rest of the layers (component y and the time axis)
+        for i in range(0, self.dims[-1]):
+            ysi = self._getitem_by_rt(self.dynamic_set[component_y][:, :, i], **kwargs).flatten()
+            ysi = ysi[np.invert(ysi.mask)]
+            y_sets['mean'].append(np.ma.mean(ysi))
+            y_sets['median'].append(np.ma.median(ysi))
+            y_sets['p95'].append(np.nanpercentile(ysi, 95))
+            y_sets['p05'].append(np.nanpercentile(ysi, 05))
+
+            t_set.append(time_step * i)
+
+        return y_sets, t_set
 
 
-    def scatter_plot_dynamic(self, component_y, component_c, title=None, y_label=None, c_label=None,
-                             r_range=None, t_range=None, symmetric=None, tight=False):
+    def _get_vrange(self, component, low_percentile=None, high_percentile=None):
+        """
+        Gets the percentile range for color bar scaling on a given component matrix. Used
+        to ensure spurious high and low values do not over stretch the color ramps on plots.
+        The more noise in the data the further form 0 and 100 respectively these percentiles
+        must be.
+
+        :param component:           component to get range for
+        :param low_percentile:      low percentile value marking coolest color
+        :param high_percentile:     high percentile value marking warmest color
+        :return:
+        """
+
+        if low_percentile is None:
+            low_percentile = VRANGE_DEFAULT[0]
+        if high_percentile is None:
+            high_percentile = VRANGE_DEFAULT[1]
+
+        comp = self._getitem_by_rt(component).astype('float')
+        vmin = np.nanpercentile(comp.filled(np.nan), low_percentile)
+        vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
+        return vmin, vmax
+
+
+    def plot_dynamic(self, component_y, title=None, y_label=None, cmap=None,
+                             y_range=None, r_range=None, t_range=None, symmetric=None,
+                             tight=False, figsize=None, outpath=None):
         """
         A scatter plot of component y where the x axis is locked as time.
         :param component_y:
-        :param component_c:
         :param title:
         :return:
         """
 
+        r_range = self._rrange_parser(r_range)
+
+        print("generating dynamic plot...")
         if title is None:
             title = "{0} over time".format(component_y)
         if y_label is None:
             y_label = component_y
-        if c_label is None:
-            c_label = component_c
-        x_label = "Time in seconds"
+        if figsize is None:
+            figsize = (14, 5)
+        if cmap is None:
+            cmap = SCATTER_DEFAULT_CMAP
+        x_label = "Time (seconds)"
 
-        #y_set = nump
-        #for i in range(self.dims[-1]):
-            #y_set.append(self._getitem_by_rt(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric))
+        subset_kwargs = {'r_range': r_range, 't_range': t_range, 'symmetric': symmetric}
+        y_sets, t_set = self._get_dynamic_subsets(component_y, **subset_kwargs)
+
+        # now make the figure
+        fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
+
+        # first plot
+        gs = plt.GridSpec(100, 100, bottom=0.15, left=0.02, right=0.98)
+        ax1 = fig.add_subplot(gs[:, 5:24])
+        xlims, ylims = self._get_plot_lims(40, 66)
+        plt.ylim(ylims)
+        plt.xlim(xlims)
+
+        areaplot = ax1.contourf(self['x_mesh'], self['y_mesh'],
+                                self._getitem_by_rt(component_y, **subset_kwargs),
+                                CONTOUR_DEFAULT_LEVELS,
+                                cmap=CONTOUR_DEFAULT_CMAP)
+
+        circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor='k',
+                          linestyle=':', facecolor='none', label="Core Boundary")
+        ax1.add_patch(circ)
+        plt.title("Sample Area Average")
+        plt.legend()
+        plt.xlabel('X position (mm)')
+        plt.ylabel('Y position (mm)')
+
+        # second dynamic plot
+        ax2 = fig.add_subplot(gs[:, 30:74])
+        boxplot = ax2.plot(t_set, y_sets['mean'], 'k-',
+                           t_set, y_sets['p05'], 'k:',
+                           t_set, y_sets['p95'], 'k:')
+        plt.grid()
+        plt.legend()
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+
+        # third plot psd
+        ax3 = fig.add_subplot(gs[:, 84:100])
+        ax3.psd(y_sets['mean'], NFFT=64, Fs=SAMPLING_RATE)
+        plt.title("log PSD")
+
+        plt.title(title)
+        if outpath:
+            plt.savefig(outpath)
+            print("saved figure to {0}".format(outpath))
+        else:
+            plt.show()
+        return
 
 
-
-
-
-
-
-
-
-    def scatter_plot(self, component_x, component_y, component_c=None, title=None,
-                     x_label=None, y_label=None, c_label=None, cmap=None,
+    def scatter_plot(self, component_x, component_y, component_c=None,
+                     title=None, x_label=None, y_label=None, c_label=None, cmap=None,
                      x_range=None, y_range=None, r_range=None, t_range=None, symmetric=None,
                      tight=False, figsize=None, outpath=None):
         """
@@ -410,7 +528,6 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.scatter(x, y, marker='x', color='black')
 
-
         # apply manual specifications of x and y range, otherwise guess.
         if y_range is None:
             vmin, vmax = self._get_vrange(component_y, 0, 100)
@@ -437,6 +554,17 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.show()
         return
+
+
+    def scatter_plot_qual(self, component_x, component_y):
+        """
+        Prints quick simple scatter plot of component_x vs component_y with the points colored
+        according to the number of samples making up data from that point. Useful for evaluating
+        trends and differentiating between real trends and potentially spurious features.
+
+        params are exactly as scatter_plot()
+        """
+        self.scatter_plot(component_x, component_y, 'num', c_label="Number of Samples")
 
 
     def quiver_plot(self, title=None, outpath=None):
@@ -487,8 +615,7 @@ class AxialVortex(MeanVecFieldCartesian):
                        color=self['P'],
                        arrowstyle='->',
                        arrowsize=1,
-                       density=[len(self.x_set) / 20, len(self.y_set) / 20],
-                       )
+                       density=[len(self.x_set) / 20, len(self.y_set) / 20])
 
         plt.colorbar()
         plt.title(title)
@@ -508,30 +635,6 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.show(fig)
         return
-
-
-    def _get_vrange(self, component, low_percentile=None, high_percentile=None):
-        """
-        Gets the percentile range for color bar scaling on a given component matrix. Used
-        to ensure spurious high and low values do not over stretch the color ramps on plots.
-        The more noise in the data the further form 0 and 100 respectively these percentiles
-        must be.
-
-        :param component:           component to get range for
-        :param low_percentile:      low percentile value marking coolest color
-        :param high_percentile:     high percentile value marking warmest color
-        :return:
-        """
-
-        if low_percentile is None:
-            low_percentile = VRANGE_DEFAULT[0]
-        if high_percentile is None:
-            high_percentile = VRANGE_DEFAULT[1]
-
-        comp = self._getitem_by_rt(component).astype('float')
-        vmin = np.nanpercentile(comp.filled(np.nan), low_percentile)
-        vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
-        return vmin, vmax
 
 
     def contour_plot(self, component, title=None, outpath=None):

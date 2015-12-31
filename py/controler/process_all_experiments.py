@@ -9,6 +9,7 @@ def process_all_experiments(force_recalc=True):
                             experiment_directory_path="../../data_full",
                             ids=None,
                             min_points=20,
+                            include_dynamic=True,
                             force_recalc=force_recalc)
 
 
