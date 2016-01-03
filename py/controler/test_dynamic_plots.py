@@ -22,7 +22,7 @@ def test_dynamic_plots(experiment_id):
     av = exp[0].axial_vortex
 
     # some plots!
-    components = ['ctke', 'rt']
+    components = ['ctke', 'rt', 'w']
     r_ranges = [('0.0r', '0.6r'), ('0.6r', '1.4r'), ('1.4r', '2.0r'), ('2.0r', '3.0r')]
     t_ranges = [(0, 90), (0, 30), (30, 60), (60, 90)]
 
