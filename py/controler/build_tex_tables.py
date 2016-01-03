@@ -1,6 +1,6 @@
 __author__ = 'Jwely'
 
-from utils import csv_to_tex
+from py.utils import csv_to_tex
 import os
 
 
@@ -11,7 +11,7 @@ def main():
     nicely formatted tables that meet a consistent style.
     """
 
-    table_dir = "../tables"
+    table_dir = r"..\..\texdocs\tables"
 
     csv_to_tex(os.path.join(table_dir, "test_matrix_table.csv"),
                justification="|ccc||ccc||ccc|",
