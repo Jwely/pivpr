@@ -65,15 +65,18 @@ through \ref{eq:wprime}.
 \end{equation}
 
 \begin{equation}
-\overline{u^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} (u_i - \overline{u})^2}
+\overline{u^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (u_i - 
+\overline{u})^2}
 \end{equation}
 
 \begin{equation}
-\overline{v^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} (v_i - \overline{v})^2}
+\overline{v^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (v_i - 
+\overline{v})^2}
 \end{equation}
 
 \begin{equation}
-\overline{w^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} (w_i - \overline{w})^2}
+\overline{w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (w_i - 
+\overline{w})^2}
 \label{eq:wprime}
 \end{equation}
 
@@ -88,33 +91,33 @@ fluctuating components together before taking the root mean square average by
 equations \ref{eq:rs_uu} through \ref{eq:rs_vw}.
 
 \begin{equation}
-\overline{u^\prime u^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{u^\prime u^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((u_i - \overline{u})(u_i - \overline{u}))^2}
 \label{eq:rs_uu}
 \end{equation}
 
 \begin{equation}
-\overline{v^\prime v^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{v^\prime v^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((v_i - \overline{v})(v_i - \overline{v}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{w^\prime w^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{w^\prime w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((w_i - \overline{w})(w_i - \overline{w}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{u^\prime v^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{u^\prime v^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((u_i - \overline{u})(v_i - \overline{v}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{u^\prime w^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{u^\prime w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((u_i - \overline{u})(w_i - \overline{w}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{v^\prime w^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{v^\prime w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((v_i - \overline{v})(w_i - \overline{w}))^2}
 \label{eq:rs_vw}
 \end{equation}
@@ -177,12 +180,14 @@ components $r$ and $t$ into stable and fluctuating components in equations
 \end{equation}
 
 \begin{equation}
-\overline{r^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} (r_i - \overline{r})^2}
+\overline{r^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (r_i - 
+\overline{r})^2}
 \label{eq:rprime}
 \end{equation}
 
 \begin{equation}
-\overline{t^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} (t_i - \overline{t})^2}
+\overline{t^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (t_i - 
+\overline{t})^2}
 \label{eq:tprime}
 \end{equation}
 
@@ -191,28 +196,28 @@ from the transformed cylindrical velocities with equations \ref{eq:rs_rr)
 through \ref{eq:rs_tw}.
 	
 \begin{equation}
-\overline{r^\prime r^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{r^\prime r^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((r_i - \overline{r})(r_i - \overline{r}))^2}
 \label{eq:rs_rr}
 \end{equation}
 
 \begin{equation}
-\overline{t^\prime t^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{t^\prime t^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((t_i - \overline{t})(t_i - \overline{t}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{r^\prime t^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{r^\prime t^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((r_i - \overline{r})(t_i - \overline{t}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{r^\prime w^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{r^\prime w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((r_i - \overline{r})(w_i - \overline{w}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{t^\prime w^\prime} = \sqrt{\frac{1}{N} \sum_{i=1}^{200} 
+\overline{t^\prime w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
 	((t_i - \overline{t})(w_i - \overline{w}))^2}
 \label{eq:rs_tw}
 \end{equation}
