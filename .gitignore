@@ -26,6 +26,7 @@ texdocs/main.pdf
 # html versions
 texdocs/psheader.txt
 texdocs/main_html
+texdocs/figs/appendix*
 
 # lets ignore all files in the references for now
 texdocs/references
