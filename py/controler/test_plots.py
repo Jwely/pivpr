@@ -41,7 +41,7 @@ def test_plots(experiment_id):
             outname = "exp{0}_dyn_{1}_{2}_{3}".format(experiment_id, component,
                                                       "-".join(r_range), "-".join(map(str, t_range)))
             outpath = "../test_plots/{name}.png".format(name=outname)
-            av.plot_dynamic(component,
+            av.dynamic_plot(component,
                             title="",
                             r_range=r_range,
                             t_range=t_range,
@@ -54,7 +54,7 @@ def test_plots(experiment_id):
             outname = "exp{0}_dyn_{1}_{2}_{3}".format(experiment_id, component,
                                                       "-".join(r_range), "-".join(map(str, t_range)))
             outpath = "../test_plots/{name}.png".format(name=outname)
-            av.plot_dynamic(component,
+            av.dynamic_plot(component,
                             title="",
                             r_range=r_range,
                             t_range=t_range,

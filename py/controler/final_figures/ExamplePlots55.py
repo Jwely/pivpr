@@ -2,17 +2,27 @@ __author__ = 'Jwely'
 
 from matplotlib import cm
 import os
-from FinalFigure import FinalFigure
+from py import constructor
 
 
-class ExamplePlots55(FinalFigure):
+class ExamplePlots55:
     """
     Builds plots for use in example section of final thesis document
     """
 
-    def __init__(self):
-        # invoke parent class init
-        FinalFigure.__init__(self, experiment_ids=[55], sub_dir="example_vortex_figs")
+    def __init__(self, experiment_ids, sub_dir):
+
+        if not isinstance(experiment_ids, list):
+            experiment_ids = [experiment_ids]
+
+        self.experiment_number = experiment_ids
+        self.fig_dir = os.path.abspath("../../texdocs/figs/{0}".format(sub_dir))
+        self.experiments = constructor.experiments(
+            experiment_table_path="../constructor/dat/experiment_table.csv",
+            experiment_directory_path="../../data_full",
+            ids=experiment_ids,
+            min_points=20,
+            force_recalc=False)
 
 
     def generate(self):

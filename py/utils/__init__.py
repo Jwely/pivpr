@@ -6,4 +6,5 @@ from install_dependencies import *
 from get_rel_humidity import *
 from masked_rms import *
 from masked_mean import *
+from shorthand_to_tex import *
 from Timer import *

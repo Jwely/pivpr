@@ -5,6 +5,9 @@ bottom=0.75in]{geometry}
 \usepackage[english]{babel}
 \usepackage{graphicx}
 
+% allows the inclusion of an appendix
+\usepackage[toc, page]{appendix}
+
 % allows the use of hyperlinks
 \usepackage{hyperref}
 
@@ -85,5 +88,9 @@ words here
 % bibliographical settings
 \bibliographystyle{apalike}
 \bibliography{bib/piv,bib/vortices,bib/other,bib/particles}
+
+\begin{appendices}
+	%\include{piv_data_appendices}	
+\end{appendices}
 
 \end{document}

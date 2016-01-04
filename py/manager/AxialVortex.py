@@ -10,7 +10,7 @@ import spectrum
 
 # local imports
 from py.manager.MeanVecFieldCartesian import MeanVecFieldCartesian
-from py.utils import cart2cyl_vector, masked_rms, masked_mean
+from py.utils import cart2cyl_vector, masked_rms, masked_mean, shorthand_to_tex
 from py.config import *
 
 
@@ -217,7 +217,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return char_dict
 
 
-    def _find_core(self, crange=20):
+    def _find_core(self, crange=7):
         """
         Attempts to find the core near the center of the matrix. The core is found by
         searching for the minimum value of in_plane velocities within :param crange:
@@ -408,7 +408,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return vmin, vmax
 
 
-    def plot_dynamic(self, component_y, title=None, y_label=None, cmap=None,
+    def dynamic_plot(self, component_y, title=None, y_label=None, cmap=None,
                              y_range=None, r_range=None, t_range=None, symmetric=None,
                              tight=False, figsize=None, outpath=None):
         """
@@ -422,7 +422,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         print("generating dynamic plot...")
         if title is None:
-            title = "{0} over time".format(component_y)
+            title = "{0} over time".format(shorthand_to_tex(component_y))
         if y_label is None:
             y_label = component_y
         if figsize is None:
@@ -507,11 +507,13 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         if title is None:
-            title = "{0} vs {1}".format(component_y, component_x)
+            title = "{0} vs {1}".format(shorthand_to_tex(component_y), shorthand_to_tex(component_x))
         if x_label is None:
-            x_label = component_x
+            x_label = shorthand_to_tex(component_x)
         if y_label is None:
-            y_label = component_y
+            y_label = shorthand_to_tex(component_y)
+        if c_label is None and component_c is not None:
+            c_label = shorthand_to_tex(component_c)
         if figsize is None:
             figsize = (12, 6)
         if cmap is None:
@@ -553,6 +555,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if outpath:
             plt.savefig(outpath)
             print("saved figure to {0}".format(outpath))
+            plt.close()
         else:
             plt.show()
         return
@@ -593,12 +596,13 @@ class AxialVortex(MeanVecFieldCartesian):
         xlims, ylims = self._get_plot_lims(50, 50)
         plt.xlim(xlims)
         plt.ylim(ylims)
-        plt.xlabel("X (mm)")
-        plt.ylabel("Y (mm)")
+        plt.xlabel("$X$ (mm)")
+        plt.ylabel("$Y$ (mm)")
 
         if outpath:
             plt.savefig(outpath)
             print("saved figure to {0}".format(outpath))
+            plt.close()
         else:
             plt.show()
 
@@ -634,6 +638,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if outpath:
             plt.savefig(outpath)
             print("saved figure to {0}".format(outpath))
+            plt.close()
         else:
             plt.show(fig)
         return
@@ -650,7 +655,7 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         if title is None:
-            title = component
+            title = self.shorthand_to_tex(component)
 
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component)
@@ -661,8 +666,8 @@ class AxialVortex(MeanVecFieldCartesian):
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
         plt.title(title)
-        plt.xlabel("X position (mm)")
-        plt.ylabel("Y position (mm)")
+        plt.xlabel("$X$ ($mm$)")
+        plt.ylabel("$Y$ ($mm$)")
 
         # plot the core location for reference
         if self.core_location[0] is not None:
@@ -676,6 +681,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if outpath:
             plt.savefig(outpath)
             print("saved figure to {0}".format(outpath))
+            plt.close()
         else:
             plt.show()
         return
@@ -693,7 +699,6 @@ if __name__ == "__main__":
     mvf.to_pickle(small_pkl, include_dynamic=True)
 
     mvf = AxialVortex().from_pickle(small_pkl)
-    mvf._find_core()
     mvf.build_cylindrical()
 
     mvf.stream_plot()
