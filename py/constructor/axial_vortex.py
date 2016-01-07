@@ -1,7 +1,7 @@
 __author__ = 'Jwely'
 
 import os
-from py.manager import AxialVortex
+from py.piv_manager import AxialVortex
 
 
 def axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,

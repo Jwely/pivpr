@@ -2,7 +2,7 @@ __author__ = 'Jwely'
 
 import pandas as pd
 import os
-from py import manager
+from py import piv_manager
 from axial_vortex import axial_vortex
 
 
@@ -37,7 +37,7 @@ def experiments(experiment_table_path, experiment_directory_path, ids=None,
             # build the experiment object
             kwargs = row.to_dict()
             exp_dir = os.path.join(experiment_directory_path, str(row['experiment_id']))
-            exp = manager.Experiment(**kwargs)
+            exp = piv_manager.Experiment(**kwargs)
 
             # now build up the vortex associated with it, and add it to the experiment
             name_tag = "ID-{0}_Z-{1}_Vfs-{2}".format(row['experiment_id'],

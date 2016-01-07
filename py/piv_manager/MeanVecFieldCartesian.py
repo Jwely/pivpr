@@ -4,7 +4,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-from py.manager.VecFieldCartesian import VecFieldCartesian
+from py.piv_manager.VecFieldCartesian import VecFieldCartesian
 from py.utils import Timer, masked_rms, masked_mean
 from py.config import *
 

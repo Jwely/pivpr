@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import spectrum
 
 # local imports
-from py.manager.MeanVecFieldCartesian import MeanVecFieldCartesian
+from py.piv_manager.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.utils import cart2cyl_vector, masked_rms, masked_mean, shorthand_to_tex
 from py.config import *
 
