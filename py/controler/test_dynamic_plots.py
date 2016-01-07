@@ -1,7 +1,8 @@
 __author__ = 'Jwely'
 
-from py import constructor
+from py.piv.construct_experiments import construct_experiments
 from matplotlib import cm
+from py.config import *
 
 
 def test_dynamic_plots(experiment_id):
@@ -12,13 +13,12 @@ def test_dynamic_plots(experiment_id):
     :return:
     """
 
-
-    exp = constructor.experiments(experiment_table_path="../constructor/dat/experiment_table.csv",
-                                  experiment_directory_path="../../data_full",
-                                  ids=[experiment_id],
-                                  min_points=20,
-                                  include_dynamic=True,
-                                  force_recalc=False)
+    exp = construct_experiments(experiment_table_path=EXPERIMENT_TABLE_PATH,
+                                experiment_directory_path=DATA_FULL_DIR,
+                                ids=[experiment_id],
+                                min_points=20,
+                                include_dynamic=True,
+                                force_recalc=False)
     av = exp[0].axial_vortex
 
     # some plots!
@@ -38,7 +38,7 @@ def test_dynamic_plots(experiment_id):
                             t_range=t_range,
                             symmetric=True,
                             outpath=outpath
-                            )
+            )
 
         for t_range in t_ranges:
             r_range = ('0r', '2r')
@@ -51,7 +51,7 @@ def test_dynamic_plots(experiment_id):
                             t_range=t_range,
                             symmetric=True,
                             outpath=outpath
-                            )
+            )
 
 
 if __name__ == "__main__":

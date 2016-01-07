@@ -2,12 +2,13 @@ __author__ = 'Jwely'
 
 import pandas as pd
 import os
-from py import piv_manager
-from axial_vortex import axial_vortex
+from py.piv.Experiment import Experiment
+from py.config import *
+from construct_axial_vortex import construct_axial_vortex
 
 
-def experiments(experiment_table_path, experiment_directory_path, ids=None,
-                min_points=20, include_dynamic=True, force_recalc=False):
+def construct_experiments(experiment_table_path, experiment_directory_path, ids=None,
+                          min_points=20, include_dynamic=True, force_recalc=False):
     """
     Constructs an Experiment instance with all useful attributes of the experiment. Some of these
     attributes are read from ancillary data in the `dat` folder.
@@ -26,6 +27,8 @@ def experiments(experiment_table_path, experiment_directory_path, ids=None,
                                         probably pretty memory intensive.
     """
 
+    if not os.path.exists(experiment_table_path):
+        raise Exception("Path does not exist at {0}".format(experiment_table_path))
     dataframe = pd.read_csv(experiment_table_path)
     experiments_list = []
 
@@ -37,7 +40,7 @@ def experiments(experiment_table_path, experiment_directory_path, ids=None,
             # build the experiment object
             kwargs = row.to_dict()
             exp_dir = os.path.join(experiment_directory_path, str(row['experiment_id']))
-            exp = piv_manager.Experiment(**kwargs)
+            exp = Experiment(**kwargs)
 
             # now build up the vortex associated with it, and add it to the experiment
             name_tag = "ID-{0}_Z-{1}_Vfs-{2}".format(row['experiment_id'],
@@ -45,13 +48,13 @@ def experiments(experiment_table_path, experiment_directory_path, ids=None,
                                                      row['v_fs_mean'])
 
             # construct an axial vortex
-            av = axial_vortex(v3d_dir=exp_dir,
-                              pkl_dir="../pickles",
-                              name_tag=name_tag,
-                              include_dynamic=include_dynamic,
-                              velocity_fs=row['v_fs_mean'],
-                              force_recalc=force_recalc,
-                              min_points=min_points)
+            av = construct_axial_vortex(v3d_dir=exp_dir,
+                                        pkl_dir=PICKLE_DIR,
+                                        name_tag=name_tag,
+                                        include_dynamic=include_dynamic,
+                                        velocity_fs=row['v_fs_mean'],
+                                        force_recalc=force_recalc,
+                                        min_points=min_points)
             exp.ingest_axial_vortex(av)
             experiments_list.append(exp)
 
@@ -59,7 +62,7 @@ def experiments(experiment_table_path, experiment_directory_path, ids=None,
 
 
 if __name__ == "__main__":
-    experiments("dat/experiment_table.csv", "../../data_full")
+    construct_experiments("dat/experiment_table.csv", "../../data_full")
 
 
 

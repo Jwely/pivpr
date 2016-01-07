@@ -1,16 +1,13 @@
 __author__ = 'Jwely'
 
 import os
-from py.tex_manager.TeXWriter import TeXWriter
+from py.tex.TeXWriter import TeXWriter
 from py.utils import shorthand_to_tex
-from py.constructor import experiments
+from py.piv.construct_experiments import construct_experiments
 from py.config import *
 
 
-
 class TeXRunFigurePage(TeXWriter):
-
-
     def __init__(self, main_path, tex_title, experiment_id, force_recalc=False):
         """
         This class uses constructors to build up a data set from the raw v3d files, perform all processing,
@@ -37,12 +34,11 @@ class TeXRunFigurePage(TeXWriter):
         if not isinstance(experiment_id, int):
             raise Exception("please input experiment ID as an integer")
 
-
-        self.experiment = experiments(experiment_table_path="../constructor/dat/experiment_table.csv",
-                                      experiment_directory_path="../../data_full",
-                                      ids=[experiment_id],
-                                      min_points=DEFAULT_MIN_POINTS,
-                                      force_recalc=force_recalc)[0]
+        self.experiment = construct_experiments(experiment_table_path=EXPERIMENT_TABLE_PATH,
+                                                experiment_directory_path=DATA_FULL_DIR,
+                                                ids=[experiment_id],
+                                                min_points=DEFAULT_MIN_POINTS,
+                                                force_recalc=force_recalc)[0]
         self.axial_vortex = self.experiment.axial_vortex
 
 

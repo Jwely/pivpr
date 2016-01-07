@@ -1,11 +1,11 @@
 __author__ = 'Jwely'
 
 import os
-from py.piv_manager import AxialVortex
+from py.piv import AxialVortex
 
 
-def axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
-                 velocity_fs=None, force_recalc=False, min_points=20):
+def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
+                           velocity_fs=None, force_recalc=False, min_points=20):
     """
     Returns an AxialVortex instance. Manages pickling of classes to allow one-time-computation
     as often as possible, unless the user overrides it with force_recalc=True.

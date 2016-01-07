@@ -9,7 +9,7 @@ from py.utils import Timer
 
 class VecFieldCartesian:
     """
-    A cartesian vector field piv_manager, this class can parse any v3d file (taken by
+    A cartesian vector field manager, this class can parse any v3d file (taken by
     planar PIV) into a set of velocity component matrices and coordinate mesh grids.
     This v3d format seems to be relatively common to PIV systems. Check out the v3d
     files in the `test_dataset` folder if you're unsure the format is the same.

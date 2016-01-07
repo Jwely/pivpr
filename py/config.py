@@ -1,19 +1,27 @@
 __author__ = 'Jwely'
 
-""" little module for defining global variables """
-
+from os.path import join, dirname, abspath
 from matplotlib import cm
 from matplotlib import rcParams
+config_root = dirname(abspath(__file__))
+
+
 
 # this prevents plt.tight_layout() from crowding axis labels off the edges of the plot.
 rcParams.update({'figure.autolayout': True})
-print("configured tight layout!")
+
+# resource filepaths and directories
+EXPERIMENT_TABLE_PATH = abspath(join(config_root, "piv/dat/experiment_table.csv"))
+PICKLE_DIR = abspath(join(config_root, "piv/pickles"))
+DATA_FULL_DIR = abspath(join(config_root, "../data_full"))
 
 # when pickling, save only these dynamic components (saves disk space), discard the others
 DYNAMIC_INCLUDES = ['ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
 
+
 # statistics variables
 DEFAULT_MIN_POINTS = 20             # minimum number of points required to consider a data point as good
+
 
 # global plotting variables
 CONTOUR_DEFAULT_LEVELS = 32         # number of discreet colors to use on contour plots
