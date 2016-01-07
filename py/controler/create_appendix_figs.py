@@ -1,7 +1,7 @@
 __author__ = 'Jwely'
 
 from matplotlib import cm
-from py.texmanager import TeXRunFigurePage
+from py.tex_manager import TeXRunFigurePage
 from py.utils import shorthand_to_tex as stt
 
 
