@@ -1,1 +1,4 @@
-__author__ = 'Jeff'
+__author__ = 'Jwely'
+
+
+from ArtificialPIV import *
