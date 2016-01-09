@@ -5,12 +5,20 @@ Thesis data was taken of an axial wake vortex in the ODU low speed wind tunnel w
 This code is built to synthesize this raw cartesian PIV imagery into a 3d velocity vector field in cylindrical coordinates about
 the center of the vortex.
 
-## to-do
+### controler
+Contains controller scripts for the other python modules within this directory. These controllers do everything
+from analyze data, create TeX figures and tables, and perform uncertainty analysis.
 
-- [x] create controler scripts to construct AxialVortex instances and generate output plots procedurally (image format?)
-- [x] set plotting methods to auto-bound image extents as function of distance from vortex core
-- [x] move vortex specific methods from MeanVecFieldCylindrical to AxialVortex
-- [x] finish scatter plotting methods
-- [x] create new experiment based top level class that includes all experimental attributes
-- [ ] add circles on heatmaps to show calculated extents of the core
-- [ ] add line on scaterplots to show boundary of the core
+### piv
+Firectly manipulates and manages PIV data and provides an API for creating plots and statistics.
+
+### tex
+Contains code specifically for creating TeX formatted figures and tables for use in the actual thesis document
+generated with TeX. (see the texdocs directory)
+
+### uncertainty
+Limited amount of code for synthesizing artificial PIV data used for monte carlo uncertainty analysis.
+
+### utils
+General utilities folder of short little useful functions. Includes a dependencies installer, a csv_to_tex converter, 
+and a few other things.
