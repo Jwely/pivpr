@@ -6,7 +6,7 @@ from py.utils import shorthand_to_tex as stt
 
 
 
-def create_appendix_figs(run_id):
+def create_tex_appendix_figs(run_id):
     """
     creates the example figures used in the PIV section
     """
@@ -42,13 +42,12 @@ def create_appendix_figs(run_id):
     figdoc.write()
 
 
-def create_all_appendix_figs():
+def create_all_tex_appendix_figs():
     run_ids = range(1, 71)
     for run_id in run_ids:
-        create_appendix_figs(run_id)
+        create_tex_appendix_figs(run_id)
 
 
 
 if __name__ == "__main__":
-    #create_appendix_figs(7)
-    create_all_appendix_figs()
+    create_all_tex_appendix_figs()

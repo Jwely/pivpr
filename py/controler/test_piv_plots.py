@@ -5,7 +5,7 @@ from matplotlib import cm
 from py.config import *
 
 
-def test_plots(experiment_id):
+def test_piv_plots(experiment_id):
     """
     This is a scratch board is function for generating plots to your hearts content. mostly just
     used for testing and development
@@ -64,6 +64,6 @@ def test_plots(experiment_id):
 
 
 if __name__ == "__main__":
-    test_plots(55)
+    test_piv_plots(55)
 
     import time

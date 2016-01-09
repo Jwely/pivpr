@@ -23,6 +23,7 @@ def install_dependencies(wheel_dir):
     pip.main(["install", os.path.join(wheel_dir, "numpy-1.9.3+mkl-cp27-none-win_amd64.whl")])
     pip.main(["install", "pandas"])
     pip.main(["install", "matplotlib"])
+    pip.main(["install", "Image"])
     pip.main(["install", os.path.join(wheel_dir, "pygraphviz-1.3.1-cp27-none-win_amd64.whl")])
 
 

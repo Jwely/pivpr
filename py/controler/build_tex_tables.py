@@ -4,7 +4,7 @@ from py.utils import csv_to_tex
 import os
 
 
-def main():
+def build_tex_tables():
     """
     Execution of this file will build .tex files from .csv files in in the `tables`
     directory. The function calls have been simplified as much as possible to allow
@@ -38,4 +38,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    build_tex_tables()

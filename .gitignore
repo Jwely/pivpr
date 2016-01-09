@@ -8,6 +8,7 @@ py/test_plots
 *.pkl
 data_full/*/*.v3d
 py/final_figures
+py/uncertainty/artificial_images
 
 # general extensions
 *.aux

@@ -5,7 +5,7 @@ from matplotlib import cm
 from py.config import *
 
 
-def test_dynamic_plots(experiment_id):
+def test_piv_dynamic_plots(experiment_id):
     """
     This is a scratch board is function for generating plots to your hearts content. mostly just
     used for testing and development
