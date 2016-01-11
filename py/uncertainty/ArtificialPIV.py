@@ -222,7 +222,6 @@ class ArtificialPIV:
         :return:
         """
 
-        '''
         # translate velocities into displacements
         x_disp = u * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
         y_disp = v * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
@@ -269,7 +268,7 @@ class ArtificialPIV:
             for key in self.images.keys():
                 im = Image.fromarray(self.images[key])
                 im.save(os.path.join(output_dir, "{0}_{1}.tif".format(self.name, key)))
-        '''
+
         # now save a json file in the same directory with the parameters of this function
         argdict = {}
         for arg in ["n_particles", "dt", "u", "v", "w", "particle_size",
