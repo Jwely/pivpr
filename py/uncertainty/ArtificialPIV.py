@@ -249,7 +249,7 @@ class ArtificialPIV:
             self.images['la'] += la
             self.images['ra'] += ra
 
-            if i % 100 == 0:
+            if i % 1000 == 0:
                 print("particle {0}".format(i))
 
         # and do the same thing for the displaced particles representing time = dt
@@ -259,7 +259,7 @@ class ArtificialPIV:
             self.images['lb'] += lb
             self.images['rb'] += rb
 
-            if i % 100 == 0:
+            if i % 1000 == 0:
                 print("particle {0}".format(i))
 
         # save the images
