@@ -202,7 +202,7 @@ class ArtificialPIV:
         return i_l, i_r
 
 
-    def make_image_pairs(self, n_particles, dt, x_vel, y_vel, z_vel, particle_size=0.2,
+    def make_image_pairs(self, n_particles, dt, u, v, w, particle_size=0.2,
                          particle_scatter=100, light_sheet_thickness=3.00, output_dir=None):
         """
         This function creates a set of image pairs at times 0 and dt. It does this by creating
@@ -213,19 +213,20 @@ class ArtificialPIV:
 
         :param n_particles:             number of particles to spawn in the interrogation plane
         :param dt:                      time step between frames (microseconds)
-        :param x_vel:                   uniform x velocity to displace particles
-        :param y_vel:                   uniform y velocity to displace particles
-        :param z_vel:                   uniform z velocity to displace particles
+        :param u:                       uniform x velocity to displace particles
+        :param v:                       uniform y velocity to displace particles
+        :param w:                       uniform z velocity to displace particles
         :param particle_size:           average size of particles in (mm)
         :param particle_scatter:        scattering efficiency of the particle
         :param light_sheet_thickness:   thickness of light sheet (+/-3 sigma) in (mm)
         :return:
         """
 
+        '''
         # translate velocities into displacements
-        x_disp = x_vel * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
-        y_disp = y_vel * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
-        z_disp = z_vel * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
+        x_disp = u * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
+        y_disp = v * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
+        z_disp = w * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
 
         # compute the dt based meshgrid with z_mm displacement
         mesh_t0 = self.get_mm_coords(self.mesh['x_px'], self.mesh['y_px'], z_mm=0)
@@ -268,16 +269,15 @@ class ArtificialPIV:
             for key in self.images.keys():
                 im = Image.fromarray(self.images[key])
                 im.save(os.path.join(output_dir, "{0}_{1}.tif".format(self.name, key)))
-
+        '''
         # now save a json file in the same directory with the parameters of this function
         argdict = {}
-        for arg in ["n_particles", "dt", "x_vel", "y_vel", "z_vel", "particle_size",
+        for arg in ["n_particles", "dt", "u", "v", "w", "particle_size",
                     "particle_scatter", "light_sheet_thickness", "output_dir"]:
             argdict[arg] = locals()[arg]
 
         with open(os.path.join(output_dir, "params.json"), 'w+') as logfile:
             logfile.write(json.dumps(argdict))
-
 
 
 
@@ -289,9 +289,9 @@ if __name__ == '__main__':
     apiv.load_calibration_file('cal_data/station_2/ely_may28th.cal')
     apiv.make_image_pairs(n_particles=2000,
                           dt=25,
-                          x_vel=0,
-                          y_vel=0,
-                          z_vel=40,
+                          u=0,
+                          v=0,
+                          w=40,
                           particle_size=0.2,
                           particle_scatter=100,
                           light_sheet_thickness=3.0,

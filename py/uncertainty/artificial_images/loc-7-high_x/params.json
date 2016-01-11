@@ -1,1 +1,1 @@
-{"particle_scatter": 100, "n_particles": 32768, "output_dir": "../uncertainty/artificial_images\\loc-7-high_x", "z_vel": 0.0, "y_vel": 0.0, "dt": 25, "x_vel": 10.0, "light_sheet_thickness": 3.0, "particle_size": 0.2}
+{"particle_scatter": 100, "n_particles": 32768, "u": 10.0, "output_dir": "../uncertainty/artificial_images\\loc-7-high_x", "w": 0.0, "v": 0.0, "dt": 25, "light_sheet_thickness": 3.0, "particle_size": 0.2}

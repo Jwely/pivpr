@@ -17,14 +17,14 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
     it go over night (scratch that ... several days).
     """
 
-    velocity_sets = {'high_z': {'dt': 25, 'x_vel': 0.00, 'y_vel': 0.00, 'z_vel': 40.0},  # high z
-                     'low_z': {'dt': 40, 'x_vel': 0.00, 'y_vel': 0.00, 'z_vel': 10.0},  # low z
-                     'high_x': {'dt': 25, 'x_vel': 10.0, 'y_vel': 0.00, 'z_vel': 0.00},  # high x
-                     'mid_x': {'dt': 25, 'x_vel': 1.00, 'y_vel': 0.00, 'z_vel': 0.00},  # mid x
-                     'low_x': {'dt': 40, 'x_vel': 0.10, 'y_vel': 0.00, 'z_vel': 0.00},  # low x
-                     'high_y': {'dt': 25, 'x_vel': 0.00, 'y_vel': 10.0, 'z_vel': 0.00},  # high y
-                     'mid_y': {'dt': 25, 'x_vel': 0.00, 'y_vel': 1.00, 'z_vel': 0.00},  # mid y
-                     'low_y': {'dt': 40, 'x_vel': 0.00, 'y_vel': 0.10, 'z_vel': 0.00}}  # low y
+    velocity_sets = {'high_z': {'dt': 25, 'u': 0.00, 'v': 0.00, 'w': 40.0},  # high z
+                     'low_z': {'dt': 40, 'u': 0.00, 'v': 0.00, 'w': 10.0},  # low z
+                     'high_x': {'dt': 25, 'u': 10.0, 'v': 0.00, 'w': 0.00},  # high x
+                     'mid_x': {'dt': 25, 'u': 1.00, 'v': 0.00, 'w': 0.00},  # mid x
+                     'low_x': {'dt': 40, 'u': 0.10, 'v': 0.00, 'w': 0.00},  # low x
+                     'high_y': {'dt': 25, 'u': 0.00, 'v': 10.0, 'w': 0.00},  # high y
+                     'mid_y': {'dt': 25, 'u': 0.00, 'v': 1.00, 'w': 0.00},  # mid y
+                     'low_y': {'dt': 40, 'u': 0.00, 'v': 0.10, 'w': 0.00}}  # low y
 
     calibrations = [1, 7]
 
