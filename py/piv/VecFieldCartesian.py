@@ -2,6 +2,7 @@ __author__ = 'Jwely'
 
 import pandas as pd
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 
 from py.utils import Timer
@@ -26,13 +27,12 @@ class VecFieldCartesian:
         """
 
         assert filepath.endswith(".v3d"), "Input is not a valid .v3d file! filepath='{0}'".format(filepath)
-
         t = Timer()
-        self.filepath = filepath            # local filepath to .v3d file
-        self.velocity_fs = velocity_fs      # free stream velocity associated with this file
-        self.headers = None                 # list of column headers
-        self.dataframe = None               # pandas dataframe of csv like data.
-        self.dims = (None, None)            # x, y dimensions of all matrix data
+        self.filepath = os.path.abspath(filepath)   # local filepath to .v3d file
+        self.velocity_fs = velocity_fs              # free stream velocity associated with this file
+        self.headers = None                         # list of column headers
+        self.dataframe = None                       # pandas dataframe of csv like data.
+        self.dims = (None, None)                    # x, y dimensions of all matrix data
 
         # set up empty coordinate value dictionary, (x and y are two-dimensionalized 1d vectors)
         self.x_set = None
