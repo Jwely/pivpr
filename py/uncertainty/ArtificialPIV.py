@@ -3,6 +3,7 @@ __author__ = 'Jwely'
 
 import numpy as np
 import os
+import json
 from PIL import Image
 
 
@@ -267,6 +268,17 @@ class ArtificialPIV:
             for key in self.images.keys():
                 im = Image.fromarray(self.images[key])
                 im.save(os.path.join(output_dir, "{0}_{1}.tif".format(self.name, key)))
+
+        # now save a json file in the same directory with the parameters of this function
+        argdict = {}
+        for arg in ["n_particles", "dt", "x_vel", "y_vel", "z_vel", "particle_size",
+                    "particle_scatter", "light_sheet_thickness", "output_dir"]:
+            argdict[arg] = locals()[arg]
+
+        with open(os.path.join(output_dir, "params.json"), 'w+') as logfile:
+            logfile.write(json.dumps(argdict))
+
+
 
 
 
