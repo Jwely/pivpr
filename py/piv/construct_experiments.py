@@ -62,7 +62,7 @@ def construct_experiments(experiment_table_path, experiment_directory_path, ids=
 
 
 if __name__ == "__main__":
-    construct_experiments("dat/experiment_table.csv", "../../data_full")
+    construct_experiments(EXPERIMENT_TABLE_PATH, DATA_FULL_DIR)
 
 
 
