@@ -6,14 +6,15 @@ from matplotlib import rcParams
 config_root = dirname(abspath(__file__))
 
 
-
 # this prevents plt.tight_layout() from crowding axis labels off the edges of the plot.
 rcParams.update({'figure.autolayout': True})
+
 
 # resource filepaths and directories
 EXPERIMENT_TABLE_PATH = abspath(join(config_root, "piv/dat/experiment_table.csv"))
 PICKLE_DIR = abspath(join(config_root, "piv/pickles"))
 DATA_FULL_DIR = abspath(join(config_root, "../data_full"))
+CALIBRATION_DIR = abspath(join(config_root, "uncertainty/cal_data"))
 
 # when pickling, save only these dynamic components (saves disk space), discard the others
 DYNAMIC_INCLUDES = ['ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
