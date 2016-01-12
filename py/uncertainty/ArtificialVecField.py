@@ -8,15 +8,37 @@ from py.piv import VecFieldCartesian
 
 
 class ArtificialVecField(VecFieldCartesian):
+    """
+    Class for evaluating performance of PIV to resolve images synthesized
+    by the ArtificialPIV class with precisely known particle movements. It
+    extends the VecFieldCartesian class, and adds just a couple methods
+    for gathering error and uncertainty information.
+    """
 
     def __init__(self, v3d_path, params_filepath):
+        """
+        :param v3d_path: filepath to v3d file
+        :param params_filepath: filepath to params.json file
+        :return:
+        """
         VecFieldCartesian.__init__(self, v3d_path)
-
         self.piv_params = json.loads(open(params_filepath).read())
 
 
-
     def plot_histogram(self, component, title=None, outpath=None):
+        """
+        Creates a histogram of the vectors within the artificial vector field
+        and compares it against the parameters used to generate the vector field.
+        Thus, bias and random error specific to the parameters used to generate
+        the artificial PIV images can be obtained.
+
+        :param component:   either 'U', 'V', or 'W'
+        :param title:       custom title for the plot
+        :param outpath:     filepath to save the figure to.
+        :return:
+        """
+
+        figsize = (10, 5)    # hardcoded for now
 
         data = self[component].flatten()
 
@@ -30,7 +52,7 @@ class ArtificialVecField(VecFieldCartesian):
                         "mean_er": 100 * (results['mean'] - results['sim']) / results['sim']})
 
         # create the histogram
-        fig = plt.figure(figsize=(10, 5), dpi=120, facecolor='w', edgecolor='k')
+        fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
         plt.hist(data[~data.mask], bins=100, align="left", color="grey", alpha=0.4)
 
         # actual velocity line
