@@ -3,6 +3,7 @@ __author__ = 'Jwely'
 from matplotlib import cm
 from py.tex import TeXRunFigurePage
 from py.utils import shorthand_to_tex as stt
+from py.config import *
 
 
 
@@ -19,7 +20,6 @@ def process_piv_data(run_id):
         construct_experiments returns
         Experiment with attribute
         AxialVortex which has plotting methods to produce figures of interest.
-
     """
 
     def contour_component_plotter(components):
@@ -33,7 +33,7 @@ def process_piv_data(run_id):
     quiver_width = '5in'
     stream_width = '5in'
 
-    figdoc = TeXRunFigurePage("../../texdocs/main.tex",
+    figdoc = TeXRunFigurePage(TEX_MAIN_PATH,
                               "appendix_run_id_{0}".format(run_id),     # note the color scheme tag
                               run_id,
                               force_recalc=True)
