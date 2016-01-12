@@ -60,3 +60,5 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
 
 if __name__ == "__main__":
     synthesize_piv_uncertainty_images("../uncertainty/artificial_images")
+    import datetime
+    print datetime.datetime.now()
