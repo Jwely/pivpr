@@ -24,6 +24,20 @@ class ArtificialVecField(VecFieldCartesian):
         VecFieldCartesian.__init__(self, v3d_path)
         self.piv_params = json.loads(open(params_filepath).read())
 
+    def get_error(self, component):
+
+        # compile some numerical results from the data to return.
+        data = self[component].flatten()
+        results = {"top": np.nanpercentile(data.filled(np.nan), 97.5),
+                   "bot": np.nanpercentile(data.filled(np.nan), 2.5),
+                   "mean": np.mean(data),
+                   "sim": self.piv_params[component.lower()]}
+        results.update({"top_er": 100 * (results['top'] - results['sim']) / results['sim'],
+                        "bot_er": 100 * (results['bot'] - results['sim']) / results['sim'],
+                        "mean_er": 100 * (results['mean'] - results['sim']) / results['sim']})
+        results.update({"max_er": max(results["top_er"], abs(results["bot_er"]))})
+        return results
+
 
     def plot_histogram(self, component, title=None, outpath=None):
         """
@@ -40,16 +54,9 @@ class ArtificialVecField(VecFieldCartesian):
 
         figsize = (10, 5)    # hardcoded for now
 
+        # compile some numerical results from the data to return.
         data = self[component].flatten()
-
-        results = {"top": np.nanpercentile(data.filled(np.nan), 99.85),
-                   "bot": np.nanpercentile(data.filled(np.nan), 0.15),
-                   "mean": np.mean(data),
-                   "sim": self.piv_params[component.lower()]}
-
-        results.update({"top_er": 100 * (results['top'] - results['sim']) / results['sim'],
-                        "bot_er": 100 * (results['bot'] - results['sim']) / results['sim'],
-                        "mean_er": 100 * (results['mean'] - results['sim']) / results['sim']})
+        results = self.get_error(component)
 
         # create the histogram
         fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
@@ -61,7 +68,7 @@ class ArtificialVecField(VecFieldCartesian):
 
         # percentile and average lines
         plt.axvline(results["mean"], color="navy", linestyle="--", linewidth=1, label="Measured Mean")
-        plt.axvline(results["top"], color="navy", linestyle=":", linewidth=1, label="99.7% Confidence")
+        plt.axvline(results["top"], color="navy", linestyle=":", linewidth=1, label="95% Confidence")
         plt.axvline(results["bot"], color="navy", linestyle=":", linewidth=1)
 
         plt.xlabel("${0}$  $(m/s)$".format(component.lower()))
