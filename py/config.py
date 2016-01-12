@@ -12,9 +12,13 @@ rcParams.update({'figure.autolayout': True})
 
 # resource filepaths and directories
 EXPERIMENT_TABLE_PATH = abspath(join(config_root, "piv/dat/experiment_table.csv"))
-PICKLE_DIR = abspath(join(config_root, "piv/pickles"))
+PIV_PICKLE_DIR = abspath(join(config_root, "piv/pickles"))
 DATA_FULL_DIR = abspath(join(config_root, "../data_full"))
 CALIBRATION_DIR = abspath(join(config_root, "uncertainty/cal_data"))
+SYNTHESIZED_PIV_DIR = abspath(join(config_root, "uncertainty/artificial_images"))
+TEX_FIGURE_DIR = abspath(join(config_root, "../texdocs/figs"))
+TEX_TABLE_DIR = abspath(join(config_root, "../texdocs/tables"))
+
 
 # when pickling, save only these dynamic components (saves disk space), discard the others
 DYNAMIC_INCLUDES = ['ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
