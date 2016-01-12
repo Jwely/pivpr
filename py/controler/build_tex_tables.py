@@ -1,6 +1,7 @@
 __author__ = 'Jwely'
 
 from py.utils import csv_to_tex
+from py.config import *
 import os
 
 
@@ -11,27 +12,25 @@ def build_tex_tables():
     nicely formatted tables that meet a consistent style.
     """
 
-    table_dir = r"..\..\texdocs\tables"
-
-    csv_to_tex(os.path.join(table_dir, "test_matrix_table.csv"),
+    csv_to_tex(os.path.join(TEX_TABLE_DIR, "test_matrix_table.csv"),
                justification="|ccc||ccc||ccc|",
                caption="Experimental conditions for all 70 experiments",
                horizontal_line_rows=[2])
 
-    csv_to_tex(os.path.join(table_dir, "piv_upsampling_displacement.csv"),
+    csv_to_tex(os.path.join(TEX_TABLE_DIR, "piv_upsampling_displacement.csv"),
                justification="|ccc|",
                caption="Pixel displacements by up sampling order.",
                horizontal_line_rows=[1])
 
     # the measurements for each station
     for station in [1, 2, 3, 4, 5, 6, 7]:
-        csv_to_tex(os.path.join(table_dir, "station_{0}_measurements.csv".format(station)),
+        csv_to_tex(os.path.join(TEX_TABLE_DIR, "station_{0}_measurements.csv".format(station)),
                    justification="|ccccccccccc|",
                    caption="Experimental measurements for station {0}".format(station),
                    horizontal_line_rows=[2])
 
     # v3d format example
-    csv_to_tex(os.path.join(table_dir, "v3d_row_example.csv"),
+    csv_to_tex(os.path.join(TEX_TABLE_DIR, "v3d_row_example.csv"),
                justification="|cccccccc|",
                caption="Example rows from v3d files with raw 3d vector data",
                horizontal_line_rows=[1])
