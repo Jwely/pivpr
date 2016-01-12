@@ -16,7 +16,7 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
     how to make it better and can't be bothered to figure it out. I'd rather just hit run and let
     it go over night (scratch that ... several days).
     """
-
+    '''
     velocity_sets = {'high_z': {'dt': 25, 'u': 0.00, 'v': 0.00, 'w': 40.0},  # high z
                      'low_z': {'dt': 40, 'u': 0.00, 'v': 0.00, 'w': 10.0},  # low z
                      'high_x': {'dt': 25, 'u': 10.0, 'v': 0.00, 'w': 0.00},  # high x
@@ -25,10 +25,15 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
                      'high_y': {'dt': 25, 'u': 0.00, 'v': 10.0, 'w': 0.00},  # high y
                      'mid_y': {'dt': 25, 'u': 0.00, 'v': 1.00, 'w': 0.00},  # mid y
                      'low_y': {'dt': 40, 'u': 0.00, 'v': 0.10, 'w': 0.00}}  # low y
+    '''
+    velocity_sets = {'high25': {'dt': 25, 'u': 10.0, 'v': 10.0, 'w': 40.0},
+                     'low25': {'dt': 25, 'u': 0.05, 'v': 0.05, 'w': 15.0},
+                     'high40': {'dt': 40, 'u': 6.0, 'v': 6.0, 'w': 28.0},
+                     'low40': {'dt': 40, 'u': 0.05, 'v': 0.05, 'w': 5.00}}
 
-    calibrations = [1, 7]
+    calibrations = [1, 2, 3, 4, 5, 6, 7]
 
-    dimensions = (1024, 1280)
+    dimensions = (1024/2, 1280/2)
 
     for vel_key in velocity_sets.keys():
         for cal in calibrations:
