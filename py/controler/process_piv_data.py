@@ -6,9 +6,20 @@ from py.utils import shorthand_to_tex as stt
 
 
 
-def create_tex_appendix_figs(run_id):
+def process_piv_data(run_id):
     """
-    creates the example figures used in the PIV section
+    Processes all vortex PIV data. At this point, everything has become a little convoluted, but running this
+    function will complete all processing for input run_id and produce all the relevant figures which embody the
+    dataset and and place them in an appendix `.tex` file ready for inclusion in the master thesis document main.
+
+    The hierarchy at this point is:
+        TeXRunFigurePage extends
+        TexWriter invokes
+        TexFigureGenerator wraps
+        construct_experiments returns
+        Experiment with attribute
+        AxialVortex which has plotting methods to produce figures of interest.
+
     """
 
     def contour_component_plotter(components):
@@ -42,12 +53,12 @@ def create_tex_appendix_figs(run_id):
     figdoc.write()
 
 
-def create_all_tex_appendix_figs():
+def process_all_piv_data():
     run_ids = range(1, 71)
     for run_id in run_ids:
-        create_tex_appendix_figs(run_id)
+        process_piv_data(run_id)
 
 
 
 if __name__ == "__main__":
-    create_all_tex_appendix_figs()
+    process_all_piv_data()

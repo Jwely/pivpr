@@ -49,7 +49,7 @@ def construct_experiments(experiment_table_path, experiment_directory_path, ids=
 
             # construct an axial vortex
             av = construct_axial_vortex(v3d_dir=exp_dir,
-                                        pkl_dir=PICKLE_DIR,
+                                        pkl_dir=PIV_PICKLE_DIR,
                                         name_tag=name_tag,
                                         include_dynamic=include_dynamic,
                                         velocity_fs=row['v_fs_mean'],

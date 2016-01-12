@@ -29,7 +29,7 @@ class TeXFigureGenerator():
 
         def enf_string(arg):
 
-            if isinstance(arg, list) and len(carg) == 1:
+            if isinstance(arg, list) and len(arg) == 1:
                 return str(arg[0])
             else:
                 return str(arg)
