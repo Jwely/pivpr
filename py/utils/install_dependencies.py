@@ -10,13 +10,13 @@ def install_dependencies(wheel_dir):
     by downloading and extracting `python27_64bit_resources.7z` and pointing this function to
     the extracted directory. You can go get all these yourself, but this is probably easier.
 
-    :param wheel_dir:   directory with python resource files in it
+    :param wheel_dir:   directory with python resource files in it (wheels)
     """
 
     # install microsoft visual studio and graphviz msi files. If they are already installed
     # you may hit cancel without any negative effects.
-    os.system(os.path.join(wheel_dir, r"VCForPython27.msi"))
-    os.system(os.path.join(wheel_dir, r"graphviz-2.38.msi"))
+    #os.system(os.path.join(wheel_dir, r"VCForPython27.msi"))
+    #os.system(os.path.join(wheel_dir, r"graphviz-2.38.msi"))
 
     # pip installation thingies
     pip.main(["install", "--upgrade", "pip"])
@@ -24,7 +24,9 @@ def install_dependencies(wheel_dir):
     pip.main(["install", "pandas"])
     pip.main(["install", "matplotlib"])
     pip.main(["install", "Image"])
-    pip.main(["install", os.path.join(wheel_dir, "pygraphviz-1.3.1-cp27-none-win_amd64.whl")])
+    pip.main(["install", "libtiff"])
+    pip.main(["install", "--upgrade", os.path.join(wheel_dir, "pygraphviz-1.3.1-cp27-none-win_amd64.whl")])
+    pip.main(["install", "--upgrade", os.path.join(wheel_dir, "libtiff-0.4.0-cp27-none-win_amd64.whl")])
 
 
 if __name__ == "__main__":

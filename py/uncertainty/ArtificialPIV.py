@@ -79,7 +79,6 @@ class ArtificialPIV:
         """
 
         def get_active(aline):
-            """ small sub function to input a string and search for variable tags"""
             # identify the active section for further parsing
             for key in self.tag_dict.keys():
                 if key in aline:
@@ -104,7 +103,8 @@ class ArtificialPIV:
         return
 
 
-    def _get_overlap_fov(self, mesh_dict):
+    @staticmethod
+    def _get_overlap_fov(mesh_dict):
         """ Finds the bounding rectangle of real coordinate space that is visible to both cameras """
 
         result = {'x_mm_min': min([np.min(mesh_dict['l_x_mm']), np.min(mesh_dict['r_x_mm'])]),
@@ -139,6 +139,10 @@ class ArtificialPIV:
         """
         gets pixel coordinates on the left and right cameras. Accepts either a set of
         x y and z coordinates or a Particle instance which has those attributes.
+        :param x_mm:    x position in mm
+        :param y_mm:    y position in mm
+        :param z_mm:    z position in mm
+        :param particle:    a Particle instance which has the other three params as attributes
         """
 
         if particle is not None:
@@ -159,7 +163,10 @@ class ArtificialPIV:
 
     def get_mm_coords(self, x_px, y_px, z_mm):
         """
-        reverse of get_pixel_coords.
+        gets real mm coordinates from pixel coordinates.
+        :param x_px:    x position in pixels
+        :param y_px:    y position in pixels
+        :param z_mm:    z position in millimeters
         """
         result = {'l_x_mm': self._eval_cal_equation('l_x_mm', x_px, y_px, z_mm),
                   'l_y_mm': self._eval_cal_equation('l_y_mm', x_px, y_px, z_mm),
@@ -168,7 +175,8 @@ class ArtificialPIV:
         return result
 
 
-    def _get_intensities(self, particle, mesh_dict, particle_size=0.2, particle_scatter=100,
+    @staticmethod
+    def _get_intensities(particle, mesh_dict, particle_size=0.2, particle_scatter=100,
                          light_sheet_thickness=3.00):
         """
         Calculate the intensity of light surrounding a particle. Based on work from Raffel et al.
@@ -202,9 +210,9 @@ class ArtificialPIV:
         return i_l, i_r
 
 
-    def make_image_pairs(self, n_particles, dt, u, v, w, particle_size=0.2,
-                         particle_scatter=100, light_sheet_thickness=3.00,
-                         dtype="uint16", name_prefix= "Ely_May28th", id5="00001", output_dir=None):
+    def make_image_pairs(self, n_particles, dt, u, v, w,
+                         particle_size=0.2, particle_scatter=100, light_sheet_thickness=3.00,
+                         dtype="uint16", name=None, output_dir=None):
         """
         This function creates a set of image pairs at times 0 and dt. It does this by creating
         particles within view of both cameras, then propagating them forward to the image planes
@@ -220,8 +228,14 @@ class ArtificialPIV:
         :param particle_size:           average size of particles in (mm)
         :param particle_scatter:        scattering efficiency of the particle
         :param light_sheet_thickness:   thickness of light sheet (+/-3 sigma) in (mm)
+        :param dtype:                   datatype of output images, defaults to uint16
+        :param name:                    this name will be used to name output files, followed by La,Lb,Ra,Rb
+        :param output_dir:              directory to save output images
         :return:
         """
+
+        if name is None:
+            name = self.name
 
         # translate velocities into displacements
         x_disp = u * dt * 1e-6 * 1e3  # convert to mm from m/s and microseconds
@@ -267,25 +281,23 @@ class ArtificialPIV:
         # save the images
         if output_dir is not None:
             for key in self.images.keys():
-                outname = os.path.join(output_dir, "{0}{1}{2}.tif".format(name_prefix, id5, key))
+                outname = os.path.join(output_dir, "{0}{1}.tif".format(name, key))
                 save_array_as_dtype(self.images[key], dtype, outname)
 
         # now save a json file in the same directory with the parameters of this function
         argdict = {}
-        for arg in ["n_particles", "dt", "u", "v", "w", "particle_size",
-                    "particle_scatter", "light_sheet_thickness", "output_dir"]:
+        for arg in ["n_particles", "dt", "u", "v", "w", "particle_size", "particle_scatter",
+                    "light_sheet_thickness", "dtype", "name", "output_dir"]:
             argdict[arg] = locals()[arg]
 
-        with open(os.path.join(output_dir, "params.json"), 'w+') as logfile:
+        with open(os.path.join(output_dir, "{0}.json".format(name)), 'w+') as logfile:
             logfile.write(json.dumps(argdict))
-
-
 
 
 # testing area
 if __name__ == '__main__':
-    dims = (1024/4, 1280/4)
-    apiv = ArtificialPIV(dims, name="test")
+    mdims = (1024 / 4, 1280 / 4)
+    apiv = ArtificialPIV(mdims, name="test")
     apiv.load_calibration_file('cal_data/station_2/ely_may28th.cal')
 
 
