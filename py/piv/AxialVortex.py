@@ -6,7 +6,6 @@ import os
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-import spectrum
 
 # local imports
 from py.piv.MeanVecFieldCartesian import MeanVecFieldCartesian
@@ -15,7 +14,6 @@ from py.config import *
 
 
 class AxialVortex(MeanVecFieldCartesian):
-
     def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None, min_points=20):
         """
         Built to extend the cartesian version of this class. Since all PIV data is
@@ -43,20 +41,20 @@ class AxialVortex(MeanVecFieldCartesian):
         self.name_tag = name_tag
 
         # vortex cylindrical specific attributes
-        self.core_location = (None, None)       # position of core
-        self.core_index = (None, None)          # fractional index position of core
-        self.velocity_fs = velocity_fs          # free stream velocity (experimental input)
-        self.core_radius = None                 # distance between core and Tmax location (mm)
-        self.Tmax = None                        # maximum tangential velocity
-        self.Wcore = None                       # axial velocity at the core
-        self.circulation_strength = None        # -flag
+        self.core_location = (None, None)  # position of core
+        self.core_index = (None, None)  # fractional index position of core
+        self.velocity_fs = velocity_fs  # free stream velocity (experimental input)
+        self.core_radius = None  # distance between core and Tmax location (mm)
+        self.Tmax = None  # maximum tangential velocity
+        self.Wcore = None  # axial velocity at the core
+        self.circulation_strength = None  # -flag
 
         # update the coordinate meshgrid
-        self.meshgrid.update({"r_mesh": None,       # radial meshgrid
-                              "t_mesh": None,       # tangential meshgrid (-pi to pi about right horizontal)
-                              "hv_mesh": None,      # tangential meshgrid (0 near horizontal, pi/2 for vertical)
-                              "t_meshd": None,      # t_mesh converted to degrees (-180 to 180)
-                              "hv_meshd": None})    # hv_mesh converted to degrees (0 to 90)
+        self.meshgrid.update({"r_mesh": None,  # radial meshgrid
+                              "t_mesh": None,  # tangential meshgrid (-pi to pi about right horizontal)
+                              "hv_mesh": None,  # tangential meshgrid (0 near horizontal, pi/2 for vertical)
+                              "t_meshd": None,  # t_mesh converted to degrees (-180 to 180)
+                              "hv_meshd": None})  # hv_mesh converted to degrees (0 to 90)
 
         # add to the velocity matrix and flattened version
         self.mean_set.update({'R': None,  # mean radial velocity around vortex core
@@ -85,7 +83,6 @@ class AxialVortex(MeanVecFieldCartesian):
                                  'rw': None,  # reynolds stress in r/w
                                  'tw': None})  # reynolds stress in t/w
 
-
     def to_pickle(self, pickle_path, include_dynamic=False):
         """ dumps the contents of this object to a pickle """
 
@@ -105,7 +102,6 @@ class AxialVortex(MeanVecFieldCartesian):
             cPickle.dump(self, f)
             print("Saved to {0}".format(pickle_path))
 
-
     @staticmethod
     def from_pickle(pickle_path):
         """ loads previous saved state from a .pkl file and returns a MeanVecFieldCartesian instance """
@@ -116,7 +112,6 @@ class AxialVortex(MeanVecFieldCartesian):
         print("loaded pkl from {0}".format(pickle_path))
         new_instance.characterize()
         return new_instance
-
 
     def _rrange_parser(self, r_range):
         """ parses r_range to allow arguments of core radii """
@@ -131,7 +126,6 @@ class AxialVortex(MeanVecFieldCartesian):
                     raise Exception("Str inputs only accepted with a trailing 'r'")
         r_range = tuple(r_range_list)
         return r_range
-
 
     def _getitem_by_rt(self, component, r_range=None, t_range=None, symmetric=None):
         """
@@ -189,7 +183,6 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return rt_subset_component
 
-
     def characterize(self, verbose=True):
         """
         Characterizes this vortex with a variety of scalar metrics such as the radius,
@@ -215,7 +208,6 @@ class AxialVortex(MeanVecFieldCartesian):
                      "Wcore": self.Wcore,
                      "Vfree": self.velocity_fs}
         return char_dict
-
 
     def _find_core(self, crange=7):
         """
@@ -248,7 +240,6 @@ class AxialVortex(MeanVecFieldCartesian):
         self.core_location = (xc, yc)
         return self.core_location
 
-
     def _get_cylindrical_meshgrids(self, core_location_tuple=None):
         """
         Creates cylindrical meshgrids from a core location and the existing x,y meshgrids.
@@ -268,9 +259,8 @@ class AxialVortex(MeanVecFieldCartesian):
         self.meshgrid['hv_mesh'] = abs(self.meshgrid['t_mesh'])
         left_half = self.meshgrid['hv_mesh'] > (math.pi / 2)
         self.meshgrid['hv_mesh'][left_half] = math.pi - self.meshgrid['hv_mesh'][left_half]
-        self.meshgrid['t_meshd'] = self.meshgrid['t_mesh'] * 180 / math.pi      # degrees version
-        self.meshgrid['hv_meshd'] = self.meshgrid['hv_mesh'] * 180 / math.pi    # degrees version
-
+        self.meshgrid['t_meshd'] = self.meshgrid['t_mesh'] * 180 / math.pi  # degrees version
+        self.meshgrid['hv_meshd'] = self.meshgrid['hv_mesh'] * 180 / math.pi  # degrees version
 
     def build_cylindrical(self, core_location_tuple=None):
         """
@@ -302,7 +292,7 @@ class AxialVortex(MeanVecFieldCartesian):
         self.mean_set['T'] = masked_mean(self.dynamic_set['T'], axis=2, mask=mpm)
 
         # find dynamic set fluctuations by subtracting out averages
-        for i in range(0, self.dims[-1]):       # cant figure out fully vectorized element wise subtraction
+        for i in range(0, self.dims[-1]):  # cant figure out fully vectorized element wise subtraction
             self.dynamic_set['r'][:, :, i] = self.dynamic_set['R'][:, :, i] - self.mean_set['R']
             self.dynamic_set['t'][:, :, i] = self.dynamic_set['T'][:, :, i] - self.mean_set['T']
 
@@ -317,7 +307,6 @@ class AxialVortex(MeanVecFieldCartesian):
         # now characterize the vortex with some important but simple statistics
         characteristics = self.characterize(verbose=True)
         return characteristics
-
 
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=100):
         """
@@ -344,7 +333,6 @@ class AxialVortex(MeanVecFieldCartesian):
         ylim = (ylim_low, ylim_high)
 
         return xlim, ylim
-
 
     def _get_dynamic_subsets(self, component_y, r_range=None, t_range=None, symmetric=None):
         """
@@ -383,7 +371,6 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return y_sets, t_set
 
-
     def _get_vrange(self, component, low_percentile=None, high_percentile=None):
         """
         Gets the percentile range for color bar scaling on a given component matrix. Used
@@ -407,10 +394,9 @@ class AxialVortex(MeanVecFieldCartesian):
         vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
         return vmin, vmax
 
-
     def dynamic_plot(self, component_y, title=None, y_label=None, cmap=None,
-                             y_range=None, r_range=None, t_range=None, symmetric=None,
-                             tight=False, figsize=None, outpath=None):
+                     y_range=None, r_range=None, t_range=None, symmetric=None,
+                     tight=False, figsize=None, outpath=None):
         """
         A scatter plot of component y where the x axis is locked as time.
         :param component_y:
@@ -472,7 +458,6 @@ class AxialVortex(MeanVecFieldCartesian):
         ax3.psd(y_sets['mean'], NFFT=64, Fs=SAMPLING_RATE)
         plt.title("log PSD")
 
-
         if outpath:
             plt.savefig(outpath)
             plt.close()
@@ -481,7 +466,6 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.show()
             plt.close()
         return
-
 
     def scatter_plot(self, component_x, component_y, component_c=None,
                      title=None, x_label=None, y_label=None, c_label=None, cmap=None,
@@ -560,7 +544,6 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.show()
         return
 
-
     def scatter_plot_qual(self, component_x, component_y):
         """
         Prints quick simple scatter plot of component_x vs component_y with the points colored
@@ -570,7 +553,6 @@ class AxialVortex(MeanVecFieldCartesian):
         params are exactly as scatter_plot()
         """
         self.scatter_plot(component_x, component_y, 'num', c_label="Number of Samples")
-
 
     def quiver_plot(self, title=None, outpath=None):
         """
@@ -582,8 +564,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
         plt.figure()
         plt.quiver(self['x_mesh'], self['y_mesh'],
-                   self['U'], self['V'], #self['P'],
-                   #cmap=cm.jet,
+                   self['U'], self['V'],  # self['P'],
+                   # cmap=cm.jet,
                    color='blue',
                    scale=400,
                    width=0.001,
@@ -605,7 +587,6 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.close()
         else:
             plt.show()
-
 
     def stream_plot(self, title=None, outpath=None):
         """
@@ -642,7 +623,6 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.show(fig)
         return
-
 
     def contour_plot(self, component, title=None, outpath=None):
         """
@@ -688,8 +668,6 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
 if __name__ == "__main__":
-
-
     run = 1
     directory = r"E:\Data2\Ely_May28th\Vector\{0}".format(run)
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
@@ -704,5 +682,3 @@ if __name__ == "__main__":
     mvf.stream_plot()
     mvf.contour_plot('cte')
     mvf.contour_plot('yte')
-
-
