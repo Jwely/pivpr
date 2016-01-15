@@ -4,7 +4,7 @@ __author__ = 'Jwely'
 import numpy as np
 import os
 import json
-from PIL import Image
+from py.utils.tiff_tools import save_array_as_dtype
 
 
 class Particle:
@@ -42,10 +42,10 @@ class ArtificialPIV:
                      'y_px': y_mesh,            # integer meshgrid of y pixel indices
                      'z_mm': x_mesh * 0}        # integer meshgrid of z indices (all zero)
 
-        self.images = {'la': np.zeros(dims),  # left image at time = 0
-                       'lb': np.zeros(dims),  # left image at time = dt
-                       'ra': np.zeros(dims),  # right image at time = 0
-                       'rb': np.zeros(dims)}  # right image at time = dt
+        self.images = {'La': np.zeros(dims),  # left image at time = 0
+                       'Lb': np.zeros(dims),  # left image at time = dt
+                       'Ra': np.zeros(dims),  # right image at time = 0
+                       'Rb': np.zeros(dims)}  # right image at time = dt
 
         # dictionary of actual calibration information
         self.cal_info = {'l_x_mm': [],  # from left pixels to interrogation plane mm
@@ -203,7 +203,8 @@ class ArtificialPIV:
 
 
     def make_image_pairs(self, n_particles, dt, u, v, w, particle_size=0.2,
-                         particle_scatter=100, light_sheet_thickness=3.00, output_dir=None):
+                         particle_scatter=100, light_sheet_thickness=3.00,
+                         dtype="uint16", name_prefix= "Ely_May28th", id5="00001", output_dir=None):
         """
         This function creates a set of image pairs at times 0 and dt. It does this by creating
         particles within view of both cameras, then propagating them forward to the image planes
@@ -247,8 +248,8 @@ class ArtificialPIV:
         print("Projecting particles into camera image planes")
         for i, p in enumerate(self.particles_a):
             la, ra = self._get_intensities(p, mesh_t0, particle_size, particle_scatter, light_sheet_thickness)
-            self.images['la'] += la
-            self.images['ra'] += ra
+            self.images['La'] += la
+            self.images['Ra'] += ra
 
             if i % 1000 == 0:
                 print("particle {0}".format(i))
@@ -257,8 +258,8 @@ class ArtificialPIV:
         print("Displacing particles and re-projecting")
         for i, p in enumerate(self.particles_b):
             lb, rb = self._get_intensities(p, mesh_t1, particle_size, particle_scatter, light_sheet_thickness)
-            self.images['lb'] += lb
-            self.images['rb'] += rb
+            self.images['Lb'] += lb
+            self.images['Rb'] += rb
 
             if i % 1000 == 0:
                 print("particle {0}".format(i))
@@ -266,8 +267,8 @@ class ArtificialPIV:
         # save the images
         if output_dir is not None:
             for key in self.images.keys():
-                im = Image.fromarray(self.images[key])
-                im.save(os.path.join(output_dir, "{0}_{1}.tif".format(self.name, key)))
+                outname = os.path.join(output_dir, "{0}{1}{2}.tif".format(name_prefix, id5, key))
+                save_array_as_dtype(self.images[key], dtype, outname)
 
         # now save a json file in the same directory with the parameters of this function
         argdict = {}
@@ -286,13 +287,5 @@ if __name__ == '__main__':
     dims = (1024/4, 1280/4)
     apiv = ArtificialPIV(dims, name="test")
     apiv.load_calibration_file('cal_data/station_2/ely_may28th.cal')
-    apiv.make_image_pairs(n_particles=2000,
-                          dt=25,
-                          u=0,
-                          v=0,
-                          w=40,
-                          particle_size=0.2,
-                          particle_scatter=100,
-                          light_sheet_thickness=3.0,
-                          output_dir=r"C:\Users\Jeff\Desktop\Github\pivpr\py\uncertainty")
+
 
