@@ -26,10 +26,9 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
 
     dimensions = (1024, 1280)
 
-    counter = 100
-    for vel_key in velocity_sets.keys():
+    for i,vel_key in enumerate(velocity_sets.keys()):
         for cal in calibrations:
-            name = "loc-{0}-{1}".format(cal, vel_key)
+            name = "Ely_May28th{0}{1}".format(str(cal).zfill(2), str(i + 1).zfill(3))
 
             cal_path = os.path.join(CALIBRATION_DIR, "station_{num}/ely_may28th.cal".format(num=cal))
             apiv = ArtificialPIV(dimensions, name)
@@ -40,11 +39,10 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
                                            "particle_scatter": 100,
                                            "light_sheet_thickness": 3.0,
                                            "dtype": "uint16",
-                                           "name": "Ely_May28th{0}".format(str(counter).zfill(5)),
+                                           "name": name,
                                            "output_dir": uncertainty_image_dir})
 
             apiv.make_image_pairs(**velocity_sets[vel_key])
-            counter += 1
 
 
 
