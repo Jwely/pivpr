@@ -1,1 +1,0 @@
-{"particle_scatter": 100, "n_particles": 32768, "u": 1.0, "output_dir": "../uncertainty/artificial_images\\loc-1-mid_x", "w": 0.0, "v": 0.0, "dt": 25, "light_sheet_thickness": 3.0, "particle_size": 0.2}
