@@ -4,7 +4,6 @@ __author__ = 'Jwely'
 import numpy as np
 import os
 import json
-from datetime import datetime
 from py.utils.tiff_tools import save_array_as_dtype
 
 
@@ -175,8 +174,8 @@ class ArtificialPIV:
                   'r_y_mm': self._eval_cal_equation('r_y_mm', x_px, y_px, z_mm)}
         return result
 
-
-    def _get_intensities(self, particles, mesh_dict, particle_size=0.2, particle_scatter=100,
+    @staticmethod
+    def _get_intensities(particles, mesh_dict, particle_size=0.2, particle_scatter=100,
                          light_sheet_thickness=3.0, subset_radius=2.0):
         """
         Calculate the intensity of light surrounding a particle. Based on work from Raffel et al.
@@ -310,7 +309,8 @@ class ArtificialPIV:
             logfile.write(json.dumps(argdict))
 
 
-# testing area
+
+# testing area for profiling
 if __name__ == '__main__':
 
     def main():
@@ -331,5 +331,3 @@ if __name__ == '__main__':
 
     import cProfile
     cProfile.run("main()")
-
-
