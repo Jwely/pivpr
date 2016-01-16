@@ -22,7 +22,7 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
                      'high': {'dt': 25, 'u': 0.0, 'v': 0.0, 'w': 5.0},
                      'max': {'dt': 25, 'u': 10.0, 'v': 10.0, 'w': 38.0}}
 
-    calibrations = [4]
+    calibrations = [1]
 
     dimensions = (1024, 1280)
 
