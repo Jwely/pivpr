@@ -17,16 +17,17 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
     it go over night (scratch that ... several days).
     """
 
+    velocity_order = ['min', 'low', 'high', 'max']
     velocity_sets = {'min': {'dt': 40, 'u': 0.0, 'v': 0.0, 'w': 5.0},
                      'low': {'dt': 40, 'u': 4.0, 'v': 4.0, 'w': 26.0},
                      'high': {'dt': 25, 'u': 0.0, 'v': 0.0, 'w': 5.0},
                      'max': {'dt': 25, 'u': 10.0, 'v': 10.0, 'w': 38.0}}
 
-    calibrations = [1]
+    calibrations = [6]
 
     dimensions = (1024, 1280)
 
-    for i,vel_key in enumerate(velocity_sets.keys()):
+    for i, vel_key in enumerate(velocity_order):
         for cal in calibrations:
             name = "Ely_May28th{0}{1}".format(str(cal).zfill(2), str(i + 1).zfill(3))
 
@@ -34,7 +35,7 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
             apiv = ArtificialPIV(dimensions, name)
             apiv.load_calibration_file(cal_path)
 
-            velocity_sets[vel_key].update({"n_particles": dimensions[0] * dimensions[1] / 40,
+            velocity_sets[vel_key].update({"n_particles": dimensions[0] * dimensions[1] / 30,
                                            "particle_size": 0.2,
                                            "particle_scatter": 100,
                                            "light_sheet_thickness": 3.0,
