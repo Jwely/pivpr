@@ -4,6 +4,7 @@ __author__ = 'Jwely'
 import numpy as np
 import os
 import json
+from datetime import datetime
 from py.utils.tiff_tools import save_array_as_dtype
 
 
@@ -251,10 +252,10 @@ class ArtificialPIV:
 
         # generate a bunch of random particles within the overlaping field of view area.
         print("Creating {0} particles!".format(n_particles))
-        for n in range(n_particles):
+        for n in xrange(n_particles):
             p_x_mm = np.random.uniform(fov['x_mm_min'], fov['x_mm_max'])
             p_y_mm = np.random.uniform(fov['y_mm_min'], fov['y_mm_max'])
-            p_z_mm = np.random.uniform(0, light_sheet_thickness) - light_sheet_thickness / 2.0
+            p_z_mm = np.random.uniform(0, light_sheet_thickness) - (light_sheet_thickness / 2.0)
             self.particles_a.append(Particle(p_x_mm, p_y_mm, p_z_mm))
             self.particles_b.append(Particle(p_x_mm + x_disp, p_y_mm + y_disp, p_z_mm + z_disp))
 
@@ -266,7 +267,7 @@ class ArtificialPIV:
             self.images['Ra'] += ra
 
             if i % 1000 == 0:
-                print("particle {0}".format(i))
+                print("particle {0} \t\t {1}".format(i, datetime.now()))
 
         # and do the same thing for the displaced particles representing time = dt
         print("Displacing particles and re-projecting")
@@ -276,7 +277,7 @@ class ArtificialPIV:
             self.images['Rb'] += rb
 
             if i % 1000 == 0:
-                print("particle {0}".format(i))
+                print("particle {0} \t\t {1}".format(i, datetime.now()))
 
         # save the images
         if output_dir is not None:
@@ -296,8 +297,24 @@ class ArtificialPIV:
 
 # testing area
 if __name__ == '__main__':
-    mdims = (1024 / 4, 1280 / 4)
-    apiv = ArtificialPIV(mdims, name="test")
-    apiv.load_calibration_file('cal_data/station_2/ely_may28th.cal')
+
+    def main():
+        mdims = (1024/4, 1280/4)
+        apiv = ArtificialPIV(mdims, name="profile_test")
+        apiv.load_calibration_file('cal_data/station_7/ely_may28th.cal')
+        apiv.make_image_pairs(n_particles=mdims[0] * mdims[1] / 40,
+                              dt=40,
+                              u=0.0,
+                              v=0.0,
+                              w=0.0,
+                              particle_size=0.2,
+                              particle_scatter=100,
+                              light_sheet_thickness=3.00,
+                              dtype="uint16",
+                              name="profile_test",
+                              output_dir="artificial_images")
+
+    import cProfile
+    cProfile.run("main()")
 
 
