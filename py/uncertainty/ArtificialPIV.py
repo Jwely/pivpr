@@ -108,10 +108,10 @@ class ArtificialPIV:
     def _get_overlap_fov(mesh_dict):
         """ Finds the bounding rectangle of real coordinate space that is visible to both cameras """
 
-        result = {'x_mm_min': min([np.min(mesh_dict['l_x_mm']), np.min(mesh_dict['r_x_mm'])]),
-                  'x_mm_max': max([np.max(mesh_dict['l_x_mm']), np.max(mesh_dict['r_x_mm'])]),
-                  'y_mm_min': min([np.min(mesh_dict['l_y_mm']), np.min(mesh_dict['r_y_mm'])]),
-                  'y_mm_max': max([np.max(mesh_dict['l_y_mm']), np.max(mesh_dict['r_y_mm'])])}
+        result = {'x_mm_min': max([np.min(mesh_dict['l_x_mm']), np.min(mesh_dict['r_x_mm'])]),
+                  'x_mm_max': min([np.max(mesh_dict['l_x_mm']), np.max(mesh_dict['r_x_mm'])]),
+                  'y_mm_min': max([np.min(mesh_dict['l_y_mm']), np.min(mesh_dict['r_y_mm'])]),
+                  'y_mm_max': min([np.max(mesh_dict['l_y_mm']), np.max(mesh_dict['r_y_mm'])])}
 
         result.update({'x_mm_cen': np.mean([result['x_mm_min'], result['x_mm_max']]),
                        'y_mm_cen': np.mean([result['y_mm_min'], result['y_mm_max']])})
@@ -123,7 +123,7 @@ class ArtificialPIV:
         Simply evaluates a displacement value from the input x,y,z coordinates.
         Note that depending on the cal_param, x, y, z may have units of (mm) or (pix).
 
-        This is not computationally efficient, but its effective and concise.
+        This is not computationally efficient, but it's effective and concise.
         """
 
         if cal_param not in self.cal_info.keys():
@@ -176,37 +176,61 @@ class ArtificialPIV:
         return result
 
 
-    @staticmethod
-    def _get_intensities(particle, mesh_dict, particle_size=0.2, particle_scatter=100,
-                         light_sheet_thickness=3.00):
+    def _get_intensities(self, particles, mesh_dict, particle_size=0.2, particle_scatter=100,
+                         light_sheet_thickness=3.0, subset_radius=2.0):
         """
         Calculate the intensity of light surrounding a particle. Based on work from Raffel et al.
 
         Raffel, M., Willert, C., and Kompenhans, J., 'Particle Image Velocimetry: A Practical
         Guide', Springer, New York, 1998.
 
-        :param particle:                a particle instance with x, y, z mm positions
+        :param particles:               a list of particle instances with x, y, z mm positions
         :param mesh_dict:               a dictionary of meshgrids as output from self.get_mm_coords. This is very
                                         important to use, because without creating a new meshgrid for every
                                         z_mm particle displacement, variation in the z direction can be lost!
         :param particle_size:           the size of the typical particle (in pixels!)
         :param particle_scatter:        scattering efficiency of particle, between 0 and 100
         :param light_sheet_thickness:   thickness in mm of the laser light sheet. (between +3 / -3 sigma intensity)
+        :param subset_radius:           the furthest radius (in mm) to consider for particle intensities.
         :return:                        left and right intensity matrices, to be added to the master.
+
+        NOTE:
+        About 70% of the processing time is eaten up by this function. Efficiency gains here are worth a lot.
+        Some significant improvements have already been made. The conditionals used to subset the matrix into
+        smaller pieces are writen for speed.
         """
 
-        # intensity after particle scattering.
-        i_o = particle_scatter * np.exp(-(particle.z_mm ** 2) / (light_sheet_thickness ** 2) / 8)
+        if not isinstance(particles, list):
+            particles = [particles]
 
-        # use new meshgrids of L/R x+y pixel space with nonzero z displacement
+        i_l = np.zeros(mesh_dict['l_x_mm'].shape)
+        i_r = np.zeros(mesh_dict['l_x_mm'].shape)
 
-        # intensities at each camera
-        i_l = i_o * np.exp((-(mesh_dict['l_x_mm'] - particle.x_mm) ** 2 -
-                            (mesh_dict['l_y_mm'] - particle.y_mm) ** 2) /
-                           ((particle_size ** 2) / 8))
-        i_r = i_o * np.exp((-(mesh_dict['r_x_mm'] - particle.x_mm) ** 2 -
-                            (mesh_dict['r_y_mm'] - particle.y_mm) ** 2) /
-                           ((particle_size ** 2) / 8))
+        for i, p in enumerate(particles):
+            # intensity after particle scattering.
+            i_o = particle_scatter * np.exp(-(p.z_mm ** 2) / (light_sheet_thickness ** 2) / 8)
+
+            # performance enhancement. Only executes the gaussian intensity function within 'index_radius'
+            # grid points. This is because the intensity trails of drastically with significant distance, and
+            # calculating the intensity for every pixel in every image for every particle is many million
+            # more operations than is reasonably needed. This moves the scale from O(n^2) towards O(n) if n is the
+            # size of one side on a square image
+            l_sub = abs(mesh_dict['l_x_mm'] - p.x_mm) < subset_radius
+            l_sub *= abs(mesh_dict['l_y_mm'] - p.y_mm) < subset_radius
+
+            r_sub = abs(mesh_dict['r_x_mm'] - p.x_mm) < subset_radius
+            r_sub *= abs(mesh_dict['r_y_mm'] - p.y_mm) < subset_radius
+
+            # intensities at each camera
+            i_l[l_sub] += i_o * np.exp((-(mesh_dict['l_x_mm'][l_sub] - p.x_mm) ** 2 -
+                                        (mesh_dict['l_y_mm'][l_sub] - p.y_mm) ** 2) /
+                                       ((particle_size ** 2) / 8))
+            i_r[r_sub] += i_o * np.exp((-(mesh_dict['r_x_mm'][r_sub] - p.x_mm) ** 2 -
+                                        (mesh_dict['r_y_mm'][r_sub] - p.y_mm) ** 2) /
+                                       ((particle_size ** 2) / 8))
+
+            if i % (len(particles) / 20) == 0:
+                print("{0:2.0f}% complete".format(float(i) / len(particles) * 100))
 
         return i_l, i_r
 
@@ -256,28 +280,19 @@ class ArtificialPIV:
             p_x_mm = np.random.uniform(fov['x_mm_min'], fov['x_mm_max'])
             p_y_mm = np.random.uniform(fov['y_mm_min'], fov['y_mm_max'])
             p_z_mm = np.random.uniform(0, light_sheet_thickness) - (light_sheet_thickness / 2.0)
+
             self.particles_a.append(Particle(p_x_mm, p_y_mm, p_z_mm))
             self.particles_b.append(Particle(p_x_mm + x_disp, p_y_mm + y_disp, p_z_mm + z_disp))
 
         # now combine all of the intensity profiles for each particle into one image
         print("Projecting particles into camera image planes")
-        for i, p in enumerate(self.particles_a):
-            la, ra = self._get_intensities(p, mesh_t0, particle_size, particle_scatter, light_sheet_thickness)
-            self.images['La'] += la
-            self.images['Ra'] += ra
-
-            if i % 1000 == 0:
-                print("particle {0} \t\t {1}".format(i, datetime.now()))
+        self.images['La'], self.images['Ra'] = self._get_intensities(self.particles_a, mesh_t0, particle_size,
+                                                                     particle_scatter, light_sheet_thickness)
 
         # and do the same thing for the displaced particles representing time = dt
         print("Displacing particles and re-projecting")
-        for i, p in enumerate(self.particles_b):
-            lb, rb = self._get_intensities(p, mesh_t1, particle_size, particle_scatter, light_sheet_thickness)
-            self.images['Lb'] += lb
-            self.images['Rb'] += rb
-
-            if i % 1000 == 0:
-                print("particle {0} \t\t {1}".format(i, datetime.now()))
+        self.images['Lb'], self.images['Rb'] = self._get_intensities(self.particles_b, mesh_t1, particle_size,
+                                                                     particle_scatter, light_sheet_thickness)
 
         # save the images
         if output_dir is not None:
@@ -299,7 +314,7 @@ class ArtificialPIV:
 if __name__ == '__main__':
 
     def main():
-        mdims = (1024/4, 1280/4)
+        mdims = (1024, 1280)
         apiv = ArtificialPIV(mdims, name="profile_test")
         apiv.load_calibration_file('cal_data/station_7/ely_may28th.cal')
         apiv.make_image_pairs(n_particles=mdims[0] * mdims[1] / 40,
