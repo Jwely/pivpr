@@ -4,6 +4,7 @@ __author__ = 'Jwely'
 import numpy as np
 import os
 import json
+from datetime import datetime
 from py.utils.tiff_tools import save_array_as_dtype
 
 
@@ -257,6 +258,7 @@ class ArtificialPIV:
         :param output_dir:              directory to save output images
         :return:
         """
+        start = datetime.now()
 
         if name is None:
             name = self.name
@@ -308,13 +310,14 @@ class ArtificialPIV:
         with open(os.path.join(output_dir, "{0}.json".format(name)), 'w+') as logfile:
             logfile.write(json.dumps(argdict))
 
+        print("time = {0} hours".format((datetime.now() - start).seconds / 3600.00))
 
 
 # testing area for profiling
 if __name__ == '__main__':
 
     def main():
-        mdims = (1024, 1280)
+        mdims = (1024/8, 1280/8)
         apiv = ArtificialPIV(mdims, name="profile_test")
         apiv.load_calibration_file('cal_data/station_7/ely_may28th.cal')
         apiv.make_image_pairs(n_particles=mdims[0] * mdims[1] / 40,
