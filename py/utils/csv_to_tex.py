@@ -17,6 +17,8 @@ def csv_to_tex(csv_path, caption, justification, horizontal_line_rows=None):
             example: [1,2] draws a horizontal line below first row (headers) and second (units)
     """
 
+    if isinstance(horizontal_line_rows, int):
+        horizontal_line_rows = [horizontal_line_rows]
 
     print("loading from {0}".format(csv_path))
     df = pd.read_csv(csv_path, header=None)
