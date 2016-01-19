@@ -76,15 +76,15 @@ a large number of simulations. This is referred to as the bias, and the three
 bias components are denoted as
 
 \begin{equation}
-\beta_{\Delta U} = \overline{\Delta U}
+\beta_{U} = \overline{\Delta U}
 \label{eq:Ubias}
 \end{equation}
 \begin{equation}
-\beta_{\Delta V} = \overline{\Delta V}
+\beta_{V} = \overline{\Delta V}
 \label{eq:Vbias}
 \end{equation}
 \begin{equation}
-\beta_{\Delta W} = \overline{\Delta W}
+\beta_{W} = \overline{\Delta W}
 \label{eq:Wbias}
 \end{equation}
 
@@ -112,17 +112,17 @@ S_{\Delta W} = \sqrt{\frac{1}{N-1} \left(\sum_{i=1}^N (\Delta W_i -
 Resulting in precision calculations given by 
 %	
 \begin{equation}
-P_{\overline{\Delta U}} = \frac{2 S_{\Delta U}}{\sqrt{N}}
+P_{\overline{U}} = \frac{2 S_{\Delta U}}{\sqrt{N}}
 \label{eq:Uprec}
 \end{equation}
 
 \begin{equation}
-P_{\overline{\Delta V}} = \frac{2 S_{\Delta V}}{\sqrt{N}}
+P_{\overline{V}} = \frac{2 S_{\Delta V}}{\sqrt{N}}
 \label{eq:Vprec}
 \end{equation}
 
 \begin{equation}
-P_{\overline{\Delta W}} = \frac{2 S_{\Delta W}}{\sqrt{N}}
+P_{\overline{W}} = \frac{2 S_{\Delta W}}{\sqrt{N}}
 \label{eq:Wprec}
 \end{equation}
 
@@ -130,15 +130,15 @@ Total uncertainty for each component at the 95\% confidence level is calculated
 by combining the bias and precision via to obtain
 
 \begin{equation}
-U_{\overline{\Delta U}} = \sqrt{\beta_{\Delta U}^2 + P_{\overline{\Delta U}}^2}
+U_{\overline{\Delta U}} = \sqrt{\beta_{U}^2 + P_{\overline{U}}^2}
 \label{eq:Uuncert}
 \end{equation}
 \begin{equation}
-U_{\overline{\Delta V}} = \sqrt{\beta_{\Delta V}^2 + P_{\overline{\Delta V}}^2}
+U_{\overline{\Delta V}} = \sqrt{\beta_{V}^2 + P_{\overline{V}}^2}
 \label{eq:Vuncert}
 \end{equation}
 \begin{equation}
-U_{\overline{\Delta W}} = \sqrt{\beta_{\Delta W}^2 + P_{\overline{\Delta W}}^2}
+U_{\overline{\Delta W}} = \sqrt{\beta_{W}^2 + P_{\overline{W}}^2}
 \label{eq:Wuncert}
 \end{equation}
 
@@ -146,6 +146,10 @@ U_{\overline{\Delta W}} = \sqrt{\beta_{\Delta W}^2 + P_{\overline{\Delta W}}^2}
 For these experiments, artificial pixel displacements were created to emulate 
 the expected range of flow field conditions. These conditions include variance 
 in the streamwise velocity $W$ between 10 and 40 $m/s$, and in the spanwise 
-components $X$, and $Y$ of 0 to 10 $m/s$. The Monte Carlo analysis shows....
+components $X$, and $Y$ of 0 to 10 $m/s$. The value of 1 was use for $N$ in the 
+precision Equations \ref{eq:Uprec} through \ref{eq:Wprec}. Even though many 
+samples were taken at every vector location, the uncertainty in each individual 
+measurement was of great importance for studying the unstable component of the 
+velocity, and thus turbulent phenomena. The Monte Carlo analysis shows....
 
 (flag, unfinished, need to run new Monte Carlo code)
