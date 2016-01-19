@@ -50,11 +50,12 @@ class TeXWriter:
         self.content += ["\\chapter{{{0}}}".format(name)]
 
 
-    def write(self):
+    def write(self, verbose=False):
         """ Writes a `.tex` file with the current text and figures """
 
         with open(self.texfile_path, 'w+') as f:
             for line in self.content:
-                print(line)
+                if verbose:
+                    print(line)
                 f.write(line + "\n")
         print("Wrote tex file at {0}".format(self.texfile_path))
