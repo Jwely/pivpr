@@ -24,7 +24,7 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
                      'max': {'dt': 25, 'u': 10.0, 'v': 10.0, 'w': 38.0}
                      }
 
-    calibrations = [7,6,5,4,3,2,1]
+    calibrations = [7]
 
     dimensions = (1024, 1280)
 
@@ -36,7 +36,7 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
             apiv = ArtificialPIV(dimensions, name)
             apiv.load_calibration_file(cal_path)
 
-            velocity_sets[vel_key].update({"n_particles": dimensions[0] * dimensions[1] / 30,
+            velocity_sets[vel_key].update({"n_particles": dimensions[0] * dimensions[1] / 15,
                                            "particle_size": 0.2,
                                            "particle_scatter": 100,
                                            "light_sheet_thickness": 3.0,
