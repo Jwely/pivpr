@@ -44,11 +44,8 @@ def process_piv_data(run_id):
     figdoc.add_stream_plot("Stream plot of run ID {0}.".format(run_id), stream_width)
     contour_component_plotter(['num', 'ctke'])
 
-    figdoc.add_text("\subsubsection{Cylindrical Coordinates}")
     contour_component_plotter(['R', 'T', 'W', 'rt', 'rw', 'tw', 'rr', 'tt', 'ww'])
 
-    figdoc.add_text("\subsubsection{Cartesian Coordinates}")
-    contour_component_plotter(['P', 'U', 'V', 'W', 'uv', 'vw', 'uw', 'uu', 'vv', 'ww'])
 
     figdoc.write()
 
