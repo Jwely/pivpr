@@ -1,38 +1,23 @@
 \tolerance=10000
 
+% general packages that seem to be required by everything
 \documentclass[12pt]{report}
 \usepackage{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{graphicx}
 
-% custom template specific to ODU thesis.
-\usepackage{ODUthesis}
+\usepackage{ODUthesis} 		% custom template specific to ODU thesis.
+\usepackage{indentfirst} 	% indents first line of a section (style guide)
+\usepackage{hyperref} 		% allows use of hyperlinks
+\usepackage{gensymb} 		% allows use of degree symbol with \degree
+\usepackage{longtable} 		% formats tables
+\usepackage{float} 			% allows use of figure{}[H]
+\usepackage{subcaption} 	% allows mutliple figures for one caption
 
-%This package causes the first line of a section to be indented as required by 
-%the dissertation guide.
-\usepackage{indentfirst}
+\usepackage[font=small, labelfont=bf]{caption} 	% formats figure captions
 
-
-
-% allows the use of hyperlinks
-\usepackage{hyperref}
-
-% allows use of degree symbol via \degree
-\usepackage{gensymb}
-
-% used for formating tables
-\usepackage{longtable}
-
-% allows use of figure{}[H]
-\usepackage{float}
-
-% configures the format of figure captions
-\usepackage[font=small, labelfont=bf]{caption}
-\usepackage{subcaption}
-
-% defines reference path for images and figures
-\graphicspath{{figs/}}
+\graphicspath{{figs/}} 		% defines reference path for images and figures
 
 %This style follows conventions used in Physical Review C. The names of 
 %figures, tables and captions can be changed by using the commands below with 
@@ -43,38 +28,26 @@
 %\renewcommand{\tablename}{TABLE}
 %\renewcommand{\bibname}{BIBLIOGRAPHY}
 
-
-
 \begin{document}
 
 \title{Experimental Investigation of Turbulent Structures and Non-Equilibrium 
 Effects in Axial Wake Vortices Via Particle Image Velocimetry}
-
 \author{Jeffry William Ely}
 \principaladviser{Robert Ash}
-\member{Drew Landman}  %This command produces a signature line for the 
-%specified member on the
-\member{Colin Britcher}  %title page. Use on instance of this command for 
-%each member of the
-                   %committee other than the advisor up to a total of 5 members.
-
+\member{Drew Landman} 
+\member{Colin Britcher} 
 \degrees{Bachelor of Science in Mechanical Engineering}
-
-\dept{Aerospace Engineering}          %for example \dept{physics}
-
+\dept{Aerospace Engineering}
 \submitdate{May 2016}
-\phdfalse
+\vita{Bachelors of Mechanical Engineering, Old Dominion University, December 
+2011}
 
-%\phdfalse          %produces language on title page for Masters Thesis. Otherwise the default
-                    %is for a Ph.D. dissertation.
+\phdfalse 			%produces language on title page for Masters Thesis
 %\copyrightfalse    %suppresses copyright notice
 %\figurespagefalse  %suppresses List of Figures
 %\tablespagefalse   %suppresses List of Tables
 
-\vita{Bachelors of Mechanical Engineering, Old Dominion University, December 
-2011}
-
-
+%=========================================================================
 \abstract{
 	Vortices are a common phenomenon in fluid flows that arise to dissipate 
 	kinetic energy into heat via viscous interaction. They arise naturally at 
@@ -108,15 +81,23 @@ Effects in Axial Wake Vortices Via Particle Image Velocimetry}
 %similarly by the command
 
 \prefacesection{Notes}
+Good practice for preserving the code used to perform this research was 
+attempted by use of the Git work flow and a Git repository. All code used to 
+perform data analysis and visualization, along with the raw three dimensional 
+vector dataset can be downloaded for free from 
+\url{https://github.com/Jwely/pivpr}.
+	
 
 \afterpreface
 
+%=========================================================================
 % introduction chapter and subdocuments
 \chapter{Introduction}
 \include{docs/intro/prob_statement}
 \include{docs/intro/vortex_modeling}
 \include{docs/intro/piv_fundamentals}
 
+%=========================================================================
 % experiment setup chapter and sub documents
 \chapter{Experiment Setup}
 A complete particle image velocimetry system was installed in the ODU low speed 
@@ -140,10 +121,13 @@ processing, and data quality control.
 \input{docs/experiment_setup/piv_acquisition}
 \input{docs/experiment_setup/piv_processing}
 \input{docs/experiment_setup/piv_uncertainty}
+%=========================================================================
 
 % experiment results and sub documents
 \chapter{Experiment Results}
 words here
+
+%=========================================================================
 % constructs the bibliography
 \bibliographystyle{apalike}
 \bibliography{bib/piv, bib/vortices, bib/other, bib/particles}
@@ -155,6 +139,7 @@ words here
 % adds an entry for the bibliography in the table of contents
 \addcontentsline{toc}{chapter}{BIBLIOGRAPHY}  
 \end{thebibliography}
+%=========================================================================
 
 \appendix
 %\include{docs/appendices/piv_data_appendices}	

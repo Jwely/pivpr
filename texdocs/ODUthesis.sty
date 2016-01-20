@@ -159,11 +159,11 @@
         \vfill\newpage}
 
 
-\def\abstractpage{\def\baselinestretch{1.3}\@normalsize\pagestyle{empty}%
+\def\abstractpage{\def\baselinestretch{1.5}\@normalsize\pagestyle{empty}%
         \begin{center}
                 {\large\bf ABSTRACT}\\
                 \vspace{18pt}
-                \renewcommand{\baselinestretch}{1.0}\@normalsize
+                \renewcommand{\baselinestretch}{1.5}\@normalsize
                 {\large\uppercase\expandafter{\@title}}\\
                 \vspace{18pt}
                 \@author\\
@@ -174,7 +174,7 @@
         \@abstract
         \vfill\newpage}
 
-\def\vitapage{\def\baselinestretch{1.3}\@normalsize\pagestyle{myheadings}
+\def\vitapage{\def\baselinestretch{1.5}\@normalsize\pagestyle{myheadings}
               \chapter*{VITA}
               \addtocontents{toc}{\vspace*{12pt}}
               \addcontentsline{toc}{chapter}{VITA}
@@ -218,7 +218,7 @@
 \def\prefacesection#1{%
       \pagestyle{myheadings}
       \cleardoublepage
-        \def\baselinestretch{1.3}\@normalsize
+        \def\baselinestretch{1.5}\@normalsize
         \chapter*{#1}}
 
 \def\afterpreface{\cleardoublepage
@@ -245,7 +245,7 @@
                 \let\addvspace=\saveaddvspace}
                 \cleardoublepage
         \fi
-        \def\baselinestretch{1.3}\@normalsize
+        \def\baselinestretch{1.5}\@normalsize
         \pagenumbering{arabic}
         \pagestyle{myheadings}
         \labelchaptersintableofcontents}
