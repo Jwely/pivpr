@@ -48,7 +48,33 @@ of PIV, combined with the  ability to interrogate a flow volume very quickly
 for information with high dimensionality makes it exceptionally useful in fluid 
 mechanics. \cite{adrian1991}
 
-\subsection{Cameras and Lighting}
+\subsection{Principles of Planar PIV}
+
+A simple planar PIV system consists of a double pulsed laser, light sheet 
+forming optics, particle seed, a single lens camera, image digitization 
+hardware, and a computer system for data storage and subsequent analysis. The 
+underlying concept behind all PIV is that light scattered from the particles as 
+they move through the flow field allows a pair of images to capture information 
+about the motion of that particle. Double pulsed illumination is commonly used 
+in PIV systems due to its relatively low cost and complexity compared with 
+multiple laser source systems. The energy required to adequately illuminate an 
+area of interest depends upon the size of that area, and the scattering 
+properties of the particle seed. Solid state Nd:YAG lasers are typically used 
+for this purpose \cite{adrian2011}. An $(X, Y, Z)$ coordinate system is defined 
+within the light sheet that exists in $(X, Y)$ space, and relates linearly to a 
+coordinate system in the image plane of the camera in $(X_p, Y_p)$ pixel space. 
+At a time $t$, a laser light sheet is produced for a short pulse and the camera 
+captures an image of the light scattering from particles within the flow. At 
+some short time later, $t + dt$, a second pulse occurs and a second image is 
+taken. By measuring the pixel displacements $(\Delta X_p, \Delta Y_p)$ for a 
+particle in the image plane, and transforming the coordinates into the plane of 
+the laser one obtains $(\Delta X, \Delta Y, \Delta Z)$. This coordinate 
+transform can be obtained from precise information about the optical geometry 
+of the system, or by direct measurement of calibration data \cite{fouras2007}.
+The method of direct measurement of a calibration target was used in this 
+research. 
+
+\subsection{Principles of Stereo PIV}
 
 \subsection{Particles}
 

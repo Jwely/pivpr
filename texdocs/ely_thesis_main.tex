@@ -1,0 +1,169 @@
+\tolerance=10000
+
+\documentclass[12pt]{report}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+
+% custom template specific to ODU thesis.
+\usepackage{ODUthesis}
+
+%This package causes the first line of a section to be indented as required by 
+%the dissertation guide.
+\usepackage{indentfirst}
+
+
+
+% allows the use of hyperlinks
+\usepackage{hyperref}
+
+% allows use of degree symbol via \degree
+\usepackage{gensymb}
+
+% used for formating tables
+\usepackage{longtable}
+
+% allows use of figure{}[H]
+\usepackage{float}
+
+% configures the format of figure captions
+\usepackage[font=small, labelfont=bf]{caption}
+\usepackage{subcaption}
+
+% defines reference path for images and figures
+\graphicspath{{figs/}}
+
+%This style follows conventions used in Physical Review C. The names of 
+%figures, tables and captions can be changed by using the commands below with 
+%appropriate changes. For example, "FIG." could be replaced by "Fig." or 
+%"Figure" to change the labeling of figure captions.
+
+%\renewcommand{\figurename}{FIG.}
+%\renewcommand{\tablename}{TABLE}
+%\renewcommand{\bibname}{BIBLIOGRAPHY}
+
+
+
+\begin{document}
+
+\title{Experimental Investigation of Turbulent Structures and Non-Equilibrium 
+Effects in Axial Wake Vortices Via Particle Image Velocimetry}
+
+\author{Jeffry William Ely}
+\principaladviser{Robert Ash}
+\member{Drew Landman}  %This command produces a signature line for the 
+%specified member on the
+\member{Colin Britcher}  %title page. Use on instance of this command for 
+%each member of the
+                   %committee other than the advisor up to a total of 5 members.
+
+\degrees{Bachelor of Science in Mechanical Engineering}
+
+\dept{Aerospace Engineering}          %for example \dept{physics}
+
+\submitdate{May 2016}
+\phdfalse
+
+%\phdfalse          %produces language on title page for Masters Thesis. Otherwise the default
+                    %is for a Ph.D. dissertation.
+%\copyrightfalse    %suppresses copyright notice
+%\figurespagefalse  %suppresses List of Figures
+%\tablespagefalse   %suppresses List of Tables
+
+\vita{Bachelors of Mechanical Engineering, Old Dominion University, December 
+2011}
+
+
+\abstract{
+	Vortices are a common phenomenon in fluid flows that arise to dissipate 
+	kinetic energy into heat via viscous interaction. They arise naturally at 
+	large scales in the form of dust devils, tornadoes, and in the wake of 
+	aircraft. It is important to understand the conditions leading to their 
+	formation, their duration, and their dissipation to prevent undesirable 
+	effects. Among these effects is an decrease in safety of aircraft 
+	operations in the wake of other aircraft, an extremely common situation at 
+	airports around the world. A large number of mathematical models and 
+	experimental data exists to help explain various aspects of axial wake 
+	vortex behavior, but current models fail to understand why many vortices 
+	remain tightly wound about their cores for as long as they have been 
+	observed to do. The current study builds upon the theoretical work of Ash, 
+	Zardadkhan and Zuckerwar \cite{ash2011}, and tests specific attributes of a 
+	vortex for agreement with non-equilibrium pressure relaxation theory. A 
+	bi-wing vortex generator was constructed, and placed in a low speed wind 
+	tunnel. Stereo particle image velocimetry was employed to map three 
+	dimensional velocity vectors in a plan perpendicular to the free stream 
+	flow direction at a rate of 1Hz for 200 seconds. A Reynolds time averaging 
+	approach was used to synthesize this velocity data into stable and 
+	fluctuating components. Free stream velocity and downstream distance were 
+	varied to create a variety of vortices, and to ensure the availability of 
+	high quality data.
+	}
+
+\beforepreface
+
+%\prefacesection{Acknowledgements}
+
+%text of Acknowledgements goes here any other preface section is inserted 
+%similarly by the command
+
+\prefacesection{Notes}
+
+\afterpreface
+
+% introduction chapter and subdocuments
+\chapter{Introduction}
+\include{docs/intro/prob_statement}
+\include{docs/intro/vortex_modeling}
+\include{docs/intro/piv_fundamentals}
+
+% experiment setup chapter and sub documents
+\chapter{Experiment Setup}
+A complete particle image velocimetry system was installed in the ODU low speed 
+wind tunnel and employed to measure three-dimensional velocity fields produced 
+by an axial vortex at multiple nominal velocities $V_{nom}$ and multiple 
+interrogation planes. The interrogation planes were defined by their 
+distance downstream of trailing edges of the bi-wing the vortex generator 
+$I_Z$. Nominal wind tunnel velocity was varied from 15$m/s$ to 33$m/s$, 
+sampling 10 distinct velocities in increments of 2$m/s$. The interrogation 
+plane was moved at irregular intervals from 546$mm$ to 1016$mm$ as shown in 
+table \ref{table:test_matrix_table}. This chapter discuss details of the 
+experimental setup used to produce these datasets, including wind tunnel 
+control, vortex generator setup, PIV system calibration, data acquisition, data 
+processing, and data quality control.
+
+\input{tables/test_matrix_table}
+
+\input{docs/experiment_setup/lswt}
+\input{docs/experiment_setup/vortex_generator}
+\input{docs/experiment_setup/piv_overview}
+\input{docs/experiment_setup/piv_acquisition}
+\input{docs/experiment_setup/piv_processing}
+\input{docs/experiment_setup/piv_uncertainty}
+
+% experiment results and sub documents
+\chapter{Experiment Results}
+words here
+% constructs the bibliography
+\bibliographystyle{apalike}
+\bibliography{bib/piv, bib/vortices, bib/other, bib/particles}
+
+\begin{thebibliography}{99}
+%This command adds some extra space in the table of contents
+\addtocontents{toc}{\vspace*{12pt}}  
+
+% adds an entry for the bibliography in the table of contents
+\addcontentsline{toc}{chapter}{BIBLIOGRAPHY}  
+\end{thebibliography}
+
+\appendix
+%\include{docs/appendices/piv_data_appendices}	
+%\include{docs/appendices/uncertainty_appendices}
+
+% starts blank page
+\newpage
+
+% initiates printing of the vita page
+\vitapage
+
+\end{document}
