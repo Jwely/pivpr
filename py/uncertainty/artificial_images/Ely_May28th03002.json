@@ -1,1 +1,1 @@
-{"particle_scatter": 100, "name": "Ely_May28th03002", "n_particles": 43690, "u": 4.0, "output_dir": "../uncertainty/artificial_images", "w": 26.0, "v": 4.0, "dt": 40, "dtype": "uint16", "light_sheet_thickness": 3.0, "particle_size": 0.2}
+{"particle_scatter": 100, "name": "Ely_May28th03002", "n_particles": 87381, "u": 4.0, "output_dir": "../uncertainty/artificial_images", "w": 26.0, "v": 4.0, "dt": 40, "dtype": "uint16", "light_sheet_thickness": 3.0, "particle_size": 0.2}
