@@ -100,33 +100,41 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
 
             u_entry = {"Station": station,
                        "$dt$": avf.piv_params['dt'],
-                       "$U_{sim}$": avf.piv_params['u'],
-                       "$V_{sim}$": avf.piv_params['v'],
-                       "$W_{sim}$": avf.piv_params['w'],
+                       #"$U_{sim}$": avf.piv_params['u'],
+                       #"$V_{sim}$": avf.piv_params['v'],
+                       #"$W_{sim}$": avf.piv_params['w'],
                        "$\\bar{U}$": ff(avf.error_data['U']['mean']),
                        "$\\beta_U$": ff(avf.error_data['U']['bias']),
-                       "$P_U$": ff(avf.error_data['U']['precision']),
-                       "$U_U$": ff(avf.error_data['U']['uncertainty'])}
+                       "$P_{1_U}$": ff(avf.error_data['U']['precision_1']),
+                       "$U_{1_U}$": ff(avf.error_data['U']['uncertainty_1']),
+                       "$P_{200_U}$": ff(avf.error_data['U']['precision_n']),
+                       "$U_{200_U}$": ff(avf.error_data['U']['uncertainty_n']),
+                       }
 
             v_entry = {"Station": station,
                        "$dt$": avf.piv_params['dt'],
-                       "$U_{sim}$": avf.piv_params['u'],
-                       "$V_{sim}$": avf.piv_params['v'],
-                       "$W_{sim}$": avf.piv_params['w'],
+                       #"$U_{sim}$": avf.piv_params['u'],
+                       #"$V_{sim}$": avf.piv_params['v'],
+                       #"$W_{sim}$": avf.piv_params['w'],
                        "$\\bar{V}$": ff(avf.error_data['V']['mean']),
                        "$\\beta_V$": ff(avf.error_data['V']['bias']),
-                       "$P_V$": ff(avf.error_data['V']['precision']),
-                       "$U_V$": ff(avf.error_data['V']['uncertainty'])}
-
+                       "$P_{1_V}$": ff(avf.error_data['U']['precision_1']),
+                       "$U_{1_V}$": ff(avf.error_data['U']['uncertainty_1']),
+                       "$P_{200_V}$": ff(avf.error_data['U']['precision_n']),
+                       "$U_{200_V}$": ff(avf.error_data['U']['uncertainty_n']),
+                       }
             w_entry = {"Station": station,
                        "$dt$": avf.piv_params['dt'],
-                       "$U_{sim}$": avf.piv_params['u'],
-                       "$V_{sim}$": avf.piv_params['v'],
-                       "$W_{sim}$": avf.piv_params['w'],
+                       #"$U_{sim}$": avf.piv_params['u'],
+                       #"$V_{sim}$": avf.piv_params['v'],
+                       #"$W_{sim}$": avf.piv_params['w'],
                        "$\\bar{W}$": ff(avf.error_data['W']['mean']),
                        "$\\beta_W$": ff(avf.error_data['W']['bias']),
-                       "$P_W$": ff(avf.error_data['W']['precision']),
-                       "$U_W$": ff(avf.error_data['W']['uncertainty'])}
+                       "$P_{1_W}$": ff(avf.error_data['U']['precision_1']),
+                       "$U_{1_W}$": ff(avf.error_data['U']['uncertainty_1']),
+                       "$P_{200_W}$": ff(avf.error_data['U']['precision_n']),
+                       "$U_{200_W}$": ff(avf.error_data['U']['uncertainty_n']),
+                       }
 
             u_list.append(u_entry)
             v_list.append(v_entry)
@@ -168,15 +176,15 @@ def perform_uncertainty_analysis():
     u_path, v_path, w_path = make_csv_uncertainty_tables([1, 2, 3, 4, 5, 6, 7], [1, 2, 3, 4], "uncertainties")
     csv_to_tex(u_path,
                caption="Uncertainty in $X$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|cccccccccc|",
+               justification="|ccccccccc|",
                horizontal_line_rows=[1])
     csv_to_tex(v_path,
                caption="Uncertainty in $Y$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|cccccccccc|",
+               justification="|ccccccccc|",
                horizontal_line_rows=[1])
     csv_to_tex(w_path,
                caption="Uncertainty in $Z$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|cccccccccc|",
+               justification="|ccccccccc|",
                horizontal_line_rows=[1])
 
 # test area
