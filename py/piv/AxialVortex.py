@@ -209,7 +209,7 @@ class AxialVortex(MeanVecFieldCartesian):
                      "Vfree": self.velocity_fs}
         return char_dict
 
-    def _find_core(self, crange=7):
+    def _find_core(self, crange=20):
         """
         Attempts to find the core near the center of the matrix. The core is found by
         searching for the minimum value of in_plane velocities within :param crange:
@@ -635,7 +635,7 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         if title is None:
-            title = self.shorthand_to_tex(component)
+            title = shorthand_to_tex(component)
 
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component)
@@ -668,17 +668,11 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
 if __name__ == "__main__":
-    run = 1
-    directory = r"E:\Data2\Ely_May28th\Vector\{0}".format(run)
+    directory = os.path.join(DATA_FULL_DIR, "69")
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
-
-    small_pkl = r"C:\Users\Jeff\Desktop\Github\thesis-pivpr\pickles\Station_{0}_test_small.pkl".format(run)
-    mvf = AxialVortex("Station_{0}".format(run), paths, velocity_fs=15.22)
-    mvf.to_pickle(small_pkl, include_dynamic=True)
-
-    mvf = AxialVortex().from_pickle(small_pkl)
+    mvf = AxialVortex(v3d_paths=paths[0:60], velocity_fs=33.00, min_points=5)
     mvf.build_cylindrical()
 
     mvf.stream_plot()
-    mvf.contour_plot('cte')
-    mvf.contour_plot('yte')
+    mvf.contour_plot('W')
+    mvf.contour_plot('P')

@@ -51,7 +51,7 @@ def process_piv_data(run_id):
 
 
 def process_all_piv_data():
-    run_ids = range(1, 71)
+    run_ids = range(60,70)
     for run_id in run_ids:
         process_piv_data(run_id)
 
