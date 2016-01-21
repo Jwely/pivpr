@@ -93,7 +93,7 @@ class ArtificialVecField(VecFieldCartesian):
         plt.axvline(results["bot"], color="navy", linestyle=":", linewidth=1)
 
         plt.xlabel("${0}$  $(m/s)$".format(component.lower()))
-        plt.ylabel("Number of Occurrences")
+        plt.ylabel("Frequency")
         plt.legend(loc=0)
         plt.tight_layout()
 
