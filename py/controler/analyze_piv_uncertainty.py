@@ -46,8 +46,8 @@ def calculate_uncertainty(name, n_measurements=1):
 
         results = avf.plot_histogram(component, n_measurements, title="", outpath=fig_path)
         caption_fmt = r"Histogram of ${c}$ measurements at station {s}. " \
-                      r"Simulated conditions $u={u} m/s$, $v={v} m/s$, $w={w} m/s$, $dt={dt} \mu s$. " \
-                      r"$\beta_{c}=\pm {mb:1.4f} m/s$, $P_{c}=\pm {p:1.4f} m/s$, $U_{c}=\pm {uncert:1.4f} m/s$"
+                      r"Simulated conditions $(u,v,w)=({u}, {v}, {w})$, $dt={dt} \mu s$, " \
+                      r"$\beta_{c}=\pm {mb:1.4f}$, $P_{c}=\pm {p:1.4f}$, $U_{c}=\pm {uncert:1.4f}$"
         caption = caption_fmt.format(c=component.upper(), s=name[12],
                                      u=avf.piv_params['u'],
                                      v=avf.piv_params['v'],
@@ -65,6 +65,12 @@ def calculate_uncertainty(name, n_measurements=1):
 
 def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
 
+    if not isinstance(stations, list):
+        stations = [stations]
+
+    if not isinstance(conditions, list):
+        conditions = [conditions]
+
     def ff(myfloat):
         if isinstance(myfloat, float):
             return "{0:2.4f}".format(myfloat)
@@ -78,8 +84,7 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
 
     # the order of columns to output to dict with pandas dataframe.to_csv
     order = ["Station",
-             "Condition",
-             "$dt (\\mu s$",
+             "$dt$",
              "$U_{sim}$",
              "$V_{sim}$",
              "$W_{sim}$"]
@@ -94,7 +99,6 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
             avf = calculate_uncertainty(name, n_measurements=1)
 
             u_entry = {"Station": station,
-                       "Condition": condition,
                        "$dt$": avf.piv_params['dt'],
                        "$U_{sim}$": avf.piv_params['u'],
                        "$V_{sim}$": avf.piv_params['v'],
@@ -105,7 +109,6 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
                        "$U_U$": ff(avf.error_data['U']['uncertainty'])}
 
             v_entry = {"Station": station,
-                       "Condition": condition,
                        "$dt$": avf.piv_params['dt'],
                        "$U_{sim}$": avf.piv_params['u'],
                        "$V_{sim}$": avf.piv_params['v'],
@@ -116,7 +119,6 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
                        "$U_V$": ff(avf.error_data['V']['uncertainty'])}
 
             w_entry = {"Station": station,
-                       "Condition": condition,
                        "$dt$": avf.piv_params['dt'],
                        "$U_{sim}$": avf.piv_params['u'],
                        "$V_{sim}$": avf.piv_params['v'],
@@ -134,17 +136,17 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
     u_file = os.path.join(TEX_TABLE_DIR, "{0}_u.csv".format(csv_name))
     udf = pd.DataFrame(u_list)
     udf = udf[order + ["$\\bar{U}$", "$\\beta_U$", "$P_U$", "$U_U$"]]
-    udf.to_csv(u_file, index_label="index")
+    udf.to_csv(u_file, index_label=" ")
 
     v_file = os.path.join(TEX_TABLE_DIR, "{0}_v.csv".format(csv_name))
     vdf = pd.DataFrame(v_list)
     vdf = vdf[order + ["$\\bar{V}$", "$\\beta_V$", "$P_V$", "$U_V$"]]
-    vdf.to_csv(v_file, index_label="index")
+    vdf.to_csv(v_file, index_label=" ")
 
     w_file = os.path.join(TEX_TABLE_DIR, "{0}_w.csv".format(csv_name))
     wdf = pd.DataFrame(w_list)
     wdf = wdf[order + ["$\\bar{W}$", "$\\beta_W$", "$P_W$", "$U_W$"]]
-    wdf.to_csv(w_file, index_label="index")
+    wdf.to_csv(w_file, index_label=" ")
 
     if verbose:
         print udf
@@ -162,27 +164,19 @@ def perform_uncertainty_analysis():
     :return:
     """
 
-    # Create uncertainty tables by station
-    # for station in range(1, 8):
-    #   make_tex_uncertainty_tables([station], [1, 2, 3, 4], "station_{0}".format(station))
-
-    # create uncertainty tables by condition
-    # for condition in range(1, 5):
-    #    make_tex_uncertainty_tables(range(1, 8), condition, "condition{0}".format(condition))
-
     # create comprehensive uncertainty table
-    u_path, v_path, w_path = make_csv_uncertainty_tables([7], [1, 2, 3, 4], "uncertainties")
+    u_path, v_path, w_path = make_csv_uncertainty_tables([1, 2, 3, 4, 5, 6, 7], [1, 2, 3, 4], "uncertainties")
     csv_to_tex(u_path,
                caption="Uncertainty in $X$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|ccccccccccc|",
+               justification="|cccccccccc|",
                horizontal_line_rows=[1])
     csv_to_tex(v_path,
                caption="Uncertainty in $Y$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|ccccccccccc|",
+               justification="|cccccccccc|",
                horizontal_line_rows=[1])
     csv_to_tex(w_path,
                caption="Uncertainty in $Z$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|ccccccccccc|",
+               justification="|cccccccccc|",
                horizontal_line_rows=[1])
 
 # test area
