@@ -10,7 +10,7 @@ Contains controller scripts for the other python modules within this directory. 
 from analyze data, create TeX figures and tables, and perform uncertainty analysis.
 
 ### piv
-Firectly manipulates and manages PIV data and provides an API for creating plots and statistics.
+Directly manipulates and manages PIV data and provides an API for creating plots and statistics.
 
 ### tex
 Contains code specifically for creating TeX formatted figures and tables for use in the actual thesis document
