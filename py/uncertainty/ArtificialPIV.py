@@ -299,6 +299,8 @@ class ArtificialPIV:
         if output_dir is not None:
             for key in self.images.keys():
                 outname = os.path.join(output_dir, "{0}{1}.tif".format(name, key))
+                if os.path.exists(outname):
+                    os.remove(outname)
                 save_array_as_dtype(self.images[key], dtype, outname)
 
         # now save a json file in the same directory with the parameters of this function
