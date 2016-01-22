@@ -6,4 +6,15 @@ This repository is for code and resources for my masters thesis in Aerospace Eng
 
 The data is discussed in the context of the pressure relaxation phenomena which is theorized to allow the longevity of axial wake vortex flow structures. "Raw" vector data is calculated from raw stereo image data and instrument calibration parameters by comercial software using particle displacement tracking methods, and is stored in tabular `v3d` files. These v3d files are considered the starting point for this code base, though some additional code has been writen to demonstrate uncertainty principles behind correlation techniques used to calculate 3d vector fields from stereo frame stradled image pairs.
 
+### py
+living version of the codebase. performs analysis and dumps files to texdocs. Many sub packages.
+### matlab
+outdated codebase, kept for good record keeping.
+### texdocs
+tex and tex resources used to produce PDF and HTML formatted research document.
+### data_full
+folder to place full set of processed 3d vector files.
+### data_test
+a small limited subset of vector files initially used for testing and development.
+
 ![A graph](/texdocs/figs/example_vortex_figs/example_TscatterTKE.png)
