@@ -5,11 +5,13 @@ import cPickle
 import os
 import math
 import numpy as np
+#import scipy
 import matplotlib.pyplot as plt
 
 # local imports
 from py.piv.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.utils import cart2cyl_vector, masked_rms, masked_mean, shorthand_to_tex
+from py.utils import movavg, get_dydx
 from py.config import *
 
 
@@ -183,6 +185,53 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return rt_subset_component
 
+    def get_dvt_dr(self, outpath=None):
+        """
+        Finds the derivative of Vtheta with respect to radius, a noteworthy quantity by sampling the
+        space of T and r, creating a list ordered by r, applying a moving average, then finding the
+        derivative.
+        :return:
+        """
+
+        # pull in flattened arrays then sort them in ascending order
+        r = self._getitem_by_rt('r_mesh').flatten()
+        t = self._getitem_by_rt('T').flatten()
+
+        # take moving averages for smoothing before taking derivative
+        ravg, tavg = movavg(r, t, 1.5, fixed_density=True)
+
+        rdr, dtavgdr = get_dydx(ravg, tavg)
+        dtavgdr *= 1000  # convert from mm to m
+
+        # find the maximum point along the moving average fit for vortex characterization
+        t_max = tavg.max()
+        r_t_max = ravg[np.unravel_index(np.ma.argmax(tavg), tavg.shape)]
+
+        # set up plots with sizing and labels
+        fig, ax1 = plt.subplots(figsize=(8, 4), dpi=200, facecolor='w')
+        smooth_label = shorthand_to_tex('T')
+        deriv_label = "$\\frac{{\\partial \\overline{t}}}{{\partial R}}$"
+
+        # plot the first axis in terms of tangential velocity
+        ax1.scatter(r / r_t_max, t, marker='.', color='black', s=0.5)
+        smooth = ax1.plot(ravg / r_t_max, tavg, linestyle='-', color='blue', label=smooth_label)
+        ax1.set_ylabel(shorthand_to_tex('T'))
+        ax1.set_xlabel("Core Radii")
+
+        # on a second axis plot the derivative curve in green
+        ax2 = ax1.twinx()
+        deriv = ax2.plot(rdr / r_t_max, dtavgdr, linestyle='--', color='green', label=deriv_label)
+        ax2.set_ylabel(deriv_label)
+        plt.grid()
+        plt.legend()
+
+        plt.xlim(0, r.max() / r_t_max)
+
+        plt.tight_layout()
+        if outpath is not False:
+            self.save_or_show(outpath)
+        return r_t_max, t_max
+
     def characterize(self, verbose=True):
         """
         Characterizes this vortex with a variety of scalar metrics such as the radius,
@@ -193,10 +242,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :return characteristics_dict:
         """
 
-        sub_t = self._getitem_by_rt('T')
-        self.Tmax = np.ma.max(sub_t)
-        Tmax_location = np.unravel_index(sub_t.argmax(), sub_t.shape)
-        self.core_radius = self['r_mesh'][Tmax_location]
+        self.core_radius, self.Tmax = self.get_dvt_dr(False)
         self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
 
         if verbose:
@@ -394,13 +440,33 @@ class AxialVortex(MeanVecFieldCartesian):
         vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
         return vmin, vmax
 
-    def dynamic_plot(self, component_y, title=None, y_label=None, cmap=None,
-                     y_range=None, r_range=None, t_range=None, symmetric=None,
-                     tight=False, figsize=None, outpath=None):
+    def save_or_show(self, outpath=None):
         """
-        A scatter plot of component y where the x axis is locked as time.
-        :param component_y:
-        :param title:
+        :param outpath: output filepath to save figure, if left None, figure will be displayed to screen
+        """
+        if outpath is not None:
+            plt.savefig(outpath)
+            print("saved figure to {0}".format(outpath))
+            plt.close()
+        else:
+            plt.show()
+
+    def dynamic_plot(self, component_y, title=None, y_label=None, cmap=None,
+                     r_range=None, t_range=None, symmetric=None, tight=False,
+                     figsize=None, outpath=None):
+        """
+        Creates multi plot showing time history of dynamic data over all runs, plus spectral content.
+
+        :param component_y:     the component under study
+        :param title:           title for the plot
+        :param y_label:         plots y axis label
+        :param cmap:            colormap to use for scatter plot
+        :param r_range:         the range of radius to sample for dynamic averaging
+        :param t_range:         the tangential range to sample for dynamic averaging
+        :param symmetric:       set "True" if radial and tangential components should be symetric about xy
+        :param tight:           set to True for a tightly ploted area
+        :param figsize:         figure size in inches at 200 dpi
+        :param outpath:         output path to save the plot as a png.
         :return:
         """
 
@@ -458,13 +524,7 @@ class AxialVortex(MeanVecFieldCartesian):
         ax3.psd(y_sets['mean'], NFFT=64, Fs=SAMPLING_RATE)
         plt.title("log PSD")
 
-        if outpath:
-            plt.savefig(outpath)
-            plt.close()
-            print("saved figure to {0}".format(outpath))
-        else:
-            plt.show()
-            plt.close()
+        self.save_or_show(outpath)
         return
 
     def scatter_plot(self, component_x, component_y, component_c=None,
@@ -536,12 +596,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylabel(y_label)
         plt.title(title)
 
-        if outpath:
-            plt.savefig(outpath)
-            print("saved figure to {0}".format(outpath))
-            plt.close()
-        else:
-            plt.show()
+        self.save_or_show(outpath)
         return
 
     def scatter_plot_qual(self, component_x, component_y):
@@ -564,8 +619,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         plt.figure()
         plt.quiver(self['x_mesh'], self['y_mesh'],
-                   self['U'], self['V'],  # self['P'],
-                   # cmap=cm.jet,
+                   self['U'], self['V'],
                    color='blue',
                    scale=400,
                    width=0.001,
@@ -580,13 +634,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylim(ylims)
         plt.xlabel("$X$ (mm)")
         plt.ylabel("$Y$ (mm)")
-
-        if outpath:
-            plt.savefig(outpath)
-            print("saved figure to {0}".format(outpath))
-            plt.close()
-        else:
-            plt.show()
+        self.save_or_show(outpath)
 
     def stream_plot(self, title=None, outpath=None):
         """
@@ -616,12 +664,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.xlim(xlims)
         plt.ylim(ylims)
 
-        if outpath:
-            plt.savefig(outpath)
-            print("saved figure to {0}".format(outpath))
-            plt.close()
-        else:
-            plt.show(fig)
+        self.save_or_show(outpath)
         return
 
     def contour_plot(self, component, title=None, outpath=None):
@@ -658,21 +701,13 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.xlim(xlims)
         plt.ylim(ylims)
 
-        if outpath:
-            plt.savefig(outpath)
-            print("saved figure to {0}".format(outpath))
-            plt.close()
-        else:
-            plt.show()
+        self.save_or_show(outpath)
         return
 
 
 if __name__ == "__main__":
-    directory = os.path.join(DATA_FULL_DIR, "69")
-    paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
-    mvf = AxialVortex(v3d_paths=paths[0:60], velocity_fs=33.00, min_points=5)
-    mvf.build_cylindrical()
-
-    mvf.stream_plot()
-    mvf.contour_plot('W')
-    mvf.contour_plot('P')
+    #directory = os.path.join(DATA_FULL_DIR, "69")
+    #paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
+    mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-55_Z-38.0_Vfs-23.33.pkl")
+    #mvf.scatter_plot('r_mesh','T')
+    mvf.get_dvt_dr()
