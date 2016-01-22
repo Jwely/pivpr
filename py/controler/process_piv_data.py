@@ -36,11 +36,11 @@ def process_piv_data(run_id):
     figdoc = TeXRunFigurePage(TEX_MAIN_PATH,
                               "appendix_run_id_{0}".format(run_id),     # note the color scheme tag
                               run_id,
-                              force_recalc=True)
+                              force_recalc=False)
 
     # populate the figdoc with content
     figdoc.add_text("\subsection{{Run ID {0}}}".format(run_id))
-    figdoc.add_quiver_plot("Quiver plot of run ID {0}.".format(run_id), quiver_width)
+    #figdoc.add_quiver_plot("Quiver plot of run ID {0}.".format(run_id), quiver_width)
     figdoc.add_stream_plot("Stream plot of run ID {0}.".format(run_id), stream_width)
     contour_component_plotter(['num', 'ctke'])
 
@@ -51,7 +51,7 @@ def process_piv_data(run_id):
 
 
 def process_all_piv_data():
-    run_ids = range(60,70)
+    run_ids = range(1,71)
     for run_id in run_ids:
         process_piv_data(run_id)
 
