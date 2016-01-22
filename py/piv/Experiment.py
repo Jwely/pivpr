@@ -1,7 +1,7 @@
 __author__ = 'Jwely'
 
 from py.utils.get_rel_humidity import get_rel_humidity
-
+import json
 
 
 class Experiment:
@@ -58,3 +58,22 @@ class Experiment:
         :return:
         """
         self.axial_vortex = axial_vortex_instance
+
+    def to_json(self, json_path):
+        """
+        dumps the parameters of this experiment to a json file, including vortex characterization
+
+        :param json_path:
+        :return:
+        """
+
+        outdict = self.axial_vortex.characterize()
+        del outdict['axial_vortex']     # remove the axial vortex instance
+
+        for var in dir(self):
+            if "__" not in var:     # remove magic varnames
+                outdict.update({var: getattr(self, var)})
+
+        with open(json_path) as logfile:
+            logfile.write(json.dumps(outdict))
+        return outdict

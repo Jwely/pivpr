@@ -7,7 +7,7 @@ from py.config import *
 
 
 
-def process_piv_data(run_id):
+def build_piv_tex_figures(run_id):
     """
     Processes all vortex PIV data. At this point, everything has become a little convoluted, but running this
     function will complete all processing for input run_id and produce all the relevant figures which embody the
@@ -45,17 +45,10 @@ def process_piv_data(run_id):
     contour_component_plotter(['num', 'ctke'])
 
     contour_component_plotter(['R', 'T', 'W', 'rt', 'rw', 'tw', 'rr', 'tt', 'ww'])
-
-
     figdoc.write()
 
 
-def process_all_piv_data():
+if __name__ == "__main__":
     run_ids = range(1,71)
     for run_id in run_ids:
-        process_piv_data(run_id)
-
-
-
-if __name__ == "__main__":
-    process_all_piv_data()
+        build_piv_tex_figures(run_id)

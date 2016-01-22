@@ -152,7 +152,6 @@ class AxialVortex(MeanVecFieldCartesian):
         # set default values when None is passed
         if t_range is None:
             t_range = (-180, 180)
-        if symmetric is None:
             symmetric = False
 
         if r_range is None:
@@ -185,7 +184,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return rt_subset_component
 
-    def get_dvt_dr(self, outpath=None):
+    def get_dvt_dr(self, t_range=None, r_range=None, symmetric=None, outpath=None):
         """
         Finds the derivative of Vtheta with respect to radius, a noteworthy quantity by sampling the
         space of T and r, creating a list ordered by r, applying a moving average, then finding the
@@ -194,8 +193,8 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         # pull in flattened arrays then sort them in ascending order
-        r = self._getitem_by_rt('r_mesh').flatten()
-        t = self._getitem_by_rt('T').flatten()
+        r = self._getitem_by_rt('r_mesh', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        t = self._getitem_by_rt('T', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
         # take moving averages for smoothing before taking derivative
         ravg, tavg = movavg(r, t, 1.5, fixed_density=True)
@@ -226,8 +225,8 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.legend()
 
         plt.xlim(0, r.max() / r_t_max)
-
         plt.tight_layout()
+
         if outpath is not False:
             self.save_or_show(outpath)
         return r_t_max, t_max
@@ -242,17 +241,19 @@ class AxialVortex(MeanVecFieldCartesian):
         :return characteristics_dict:
         """
 
-        self.core_radius, self.Tmax = self.get_dvt_dr(False)
+        self.core_radius, self.Tmax = self.get_dvt_dr(outpath=False)
         self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
 
         if verbose:
             message_fmt = "Core specs: radius={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Vfree={vf:2.2f}"
             print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore, vf=self.velocity_fs))
 
-        char_dict = {"Tmax": self.Tmax,
-                     "CoreRadius": self.core_radius,
-                     "Wcore": self.Wcore,
-                     "Vfree": self.velocity_fs}
+        char_dict = {"T_max": self.Tmax,
+                     "r_mesh_core": self.core_radius,
+                     "W_core": self.Wcore,
+                     "velocity_free_stream": self.velocity_fs,
+                     "core_location": self.core_location}
+
         return char_dict
 
     def _find_core(self, crange=20):
@@ -709,5 +710,5 @@ if __name__ == "__main__":
     #directory = os.path.join(DATA_FULL_DIR, "69")
     #paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
     mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-55_Z-38.0_Vfs-23.33.pkl")
-    #mvf.scatter_plot('r_mesh','T')
-    mvf.get_dvt_dr()
+    mvf.contour_plot('T')
+    mvf.get_dvt_dr(t_range=(0, 10), symmetric=True)

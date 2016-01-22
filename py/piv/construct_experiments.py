@@ -56,6 +56,7 @@ def construct_experiments(experiment_table_path, experiment_directory_path, ids=
                                         force_recalc=force_recalc,
                                         min_points=min_points)
             exp.ingest_axial_vortex(av)
+            exp.to_json(os.path.join(PIV_PICKLE_DIR, "{0}.json".format(name_tag)))
             experiments_list.append(exp)
 
     return experiments_list
