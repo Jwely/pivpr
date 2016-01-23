@@ -68,12 +68,11 @@ class Experiment:
         """
 
         outdict = self.axial_vortex.characterize()
-        del outdict['axial_vortex']     # remove the axial vortex instance
+        atts = ["experiment_id", "n_samples", "z_location", "v_nominal", "dt", "test_date", "v_fs_mean",
+                "v_fs_sigma", "q", "pres_atm", "temp_tunnel", "wet_bulb", "dry_bulb", "rel_humid"]
+        for att in atts:
+                outdict.update({att: getattr(self, att)})
 
-        for var in dir(self):
-            if "__" not in var:     # remove magic varnames
-                outdict.update({var: getattr(self, var)})
-
-        with open(json_path) as logfile:
-            logfile.write(json.dumps(outdict))
+        with open(json_path, 'w+') as logfile:
+            logfile.write(json.dumps(outdict, indent=4))
         return outdict
