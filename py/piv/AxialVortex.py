@@ -229,6 +229,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
         if outpath is not False:
             self.save_or_show(outpath)
+        else:
+            plt.close()
         return r_t_max, t_max
 
     def characterize(self, verbose=True):
@@ -352,7 +354,7 @@ class AxialVortex(MeanVecFieldCartesian):
             self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
 
         # now characterize the vortex with some important but simple statistics
-        characteristics = self.characterize(verbose=True)
+        characteristics = self.characterize(verbose=False)
         return characteristics
 
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=100):
