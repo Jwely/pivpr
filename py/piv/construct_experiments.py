@@ -27,6 +27,9 @@ def construct_experiments(experiment_table_path, experiment_directory_path, ids=
                                         probably pretty memory intensive.
     """
 
+    if isinstance(ids, int):
+        ids = [ids]
+
     if not os.path.exists(experiment_table_path):
         raise Exception("Path does not exist at {0}".format(experiment_table_path))
     dataframe = pd.read_csv(experiment_table_path)
