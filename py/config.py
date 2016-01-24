@@ -23,7 +23,7 @@ TEX_MAIN_PATH = abspath(join(config_root, "../texdocs/main.tex"))
 
 
 # when pickling, save only these dynamic components (saves disk space), discard the others
-DYNAMIC_INCLUDES = ['ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
+DYNAMIC_INCLUDES = ['U', 'V', 'ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
 
 
 # statistics variables
