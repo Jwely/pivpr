@@ -199,6 +199,7 @@ class AxialVortex(MeanVecFieldCartesian):
         self.Tmax = dvt_dr_results['t_max']
         self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
 
+        # print a summary of characteristics
         if verbose:
             message_fmt = "Core specs: radius={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Vfree={vf:2.2f}"
             print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore, vf=self.velocity_fs))
@@ -211,7 +212,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return char_dict
 
-    def _find_core(self, crange=20):
+    def _find_core(self, crange=5):
         """
         Attempts to find the core near the center of the matrix. The core is found by
         searching for the minimum value of in_plane velocities within :param crange:
