@@ -29,12 +29,11 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
     if include_dynamic:
         if os.path.exists(pkl_path_dyn) and not force_recalc:
             av_instance = AxialVortex().from_pickle(pkl_path_dyn)
-            #av_instance.build_cylindrical()
+            av_instance.build_cylindrical()
             return av_instance
     else:
         if os.path.exists(pkl_path) and not force_recalc:
             av_instance = AxialVortex().from_pickle(pkl_path)
-            #av_instance.build_cylindrical()
             return av_instance
 
     # build list of all v3d files in directory from which to create the AxialVortex
