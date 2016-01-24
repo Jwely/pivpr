@@ -41,5 +41,5 @@ VRANGE_DEFAULT = (1, 99.9)          # default percentile values for defining col
 # attributes of the dataset
 SAMPLING_RATE = 1                   # the sampling rate in Hz. (1/time between vector fields)
 
-
-
+# dictionary that converts kewords notation into tex formatted symbols.
+KW_DICTIONARY = {}
