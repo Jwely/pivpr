@@ -143,14 +143,42 @@ U_{\overline{\Delta W}} = \sqrt{\beta_{W}^2 + P_{\overline{W}}^2}
 \end{equation}
 
 
-For these experiments, artificial pixel displacements were created to emulate 
-the expected range of flow field conditions. These conditions include variance 
-in the streamwise velocity $W$ between 10 and 40 $m/s$, and in the spanwise 
-components $X$, and $Y$ of 0 to 10 $m/s$. The value of 1 was use for $N$ in the 
-precision Equations \ref{eq:Uprec} through \ref{eq:Wprec}. Even though many 
-samples were taken at every vector location, the uncertainty in each individual 
-measurement was of great importance for studying the unstable component of the 
-velocity, and thus turbulent phenomena. 
+For these experiments, uncertainty analysis was conducted after the 
+experimental data was taken. Vortices were characterized by velocities at key 
+locations that allow each vortex to be described by one of the common vortex 
+models. Characterization velocities of particular interest include the maximum 
+tangential velocity about the vortex core, the distance of this high tangential 
+velocity region from the core, which defined the core radius, and the minimum 
+axial velocity observed in the vortex core. Understanding the uncertainty of 
+these measurements required a Monte Carlo approach from synthetically created 
+particle imagery. Artificial pixel displacements were specified to approximate 
+the typical displacement associated with the velocities of greatest interest. 
+
+To add complexity, the time between frame captures, $dt$ was expected to have a 
+significant impact on uncertainty. Since the range of velocities used in this 
+study required the use of multiple values of $dt$, artificial images were 
+generated for a scenario at each value of $dt$ and the associated velocities. 
+With the exception of measurements at station one, the furthest upstream 
+observations at $I_Z$ of 546$mm$ down stream, all tests were conducted with a 
+$dt$ value of 25, or 40 $\mu s$. At station one $dt$ values of 35 were also 
+used. During the experimentation period, great difficulty 
+was encountered in tuning PIV parameters to achieve well resolved vector fields 
+at station one. The uncertainty analysis will demonstrate that the geometry of 
+viewing angles was also unfavorable at this station, and the quality of 
+measurements taken this far upstream was poor. Measurements taken at station 
+one were largely discarded.
+
+In the stream wise direction, the velocity of interest is that of the core, 
+which was reported as lower than free stream. (flag)
+
+Even though many samples were taken at every vector location, the uncertainty 
+in each individual measurement was of great importance for studying the 
+unstable component of the velocity, and thus turbulent phenomena. Uncertainty 
+in the fluctuating component were best represented by using an $N$ 
+value of one in precision Equations \ref{eq:Uprec} through \ref{eq:Wprec}. 
+Uncertainty in the stable component was lower, since this measurement is a 
+result of averaging many measurements, and was calculated by using an $N$ value 
+of 200 in the precision Equations \ref{eq:Uprec} through \ref{eq:Wprec}.
 
 
 The Monte Carlo analysis shows....
