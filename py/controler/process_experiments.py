@@ -3,6 +3,7 @@ __author__ = "Jwely"
 import os
 import json
 import pandas as pd
+from py.utils import csv_to_tex
 from py.piv import construct_experiments
 from py.config import *
 
@@ -36,10 +37,14 @@ def process_experiments(ids=None, min_points=DEFAULT_MIN_POINTS,
                  "$T_{tunnel}$", "$\phi$", "$R_{core}$", "$\\overline{t}_{max}$", "$\\overline{w}_{core}$"]
     df = df[kw_names]
     df.columns = tex_names
-    df.to_csv("results_table.csv", index=False)
+    result_path = os.path.join(TEX_TABLE_DIR, "experiment_results_summary.csv")
+    df.to_csv(result_path, index=False)
 
-
+    # push experiment results summary table to TEX
+    csv_to_tex(os.path.join(TEX_TABLE_DIR, "experiment_results_summary.csv"),
+               caption="Summary of Experimental Results",
+               horizontal_line_rows=[1])
 
 
 if __name__ == "__main__":
-    process_experiments(include_dynamic=False, force_recalc=False)
+    process_experiments(include_dynamic=True, force_recalc=True)
