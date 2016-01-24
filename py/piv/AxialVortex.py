@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 # local imports
 from py.piv.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.utils import cart2cyl_vector, masked_rms, masked_mean, shorthand_to_tex
-from py.utils import movavg, get_dydx
+from py.utils import movavg, get_dydx, smooth_filt
 from py.config import *
 
 
@@ -184,55 +184,6 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return rt_subset_component
 
-    def get_dvt_dr(self, t_range=None, r_range=None, symmetric=None, outpath=None):
-        """
-        Finds the derivative of Vtheta with respect to radius, a noteworthy quantity by sampling the
-        space of T and r, creating a list ordered by r, applying a moving average, then finding the
-        derivative.
-        :return:
-        """
-
-        # pull in flattened arrays then sort them in ascending order
-        r = self._getitem_by_rt('r_mesh', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
-        t = self._getitem_by_rt('T', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
-
-        # take moving averages for smoothing before taking derivative
-        ravg, tavg = movavg(r, t, 1.5, fixed_density=True)
-
-        rdr, dtavgdr = get_dydx(ravg, tavg)
-        dtavgdr *= 1000  # convert from mm to m
-
-        # find the maximum point along the moving average fit for vortex characterization
-        t_max = tavg.max()
-        r_t_max = ravg[np.unravel_index(np.ma.argmax(tavg), tavg.shape)]
-
-        # set up plots with sizing and labels
-        fig, ax1 = plt.subplots(figsize=(8, 4), dpi=200, facecolor='w')
-        smooth_label = shorthand_to_tex('T')
-        deriv_label = "$\\frac{{\\partial \\overline{t}}}{{\partial R}}$"
-
-        # plot the first axis in terms of tangential velocity
-        ax1.scatter(r / r_t_max, t, marker='.', color='black', s=0.5)
-        smooth = ax1.plot(ravg / r_t_max, tavg, linestyle='-', color='blue', label=smooth_label)
-        ax1.set_ylabel(shorthand_to_tex('T'))
-        ax1.set_xlabel("Core Radii")
-
-        # on a second axis plot the derivative curve in green
-        ax2 = ax1.twinx()
-        deriv = ax2.plot(rdr / r_t_max, dtavgdr, linestyle='--', color='green', label=deriv_label)
-        ax2.set_ylabel(deriv_label)
-        plt.grid()
-        plt.legend()
-
-        plt.xlim(0, r.max() / r_t_max)
-        plt.tight_layout()
-
-        if outpath is not False:
-            self.save_or_show(outpath)
-        else:
-            plt.close()
-        return r_t_max, t_max
-
     def characterize(self, verbose=True):
         """
         Characterizes this vortex with a variety of scalar metrics such as the radius,
@@ -243,7 +194,9 @@ class AxialVortex(MeanVecFieldCartesian):
         :return characteristics_dict:
         """
 
-        self.core_radius, self.Tmax = self.get_dvt_dr(outpath=False)
+        dvt_dr_results = self.get_dvt_dr(outpath=False)
+        self.core_radius = dvt_dr_results['r_t_max']
+        self.Tmax = dvt_dr_results['t_max']
         self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
 
         if verbose:
@@ -454,6 +407,67 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.show()
 
+    def get_dvt_dr(self, t_range=None, r_range=None, symmetric=None, outpath=None):
+        """
+        Finds the derivative of Vtheta with respect to radius, a noteworthy quantity by sampling the
+        space of T and r, creating a list ordered by r, applying a moving average, then finding the
+        derivative.
+        :return:
+        """
+
+        # pull in flattened arrays then sort them in ascending order
+        r = self._getitem_by_rt('r_mesh', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        t = self._getitem_by_rt('T', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+
+        # take moving averages for smoothing before taking derivative
+        ravg, tavg = smooth_filt(r, t, 1e4, 100, 50, order=50)
+
+        # chop of back 5% to remove the smoothing distortion
+        ravg=ravg[0:-int(len(ravg) / 20)]
+        tavg=tavg[0:-int(len(tavg) / 20)]
+
+        rdr, dtavgdr = get_dydx(ravg, tavg)
+        dtavgdr *= 1000  # convert from mm to m
+
+        # find the maximum point along the moving average fit for vortex characterization
+        t_max = tavg.max()
+        r_t_max = ravg[np.unravel_index(np.ma.argmax(tavg), tavg.shape)]
+
+        # set up plots with sizing and labels
+        fig, ax1 = plt.subplots(figsize=(8, 4), dpi=200, facecolor='w')
+        smooth_label = shorthand_to_tex('T')
+        deriv_label = "$\\frac{{\\partial \\overline{t}}}{{\partial R}}$"
+
+        # plot the first axis in terms of tangential velocity
+        ax1.scatter(r / r_t_max, t, marker='.', color='black', s=0.5)
+        smooth = ax1.plot(ravg / r_t_max, tavg, linestyle='-', color='blue', label=smooth_label)
+        ax1.set_ylabel(shorthand_to_tex('T'))
+        ax1.set_xlabel("Core Radii")
+        ax1.set_ylim(0)
+
+        # on a second axis plot the derivative curve in green
+        ax2 = ax1.twinx()
+        deriv = ax2.plot(rdr / r_t_max, dtavgdr, linestyle='--', color='green', label=deriv_label)
+        ax2.set_ylabel(deriv_label)
+        plt.grid()
+        plt.legend()
+
+        plt.xlim(0, 4)
+        plt.tight_layout()
+
+        if outpath is not False:
+            self.save_or_show(outpath)
+        else:
+            plt.close()
+
+        results_dict = {"r_t_max": r_t_max,
+                        "t_max": t_max,
+                        "r": r,
+                        "t": t,
+                        "ravg": ravg,
+                        "tavg": tavg}
+        return results_dict
+
     def dynamic_plot(self, component_y, title=None, y_label=None, cmap=None,
                      r_range=None, t_range=None, symmetric=None, tight=False,
                      figsize=None, outpath=None):
@@ -528,7 +542,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.title("log PSD")
 
         self.save_or_show(outpath)
-        return
+        return {"t_set": t_set, "y_sets": y_sets}
 
     def scatter_plot(self, component_x, component_y, component_c=None,
                      title=None, x_label=None, y_label=None, c_label=None, cmap=None,
@@ -578,6 +592,7 @@ class AxialVortex(MeanVecFieldCartesian):
             cb.set_label(c_label)
         else:
             plt.scatter(x, y, marker='x', color='black')
+            c = None
 
         # apply manual specifications of x and y range, otherwise guess.
         if y_range is None:
@@ -600,7 +615,9 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.title(title)
 
         self.save_or_show(outpath)
-        return
+
+        # return the plotted data
+        return {"x": x, "y": y, "c": c}
 
     def scatter_plot_qual(self, component_x, component_y):
         """
@@ -610,7 +627,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         params are exactly as scatter_plot()
         """
-        self.scatter_plot(component_x, component_y, 'num', c_label="Number of Samples")
+        return self.scatter_plot(component_x, component_y, 'num', c_label="Number of Samples")
 
     def quiver_plot(self, title=None, outpath=None):
         """
@@ -666,6 +683,7 @@ class AxialVortex(MeanVecFieldCartesian):
         xlims, ylims = self._get_plot_lims()
         plt.xlim(xlims)
         plt.ylim(ylims)
+        plt.axis('equal')
 
         self.save_or_show(outpath)
         return
@@ -703,6 +721,7 @@ class AxialVortex(MeanVecFieldCartesian):
         xlims, ylims = self._get_plot_lims()
         plt.xlim(xlims)
         plt.ylim(ylims)
+        plt.gca().set_aspect('equal', adjustable='box')
 
         self.save_or_show(outpath)
         return
@@ -712,5 +731,6 @@ if __name__ == "__main__":
     #directory = os.path.join(DATA_FULL_DIR, "69")
     #paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
     mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-55_Z-38.0_Vfs-23.33.pkl")
-    mvf.contour_plot('T')
-    mvf.get_dvt_dr(t_range=(0, 10), symmetric=True)
+    #mvf.contour_plot('T')
+    mvf.get_dvt_dr(r_range=(0, 80), t_range=(0, 10), symmetric=True)
+    mvf.get_dvt_dr(r_range=(0, 80), t_range=(0, 90), symmetric=True)
