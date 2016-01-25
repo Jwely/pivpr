@@ -60,7 +60,8 @@ in PIV systems due to its relatively low cost and complexity compared with
 multiple laser source systems. The energy required to adequately illuminate an 
 area of interest depends upon the size of that area, and the scattering 
 properties of the particle seed. Solid state Nd:YAG lasers are typically used 
-for this purpose \cite{adrian2011}. An $(X, Y, Z)$ coordinate system is defined 
+for this purpose \cite{adrian2011}. An $(X, Y, Z)$ coordinate system 
+is defined 
 within the light sheet that exists in $(X, Y)$ space, and relates linearly to a 
 coordinate system in the image plane of the camera in $(X_p, Y_p)$ pixel space. 
 At a time $t$, a laser light sheet is produced for a short pulse and the camera 
@@ -74,7 +75,47 @@ of the system, or by direct measurement of calibration data \cite{fouras2007}.
 The method of direct measurement of a calibration target was used in this 
 research. 
 
+The detection rate, accuracy, and reliability of PIV depends upon careful 
+selection of experimental parameters. Kean and Adrian suggest a set of six 
+important dimensionless quantities and ideal operating ranges that improve the 
+chances of high quality PIV results . The parameters 
+are data validation criterion, particle image density, relative in-plane image 
+displacement, relative out-of-plane displacement, velocity gradient, and the 
+ratio of the mean image diameter to the interrogation spot diameter 
+\cite{kean1990,kean1991}. Steep velocity gradients create random errors as the 
+individual particle displacements cover a discreet range within an 
+interrogation spot. Particle displacements should be restricted to 25\% of the 
+interrogation spot diameter for in-plane velocities, and to 25\% of the light 
+sheet thickness in out-of-plane velocities. One way to mitigate both of these 
+effects is to use as high resolution PIV as possible, or by scaling the 
+interrogation area down by altering the zoom of the cameras. Since the velocity 
+profile of an axial vortex can contain high velocity gradients in the vicinity 
+of the core, and both in-plane and out-of-plane velocities are expected to be 
+high, the present experiments used 50mm lenses to zoom each camera to 
+focus on a small an interrogation plane as possible.
+
 \subsection{Principles of Stereo PIV}
+
+Classical single camera PIV is only capable of capturing the projection of the 
+velocity vector on the image plane. The out-of-plane component is lost 
+completely, and the in-plane components are affected by unrecoverable error. In 
+Stereo PIV, a pair of cameras may obliquely view the same plane and the entire 
+3d velocity vector may be inferred using the camera geometry. This technique 
+includes tilting the backplanes of the cameras to satisfy the Scheimpflug image 
+criteria and a dewarping function based on camera geometry to account for 
+projective distortion \cite{willert1997}. An example of the geometric set up 
+used by Willert to study the movement of a ring vortex through the 
+interrogation plane is shown in Figure \ref{fig:stereo_piv}. Uncertainties 
+associated with high out-of-plane motion in planar PIV are greatly reduced in 
+stereo PIV.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=5in]{figs/piv_method/stereo_piv_optics}
+	\caption{Stereo camera PIV system for mapping three dimensional velocity 
+		vectors}
+	\label{fig:stereo_piv}
+\end{figure}  
 
 \subsection{Particles}
 
