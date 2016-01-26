@@ -34,6 +34,6 @@ class RankineVortex:
 
         # assemble piecewise output vtheta
         vtheta = vtheta_out
-        vtheta[r_array < rcore] = vtheta_in
+        vtheta[r_array < rcore] = vtheta_in[r_array < rcore]
 
         return vtheta

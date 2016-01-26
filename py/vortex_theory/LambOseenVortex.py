@@ -19,23 +19,32 @@ class LambOseenVortex:
         pass
 
 
-    def get_vtheta(self, r_array, time, verbose=True):
+    def get_vtheta(self, r_array, core_radius=None, time=None, verbose=True):
         """
-        Returns an array of vtheta values for input r_array and time
-        :param r_array:     Array of radius points at which to sample vtheta
-        :param time:        Age of the vortex in seconds. For axial vortices, this is the
-                            downstream distance divided by the free stream velocity
+        returns array of vtheta values for input r_array and other parameters. uses
+        core_radius input if available, otherwise a time input is required.
+
+        :param r_array:     array of radial points for which to compute vtheta
+        :param core_radius: the radius of the core in meters!
+        :param time:        the age of the vortex in seconds, or downstream distance / free stream
+        :param verbose:     set False to suppress print statements.
         :return:
         """
 
         gamma = self.circulation_strength
-        rcore = (4 * self.viscosity * time)     # compute core radius as function of time and viscosity
+
+        if core_radius is not None:
+            time = core_radius / (4 * self.viscosity)       # compute time
+        elif time is not None:
+            core_radius = (4 * self.viscosity * time)       # compute core radius
+        else:
+            raise Exception("must use core_radius or time parameter")
 
         # find vtheta
-        exponent = (- (r_array ** 2) / rcore ** time)
+        exponent = (-1.26 * (r_array / core_radius) ** 2)
         vtheta = gamma / (2 * math.pi * r_array) * (1 - numpy.exp(exponent))
 
         if verbose:
-            print("Lamb-Oseen vortex core radius at time {0}s is {1}m".format(time, rcore))
+            print("Lamb-Oseen vortex core radius at time {0}s is {1}m".format(time, core_radius))
 
         return vtheta
