@@ -5,11 +5,11 @@ import cPickle
 import os
 import math
 import numpy as np
-#import scipy
 import matplotlib.pyplot as plt
 
 # local imports
 from py.piv.MeanVecFieldCartesian import MeanVecFieldCartesian
+from py.vortex_theory import AshVortex, LambOseenVortex, RankineVortex, BurnhamHallockVortex
 from py.utils import cart2cyl_vector, masked_rms, masked_mean, shorthand_to_tex
 from py.utils import movavg, get_dydx, smooth_filt
 from py.config import *
@@ -212,7 +212,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return char_dict
 
-    def _find_core(self, crange=5):
+    def _find_core(self, crange=20):
         """
         Attempts to find the core near the center of the matrix. The core is found by
         searching for the minimum value of in_plane velocities within :param crange:
@@ -468,6 +468,82 @@ class AxialVortex(MeanVecFieldCartesian):
                         "ravg": ravg,
                         "tavg": tavg}
         return results_dict
+
+
+    def comparison_plot(self, t_range=None, r_range=None, symmetric=None, outpath=None,
+                        kinematic_viscosity=None, time=None):
+        """
+        This function is very similar to get_dvt_dr, and is just another step in our evolving understanding
+        of what we actually want to show here. It plots the average experimental profile against several
+        theoretical vortex profiles including Rankin, Lamb-Oseen, and Ash.
+        :param t_range:
+        :param r_range:
+        :param symmetric:
+        :param outpath:
+        :return:
+        """
+
+        if kinematic_viscosity is None:
+            kinematic_viscosity = AIR_KINEMATIC_VISCOSITY
+
+        # pull in flattened arrays then sort them in ascending order (convert to meters)
+        r_scatter = self._getitem_by_rt('r_mesh', r_range=r_range,
+                                        t_range=t_range, symmetric=symmetric).flatten() / 1000
+        t_scatter = self._getitem_by_rt('T', r_range=r_range,
+                                        t_range=t_range, symmetric=symmetric).flatten()
+
+        # take moving averages for smoothing before taking derivative
+        r_array, t_exp = smooth_filt(r_scatter, t_scatter, 1e4, 100, 50, order=50)
+
+        # chop of back 5% to remove the smoothing distortion
+        r_array = r_array[0:-int(len(r_array) / 20)]
+        t_exp = t_exp[0:-int(len(t_exp) / 20)]
+
+        # find the maximum point along the moving average fit for vortex characterization
+        vtheta_max = t_exp.max()
+        core_radius = r_array[np.unravel_index(np.ma.argmax(t_exp), t_exp.shape)]
+
+        # solve for the circulation strength as in Ash, Zardkhan 2011
+        circulation_strength = vtheta_max * 4 * math.pi * core_radius
+
+        # rankine vortex
+        t_rankine = RankineVortex(core_radius, circulation_strength).get_vtheta(r_array)
+
+        # lamb oseen vortex based on core_radius
+        t_lamboseen = LambOseenVortex(circulation_strength, kinematic_viscosity).get_vtheta(r_array, core_radius)
+
+        # ash vortex based on vtheta max
+        t_ash = AshVortex(core_radius, vtheta_max=vtheta_max).get_vtheta(r_array)
+
+        # ash vortex based on pressure relaxation
+        ettap  = 0.39e-6
+        t_ash2 = AshVortex(core_radius, circulation_strength, kinematic_viscosity, ettap).get_vtheta(r_array)
+
+        # burnham and hallock vortex
+        #t_burnhamhallock = BurnhamHallockVortex(core_radius, circulation_strength).get_vtheta(r_array)
+
+        # set up plots with sizing and labels
+        fig, ax1 = plt.subplots(figsize=(10, 5), dpi=120, facecolor='w')
+
+        plt.scatter(r_scatter * 1000, t_scatter, marker='.', color='lightgray', s=0.4, label="Experimental Data")
+        plt.plot(r_array * 1000, t_exp, linestyle='-', color='black', label="Experimental Fit")
+        plt.plot(r_array * 1000, t_rankine, linestyle='--', color='firebrick', label="Rankine")
+        plt.plot(r_array * 1000, t_lamboseen, linestyle=':', color='navy', label="Lamb-Oseen")
+        plt.plot(r_array * 1000, t_ash, linestyle='-.', color='purple', label="Ash - $V_{\\theta, max}$")
+        plt.plot(r_array * 1000, t_ash2, linestyle='-.', color='darkgreen', label="Ash")
+        #plt.plot(r_array * 1000, t_burnhamhallock, linestyle=':', color='red', label="Burnham-Hallock")
+        plt.legend()
+        plt.xlim(xmin=0)
+        plt.ylim(ymin=0)
+        plt.xlabel(shorthand_to_tex('r_mesh'))
+        plt.ylabel(shorthand_to_tex('T'))
+
+        if outpath is not False:
+            self.save_or_show(outpath)
+        else:
+            plt.close()
+        return
+
 
     def dynamic_plot(self, component_y, title=None, y_label=None, cmap=None,
                      r_range=None, t_range=None, symmetric=None, tight=False,
@@ -732,6 +808,8 @@ if __name__ == "__main__":
     #directory = os.path.join(DATA_FULL_DIR, "69")
     #paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
     mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-55_Z-38.0_Vfs-23.33.pkl")
+    #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-70_Z-40.0_Vfs-33.01.pkl")
+
     #mvf.contour_plot('T')
-    mvf.get_dvt_dr(r_range=(0, 80), t_range=(0, 10), symmetric=True)
-    mvf.get_dvt_dr(r_range=(0, 80), t_range=(0, 90), symmetric=True)
+    mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
+
