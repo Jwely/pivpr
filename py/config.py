@@ -9,6 +9,8 @@ config_root = dirname(abspath(__file__))
 # this prevents plt.tight_layout() from crowding axis labels off the edges of the plot.
 rcParams.update({'figure.autolayout': True})
 
+# aerodynamic params to assume
+AIR_KINEMATIC_VISCOSITY = 15.68e-6      # m^2 / s
 
 # resource filepaths and directories
 EXPERIMENT_TABLE_PATH = abspath(join(config_root, "piv/dat/experiment_table.csv"))
