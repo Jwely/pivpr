@@ -29,7 +29,7 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
     if include_dynamic:
         if os.path.exists(pkl_path_dyn) and not force_recalc:
             av_instance = AxialVortex().from_pickle(pkl_path_dyn)
-            av_instance.build_cylindrical()
+            av_instance.find_core()
             return av_instance
     else:
         if os.path.exists(pkl_path) and not force_recalc:
@@ -42,7 +42,7 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
                               velocity_fs=velocity_fs, min_points=min_points)
 
     # find the core and build cylindrical coordinate data around it
-    av_instance.build_cylindrical()
+    av_instance.find_core()
 
     # pickle both the full dynamic set and the reduced set
     av_instance.to_pickle(pkl_path_dyn, include_dynamic=True)

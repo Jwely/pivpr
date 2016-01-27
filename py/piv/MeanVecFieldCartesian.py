@@ -75,6 +75,18 @@ class MeanVecFieldCartesian:
                             'uw': None,      # reynolds stress in u/w
                             'vw': None}      # reynolds stress in v/w
 
+        # partial spatial derivatives. the changes with respect to Z will require comparison between
+        # axial vortex datasets taken at multiple stream-wise positions.
+        self.derivative_set = {'dudx': None,
+                               'dudy': None,
+                               'dudz': None,    # special case
+                               'dvdx': None,
+                               'dvdy': None,
+                               'dvdz': None,    # special case
+                               'dwdx': None,
+                               'dwdy': None,
+                               'dwdz': None}    # special case
+
         # Build up the data set
         if v3d_paths is not None:
             self.ingest_paths(v3d_paths, min_points)  # creates constituent_vel_matrix_list from input filepath list
@@ -91,6 +103,9 @@ class MeanVecFieldCartesian:
 
         elif key in self.meshgrid.keys():
             return self.meshgrid[key]
+
+        elif key in self.derivative_set.keys():
+            return self.derivative_set[key]
 
 
     def __setitem__(self, key, value):

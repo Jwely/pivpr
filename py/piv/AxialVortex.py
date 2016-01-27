@@ -7,16 +7,15 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-# local imports
+# package imports
 from py.piv.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.vortex_theory import AshVortex, LambOseenVortex, RankineVortex, BurnhamHallockVortex
-from py.utils import cart2cyl_vector, masked_rms, masked_mean, shorthand_to_tex
-from py.utils import movavg, get_dydx, smooth_filt
+from py.utils import cart2cyl_vector, masked_rms, masked_mean, shorthand_to_tex, smooth_filt, get_spatial_derivative
 from py.config import *
 
 
 class AxialVortex(MeanVecFieldCartesian):
-    def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None, min_points=20):
+    def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None, z_location=None, min_points=20):
         """
         Built to extend the cartesian version of this class. Since all PIV data is
         reasonably always going to be taken raw in cartesian coordinates, there is no
@@ -43,13 +42,14 @@ class AxialVortex(MeanVecFieldCartesian):
         self.name_tag = name_tag
 
         # vortex cylindrical specific attributes
-        self.core_location = (None, None)  # position of core
-        self.core_index = (None, None)  # fractional index position of core
-        self.velocity_fs = velocity_fs  # free stream velocity (experimental input)
-        self.core_radius = None  # distance between core and Tmax location (mm)
-        self.Tmax = None  # maximum tangential velocity
-        self.Wcore = None  # axial velocity at the core
-        self.circulation_strength = None  # -flag
+        self.z_location = z_location        # the position of this vortex downstream. in mm
+        self.core_location = (None, None)   # position of core
+        self.core_index = (None, None)      # fractional index position of core
+        self.velocity_fs = velocity_fs      # free stream velocity (experimental input)
+        self.core_radius = None             # distance between core and Tmax location (mm)
+        self.Tmax = None                    # maximum tangential velocity
+        self.Wcore = None                   # axial velocity at the core
+        self.circulation_strength = None    # -flag
 
         # update the coordinate meshgrid
         self.meshgrid.update({"r_mesh": None,  # radial meshgrid
@@ -194,9 +194,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :return characteristics_dict:
         """
 
-        dvt_dr_results = self.get_dvt_dr(outpath=False)
-        self.core_radius = dvt_dr_results['r_t_max']
-        self.Tmax = dvt_dr_results['t_max']
+        self.core_radius, self.Tmax = self._get_rcore_tmax()
         self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
 
         # print a summary of characteristics
@@ -212,14 +210,25 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return char_dict
 
-    def _find_core(self, crange=20):
-        """
-        Attempts to find the core near the center of the matrix. The core is found by
-        searching for the minimum value of in_plane velocities within :param crange:
-        index units (not mm) of the image center.
-        """
+    def _get_rcore_tmax(self):
+        r = self._getitem_by_rt('r_mesh').flatten()
+        t = self._getitem_by_rt('T').flatten()
 
-        # find x and y indices of the image center
+        # smooth the curve
+        ravg, tavg = smooth_filt(r, t, 1e4, 100, 50, order=50)
+
+        # chop of back 5% to remove the smoothing distortion
+        ravg = ravg[0:-int(len(ravg) / 20)]
+        tavg = tavg[0:-int(len(tavg) / 20)]
+        t_max = tavg.max()
+        r_core = ravg[np.unravel_index(np.ma.argmax(tavg), tavg.shape)]
+        return r_core, t_max
+
+    def _guess_core(self, crange=20):
+        """
+        creates an initial guess at the location of the vortex core based on in plane velocities
+        """
+         # find x and y indices of the image center
         xic = int(len(self.x_set) / 2)
         yic = int(len(self.y_set) / 2)
 
@@ -239,11 +248,47 @@ class AxialVortex(MeanVecFieldCartesian):
         # just take an inverse in-plane velocity weighted average of the meshgrids
         xc = np.sum((1 / cz) * cz_x_mesh) / np.sum(1 / cz)  # x coordinate of core axis
         yc = np.sum((1 / cz) * cz_y_mesh) / np.sum(1 / cz)  # y coordinate of core axis
+        core_location = (xc, yc)
+        return core_location
 
-        self.core_location = (xc, yc)
+    def find_core(self, crange=20, core_radius_range=(10.0, 25.0), vtheta_max_range=(3.0, 10.0)):
+        """
+        Attempts to find the core near the center of the matrix by restricting the search area
+        iteratively.
+        :param crange:              the number of grid points away from geometric center to search
+                                    for a minimum in plane velocity.
+        :param core_radius_range:   the range in mm to look for a vtehta_max, a core radius outside this
+                                    range will be considered erroneous.
+        :param vtheta_max_range:    the range of acceptable vtheta_max values. values outside this
+                                    # range will be considered erroneous
+        """
+        core_radius_good = False
+        t_max_good = False
+        max_tries = 10
+        tries = 0
+
+        while not core_radius_good and not t_max_good or tries > max_tries:
+            core_location = self._guess_core(crange=crange)
+            self._get_cylindrical_meshgrids(core_location)
+            self._build_cylindrical(core_location)
+            r_core, t_max = self._get_rcore_tmax()
+
+            if core_radius_range[0] < r_core < core_radius_range[1]:
+                core_radius_good = True
+            if vtheta_max_range[0] < t_max < vtheta_max_range[1]:
+                t_max_good = True
+
+            crange *= 0.8
+            tries += 1
+
+        print("found core with crange={0}".format(crange))
+        self.Tmax = t_max
+        self.core_radius = r_core
+        self.core_location = core_location
+        self.characterize(verbose=True)
         return self.core_location
 
-    def _get_cylindrical_meshgrids(self, core_location_tuple=None):
+    def _get_cylindrical_meshgrids(self, core_location_tuple):
         """
         Creates cylindrical meshgrids from a core location and the existing x,y meshgrids.
         These meshgrids are simply stored as attributes of the axial vortex.
@@ -251,10 +296,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :param core_location_tuple: location of the core in (x,y) in units of millimeters
         """
 
-        if core_location_tuple is None:
-            xc, yc = self._find_core()
-        else:
-            xc, yc = core_location_tuple
+        xc, yc = core_location_tuple
 
         self.meshgrid['r_mesh'] = ((self['x_mesh'] - xc) ** 2 + (self['y_mesh'] - yc) ** 2) ** 0.5
         self.meshgrid['t_mesh'] = np.arctan2((self['y_mesh'] - yc), (self['x_mesh'] - xc))
@@ -265,14 +307,16 @@ class AxialVortex(MeanVecFieldCartesian):
         self.meshgrid['t_meshd'] = self.meshgrid['t_mesh'] * 180 / math.pi  # degrees version
         self.meshgrid['hv_meshd'] = self.meshgrid['hv_mesh'] * 180 / math.pi  # degrees version
 
-    def build_cylindrical(self, core_location_tuple=None):
+    def _build_cylindrical(self, core_location_tuple=None):
         """
         Converts cartesian coordinate attributes into cylindrical attributes, and
 
         :param core_location_tuple:   tuple (X mm, Y mm) of actual core location on the meshgrid
         """
 
-        self._get_cylindrical_meshgrids(core_location_tuple)
+        # makes an initial guess at the core location, then builds the cylindrical coordinate system.
+        if core_location_tuple is None:
+            self._get_cylindrical_meshgrids(self._guess_core())
 
         # use the num attribute to get the minimum point mask
         mpm = self['num'].mask
@@ -306,11 +350,42 @@ class AxialVortex(MeanVecFieldCartesian):
         for component in ['rr', 'tt', 'rt', 'rw', 'tw']:
             self.dynamic_set[component] = self.dynamic_set[component[0]] * self.dynamic_set[component[1]]
             self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
+        return
 
-        # now characterize the vortex with some important but simple statistics
-        characteristics = self.characterize(verbose=False)
-        return characteristics
+    def _get_circulation_strength(self, vtheta_max, core_radius):
+        """ simply solves for the circulation strength of the vortex using Ash-Zardkahan model"""
+        gamma = vtheta_max * 4 * math.pi * core_radius
+        self.circulation_strength = gamma
+        return gamma
 
+    def get_xy_spatial_derivatives(self):
+        """
+        This function computes 6 of the 9 spatial derivatives needed for experimental
+        validation of the turbulent viscosity hypothesis.
+        """
+        self.derivative_set['dudx'] = get_spatial_derivative(self['U'], self['x_mesh'])
+        self.derivative_set['dudy'] = get_spatial_derivative(self['U'], self['y_mesh'])
+        self.derivative_set['dvdx'] = get_spatial_derivative(self['V'], self['x_mesh'])
+        self.derivative_set['dvdy'] = get_spatial_derivative(self['V'], self['y_mesh'])
+        self.derivative_set['dwdx'] = get_spatial_derivative(self['W'], self['x_mesh'])
+        self.derivative_set['dwdy'] = get_spatial_derivative(self['W'], self['y_mesh'])
+        return self.derivative_set
+
+    def get_z_spatial_derivatives(self, upstream_vortex, downstream_vortex):
+        """
+        Solves for the z spatial derivatives. how???
+
+        :param upstream_vortex:
+        :param downstream_vortex:
+        :return:
+        """
+
+        if any([v.z_location is None for v in [self, upstream_vortex, downstream_vortex]]):
+            raise Exception("All vortices must have a defined 'z_location' attribute")
+
+
+
+# ============== plotting functions=======================
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=100):
         """
         returns the plot extents based on user defined distance to core. If the
@@ -397,7 +472,8 @@ class AxialVortex(MeanVecFieldCartesian):
         vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
         return vmin, vmax
 
-    def save_or_show(self, outpath=None):
+    @staticmethod
+    def save_or_show(outpath=None):
         """
         :param outpath: output filepath to save figure, if left None, figure will be displayed to screen
         """
@@ -427,7 +503,7 @@ class AxialVortex(MeanVecFieldCartesian):
         ravg=ravg[0:-int(len(ravg) / 20)]
         tavg=tavg[0:-int(len(tavg) / 20)]
 
-        rdr, dtavgdr = get_dydx(ravg, tavg)
+        rdr, dtavgdr = get_spatial_derivative(tavg, ravg)
         dtavgdr *= 1000  # convert from mm to m
 
         # find the maximum point along the moving average fit for vortex characterization
@@ -469,7 +545,6 @@ class AxialVortex(MeanVecFieldCartesian):
                         "tavg": tavg}
         return results_dict
 
-
     def comparison_plot(self, t_range=None, r_range=None, symmetric=None, outpath=None,
                         kinematic_viscosity=None, time=None):
         """
@@ -503,8 +578,8 @@ class AxialVortex(MeanVecFieldCartesian):
         vtheta_max = t_exp.max()
         core_radius = r_array[np.unravel_index(np.ma.argmax(t_exp), t_exp.shape)]
 
-        # solve for the circulation strength as in Ash, Zardkhan 2011
-        circulation_strength = vtheta_max * 4 * math.pi * core_radius
+        # get the circulation strength
+        circulation_strength = self._get_circulation_strength(vtheta_max, core_radius)
 
         # rankine vortex
         t_rankine = RankineVortex(core_radius, circulation_strength).get_vtheta(r_array)
@@ -543,7 +618,6 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.close()
         return
-
 
     def dynamic_plot(self, component_y, title=None, y_label=None, cmap=None,
                      r_range=None, t_range=None, symmetric=None, tight=False,
@@ -805,11 +879,21 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
 if __name__ == "__main__":
-    #directory = os.path.join(DATA_FULL_DIR, "69")
-    #paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
-    mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-55_Z-38.0_Vfs-23.33.pkl")
+
+    #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-55_Z-38.0_Vfs-23.33.pkl")
+    #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-28_Z-31.0_Vfs-29.09.pkl")
     #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-70_Z-40.0_Vfs-33.01.pkl")
 
-    #mvf.contour_plot('T')
-    mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
+    directory = os.path.join(DATA_FULL_DIR, "28")
+    paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
+    mvf = AxialVortex("test", v3d_paths=paths, velocity_fs=29.09, min_points=20)
+    mvf.find_core()
+    #mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
+    mvf.get_xy_spatial_derivatives()
+    mvf.contour_plot('dudx')
+    mvf.contour_plot('dudy')
+    mvf.contour_plot('dvdx')
+    mvf.contour_plot('dvdy')
+    mvf.contour_plot('dwdx')
+    mvf.contour_plot('dwdy')
 
