@@ -29,7 +29,6 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
     if include_dynamic:
         if os.path.exists(pkl_path_dyn) and not force_recalc:
             av_instance = AxialVortex().from_pickle(pkl_path_dyn)
-            av_instance.find_core()
             return av_instance
     else:
         if os.path.exists(pkl_path) and not force_recalc:
@@ -43,6 +42,7 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
 
     # find the core and build cylindrical coordinate data around it
     av_instance.find_core()
+    av_instance.calculate_turbulent_viscosity()
 
     # pickle both the full dynamic set and the reduced set
     av_instance.to_pickle(pkl_path_dyn, include_dynamic=True)

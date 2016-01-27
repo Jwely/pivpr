@@ -26,9 +26,17 @@ def shorthand_to_tex(component):
             # note the use of double enclosing brackets, this is required to eval literal {}
             return "$\overline{{{comp0}^\prime {comp1}^\prime}}$".format(comp0=component[0], comp1=component[1])
 
+        # handles partial derivatives of format 'dxdy'
+        elif len(component) == 4:
+            return "$\\frac{{\\partial {0}}}{{\\partial{1}}}".format(component[1], component[3])
+
         # meshgrid attributes
         elif "mesh" in component:
             return component.upper().split("_")[0]
+
+        # turbulent viscosity is a special case
+        elif component == "turb_visc":
+            return "\\nu_{t}"
 
         # turbulent energy is a special case
         elif component == "ctke":
@@ -36,6 +44,8 @@ def shorthand_to_tex(component):
 
         elif component == "num":
             return "$N$"
-        # return error if none of these conditions apply
+
+        # give the user their component string back if nothing matches
         else:
-            raise Exception("Don't recognize input {0}".format(component))
+            Warning("Don't recognize input {0}".format(component))
+            return component

@@ -8,9 +8,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # package imports
+from shorthand_to_tex import shorthand_to_tex
 from py.piv.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.vortex_theory import AshVortex, LambOseenVortex, RankineVortex, BurnhamHallockVortex
-from py.utils import cart2cyl_vector, masked_rms, masked_mean, shorthand_to_tex, smooth_filt, get_spatial_derivative
+from py.utils import cart2cyl_vector, masked_rms, masked_mean, smooth_filt, get_spatial_derivative
 from py.config import *
 
 
@@ -40,6 +41,7 @@ class AxialVortex(MeanVecFieldCartesian):
         MeanVecFieldCartesian.__init__(self, name_tag=name_tag, v3d_paths=v3d_paths,
                                        velocity_fs=velocity_fs, min_points=min_points)
         self.name_tag = name_tag
+        self.calculated_turb_viscosity = None   # turbulent viscosity as calculated from velocity data
 
         # vortex cylindrical specific attributes
         self.z_location = z_location        # the position of this vortex downstream. in mm
@@ -97,7 +99,8 @@ class AxialVortex(MeanVecFieldCartesian):
                     self.dynamic_set[key] = None
 
         # create the directory and write the pkl file.
-        if not os.path.exists(os.path.dirname(pickle_path)):
+        pkl_dir = os.path.dirname(pickle_path)
+        if pkl_dir != "" and not os.path.exists(pkl_dir):
             os.mkdir(os.path.dirname(pickle_path))
 
         with open(pickle_path, 'wb+') as f:
@@ -357,32 +360,6 @@ class AxialVortex(MeanVecFieldCartesian):
         gamma = vtheta_max * 4 * math.pi * core_radius
         self.circulation_strength = gamma
         return gamma
-
-    def get_xy_spatial_derivatives(self):
-        """
-        This function computes 6 of the 9 spatial derivatives needed for experimental
-        validation of the turbulent viscosity hypothesis.
-        """
-        self.derivative_set['dudx'] = get_spatial_derivative(self['U'], self['x_mesh'])
-        self.derivative_set['dudy'] = get_spatial_derivative(self['U'], self['y_mesh'])
-        self.derivative_set['dvdx'] = get_spatial_derivative(self['V'], self['x_mesh'])
-        self.derivative_set['dvdy'] = get_spatial_derivative(self['V'], self['y_mesh'])
-        self.derivative_set['dwdx'] = get_spatial_derivative(self['W'], self['x_mesh'])
-        self.derivative_set['dwdy'] = get_spatial_derivative(self['W'], self['y_mesh'])
-        return self.derivative_set
-
-    def get_z_spatial_derivatives(self, upstream_vortex, downstream_vortex):
-        """
-        Solves for the z spatial derivatives. how???
-
-        :param upstream_vortex:
-        :param downstream_vortex:
-        :return:
-        """
-
-        if any([v.z_location is None for v in [self, upstream_vortex, downstream_vortex]]):
-            raise Exception("All vortices must have a defined 'z_location' attribute")
-
 
 
 # ============== plotting functions=======================
@@ -884,16 +861,13 @@ if __name__ == "__main__":
     #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-28_Z-31.0_Vfs-29.09.pkl")
     #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-70_Z-40.0_Vfs-33.01.pkl")
 
-    directory = os.path.join(DATA_FULL_DIR, "28")
+    directory = os.path.join(DATA_FULL_DIR, "55")
     paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
-    mvf = AxialVortex("test", v3d_paths=paths, velocity_fs=29.09, min_points=20)
-    mvf.find_core()
-    #mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
-    mvf.get_xy_spatial_derivatives()
-    mvf.contour_plot('dudx')
-    mvf.contour_plot('dudy')
-    mvf.contour_plot('dvdx')
-    mvf.contour_plot('dvdy')
-    mvf.contour_plot('dwdx')
-    mvf.contour_plot('dwdy')
+    mvf = AxialVortex("test", v3d_paths=paths, velocity_fs=23.33, min_points=20)
+    mvf.to_pickle("temp.pkl", include_dynamic=True)
 
+    #mvf = AxialVortex().from_pickle("temp.pkl")
+    mvf.find_core()
+    mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
+    mvf.calculate_turbulent_viscosity()
+    mvf.contour_plot('turb_visc')
