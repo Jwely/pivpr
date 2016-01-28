@@ -25,6 +25,7 @@ def get_rel_humidity(dry_bulb, wet_bulb, pressure):
     return rh
 
 
+# testing
 if __name__ == "__main__":
 
     print get_rel_humidity(299.15, 293.65, 102000)
