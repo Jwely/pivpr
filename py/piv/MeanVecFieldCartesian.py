@@ -191,15 +191,22 @@ class MeanVecFieldCartesian:
         validation of the turbulent viscosity hypothesis. The others are left zero, which
         can be acceptable assumptions.
         """
-        self.derivative_set['dudx'] = get_spatial_derivative(self['U'], self['x_mesh'])
-        self.derivative_set['dudy'] = get_spatial_derivative(self['U'], self['y_mesh'])
-        self.derivative_set['dvdx'] = get_spatial_derivative(self['V'], self['x_mesh'])
-        self.derivative_set['dvdy'] = get_spatial_derivative(self['V'], self['y_mesh'])
-        self.derivative_set['dwdx'] = get_spatial_derivative(self['W'], self['x_mesh'])
-        self.derivative_set['dwdy'] = get_spatial_derivative(self['W'], self['y_mesh'])
+        xmesh_m = self['x_mesh'] / 1000
+        ymesh_m = self['y_mesh'] / 1000
+
+        self.derivative_set['dudx'], self.derivative_set['dudy'] = \
+            get_spatial_derivative(self['U'], xmesh_m, ymesh_m)
+
+        self.derivative_set['dvdx'], self.derivative_set['dvdy'] = \
+            get_spatial_derivative(self['V'], xmesh_m, ymesh_m)
+
+        self.derivative_set['dwdx'], self.derivative_set['dwdy'] = \
+            get_spatial_derivative(self['W'], xmesh_m, ymesh_m)
+
         self.derivative_set['dudz'] = self['W'] * 0
         self.derivative_set['dvdz'] = self['W'] * 0
         self.derivative_set['dwdz'] = self['W'] * 0
+
         return self.derivative_set
 
     def calculate_turbulent_viscosity(self):
@@ -230,10 +237,29 @@ class MeanVecFieldCartesian:
         dwdy = self['dwdy']
         dwdz = self['dwdz'] * 0 + 1     # convert this to one so we can still see ww variation
 
+        '''
+        print 'uu', uu.max(), uu.min()
+        print 'vv', vv.max(), vv.min()
+        print 'ww', ww.max(), ww.min()
+        print 'uv', uv.max(), uv.min()
+        print 'uw', uw.max(), uw.min()
+        print 'vw', vw.max(), vw.min()
+
+        print 'dudx', dudx.max(), dudx.min()
+        print 'dudy', dudy.max(), dudy.min()
+        print 'dudz', dudz.max(), dudz.min()
+        print 'dvdx', dvdx.max(), dvdx.min()
+        print 'dvdy', dvdy.max(), dvdy.min()
+        print 'dvdz', dvdz.max(), dvdz.min()
+        print 'dwdx', dwdx.max(), dwdx.min()
+        print 'dwdy', dwdy.max(), dwdy.min()
+        print 'dwdz', dwdz.max(), dwdz.min()
+        '''
+
         tv = - (1 / 3) * (uu / dudx + vv / dvdy + ww / dwdz) - \
              2 * ((uw / (dudz + dwdx)) + (uv / (dudy + dvdx)) + (vw / (dvdz + dwdy)))
 
-        self.calculated_turb_viscosity = tv
+        self.calculated_turb_viscosity = np.abs(tv)
         return tv
 
     def show_heatmap(self, component):
