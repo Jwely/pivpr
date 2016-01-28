@@ -8,7 +8,7 @@ from py.tex import TeXWriter
 from py.config import *
 
 
-def calculate_uncertainty(name, n_measurements=1):
+def calculate_uncertainty(name, n_measurements=200):
     """
     Finds the files in the artificial_images folder of the uncertainty package and calculates
     uncertainty values for each image set. The controller function `synthesize_piv_uncertainty_images` must
@@ -45,17 +45,21 @@ def calculate_uncertainty(name, n_measurements=1):
         fig_path = os.path.join(fig_dir, fig_name)
 
         results = avf.plot_histogram(component, n_measurements, title="", outpath=fig_path)
+                      # r"$\beta_{c}=\pm {mb:1.4f}$, $P_1{c}=\pm {p1:1.4f}$"\
         caption_fmt = r"Histogram of ${c}$ measurements at station {s}. " \
-                      r"Simulated conditions $u={u} m/s$, $v={v} m/s$, $w={w} m/s$, $dt={dt} \mu s$. " \
-                      r"$\beta_{c}=\pm {mb:1.4f} m/s$, $P_{c}=\pm {p:1.4f} m/s$, $U_{c}=\pm {uncert:1.4f} m/s$"
+                      r"Simulated conditions $(u,v,w)=({u}, {v}, {w})$, $dt={dt} \mu s$, " \
+                      r"$U_1_{c}=\pm {u1:1.3f}$, $U_200_{c}=\pm {u200:1.3f}$"
         caption = caption_fmt.format(c=component.upper(), s=name[12],
                                      u=avf.piv_params['u'],
                                      v=avf.piv_params['v'],
                                      w=avf.piv_params['w'],
                                      dt=avf.piv_params['dt'],
                                      mb=results['bias'],
-                                     p=results['stdev'],
-                                     uncert=results['uncertainty'])
+                                     p1=results['precision_1'],
+                                     u1=results['uncertainty_1'],
+                                     p200=results['precision_n'],
+                                     u200=results['uncertainty_n']
+                                     )
         print caption
         texwriter.add_figure(fig_path, caption, '6in')
 
@@ -65,9 +69,15 @@ def calculate_uncertainty(name, n_measurements=1):
 
 def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
 
+    if not isinstance(stations, list):
+        stations = [stations]
+
+    if not isinstance(conditions, list):
+        conditions = [conditions]
+
     def ff(myfloat):
         if isinstance(myfloat, float):
-            return "{0:2.4f}".format(myfloat)
+            return "{0:2.3f}".format(myfloat)
         else:
             return myfloat
 
@@ -78,81 +88,81 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
 
     # the order of columns to output to dict with pandas dataframe.to_csv
     order = ["Station",
-             "Condition",
-             "$dt (\\mu s$",
-             "$U_{sim}$",
-             "$V_{sim}$",
-             "$W_{sim}$"]
+             "$dt$",
+             "$u_{{sim}}$",
+             "$v_{{sim}}$",
+             "$w_{{sim}}$",
+             ]
 
     for station in stations:
 
-        names = ["Ely_May28th{0}{1}".format(str(station).zfill(2), str(condition).zfill(3)) for condition in conditions]
+        names = ["Ely_May28th{0}{1}".format(str(station).zfill(2), str(condition).zfill(3))
+                 for condition in conditions]
 
         for name in names:
             station = name[12]
             condition = name[15]
-            avf = calculate_uncertainty(name, n_measurements=1)
+            avf = calculate_uncertainty(name)
 
             u_entry = {"Station": station,
-                       "Condition": condition,
                        "$dt$": avf.piv_params['dt'],
-                       "$U_{sim}$": avf.piv_params['u'],
-                       "$V_{sim}$": avf.piv_params['v'],
-                       "$W_{sim}$": avf.piv_params['w'],
-                       "$\\bar{U}$": ff(avf.error_data['U']['mean']),
-                       "$\\beta_U$": ff(avf.error_data['U']['bias']),
-                       "$P_U$": ff(avf.error_data['U']['precision']),
-                       "$U_U$": ff(avf.error_data['U']['uncertainty'])}
+                       "$u_{sim}$": avf.piv_params['u'],
+                       "$v_{sim}$": avf.piv_params['v'],
+                       "$w_{sim}$": avf.piv_params['w'],
+                       "$\\bar{u}$": ff(avf.error_data['U']['mean']),
+                       "$\\beta_u$": ff(avf.error_data['U']['bias']),
+                       "$P_{u^{\prime}}$": ff(avf.error_data['U']['precision_1']),
+                       "$U_{u^{\prime}}$": ff(avf.error_data['U']['uncertainty_1']),
+                       "$P_{\\bar{u}}$": ff(avf.error_data['U']['precision_n']),
+                       "$U_{\\bar{u}}$": ff(avf.error_data['U']['uncertainty_n']),
+                       }
 
             v_entry = {"Station": station,
-                       "Condition": condition,
                        "$dt$": avf.piv_params['dt'],
-                       "$U_{sim}$": avf.piv_params['u'],
-                       "$V_{sim}$": avf.piv_params['v'],
-                       "$W_{sim}$": avf.piv_params['w'],
-                       "$\\bar{V}$": ff(avf.error_data['V']['mean']),
-                       "$\\beta_V$": ff(avf.error_data['V']['bias']),
-                       "$P_V$": ff(avf.error_data['V']['precision']),
-                       "$U_V$": ff(avf.error_data['V']['uncertainty'])}
-
+                       "$u_{sim}$": avf.piv_params['u'],
+                       "$v_{sim}$": avf.piv_params['v'],
+                       "$w_{sim}$": avf.piv_params['w'],
+                       "$\\bar{v}$": ff(avf.error_data['V']['mean']),
+                       "$\\beta_v$": ff(avf.error_data['V']['bias']),
+                       "$P_{v^{\prime}}$": ff(avf.error_data['V']['precision_1']),
+                       "$U_{v^{\prime}}$": ff(avf.error_data['V']['uncertainty_1']),
+                       "$P_{\\bar{v}}$": ff(avf.error_data['V']['precision_n']),
+                       "$U_{\\bar{v}}$": ff(avf.error_data['V']['uncertainty_n']),
+                       }
             w_entry = {"Station": station,
-                       "Condition": condition,
                        "$dt$": avf.piv_params['dt'],
-                       "$U_{sim}$": avf.piv_params['u'],
-                       "$V_{sim}$": avf.piv_params['v'],
-                       "$W_{sim}$": avf.piv_params['w'],
-                       "$\\bar{W}$": ff(avf.error_data['W']['mean']),
-                       "$\\beta_W$": ff(avf.error_data['W']['bias']),
-                       "$P_W$": ff(avf.error_data['W']['precision']),
-                       "$U_W$": ff(avf.error_data['W']['uncertainty'])}
+                       "$u_{sim}$": avf.piv_params['u'],
+                       "$v_{sim}$": avf.piv_params['v'],
+                       "$w_{sim}$": avf.piv_params['w'],
+                       "$\\bar{w}$": ff(avf.error_data['W']['mean']),
+                       "$\\beta_w$": ff(avf.error_data['W']['bias']),
+                       "$P_{w^{\prime}}$": ff(avf.error_data['W']['precision_1']),
+                       "$U_{w^{\prime}}$": ff(avf.error_data['W']['uncertainty_1']),
+                       "$P_{\\bar{w}}$": ff(avf.error_data['W']['precision_n']),
+                       "$U_{\\bar{w}}$": ff(avf.error_data['W']['uncertainty_n']),
+                       }
 
             u_list.append(u_entry)
             v_list.append(v_entry)
             w_list.append(w_entry)
 
     # now write these lists of dictionaries to a pandas dataframe and csv file
-    u_file = os.path.join(TEX_TABLE_DIR, "{0}_u.csv".format(csv_name))
-    udf = pd.DataFrame(u_list)
-    udf = udf[order + ["$\\bar{U}$", "$\\beta_U$", "$P_U$", "$U_U$"]]
-    udf.to_csv(u_file, index_label="index")
+    returnlist = []
+    for comp in ["u", "v", "w"]:
+        fpath = os.path.join(TEX_TABLE_DIR, "{0}_{1}.csv".format(csv_name, comp))
+        df = pd.DataFrame(eval("{0}_list".format(comp)))
+        # the bracketing here has gotten really tricky
+        headers = order + ["$\\bar{{{c}}}$", "$\\beta_{c}$", "$P_{{{c}^{{\prime}}}}$",
+                           "$P_{{\\bar{{{c}}}}}$", "$U_{{{c}^{{\prime}}}}$", "$U_{{\\bar{{{c}}}}}$"]
+        headers = [head.format(c=comp) for head in headers]
+        df = df[headers]
+        df.to_csv(fpath, index=False)
+        returnlist.append(fpath)
 
-    v_file = os.path.join(TEX_TABLE_DIR, "{0}_v.csv".format(csv_name))
-    vdf = pd.DataFrame(v_list)
-    vdf = vdf[order + ["$\\bar{V}$", "$\\beta_V$", "$P_V$", "$U_V$"]]
-    vdf.to_csv(v_file, index_label="index")
+        if verbose:
+            print df
 
-    w_file = os.path.join(TEX_TABLE_DIR, "{0}_w.csv".format(csv_name))
-    wdf = pd.DataFrame(w_list)
-    wdf = wdf[order + ["$\\bar{W}$", "$\\beta_W$", "$P_W$", "$U_W$"]]
-    wdf.to_csv(w_file, index_label="index")
-
-    if verbose:
-        print udf
-        print vdf
-        print wdf
-
-    return u_file, v_file, w_file
-
+    return tuple(returnlist)
 
 
 def perform_uncertainty_analysis():
@@ -162,27 +172,16 @@ def perform_uncertainty_analysis():
     :return:
     """
 
-    # Create uncertainty tables by station
-    # for station in range(1, 8):
-    #   make_tex_uncertainty_tables([station], [1, 2, 3, 4], "station_{0}".format(station))
-
-    # create uncertainty tables by condition
-    # for condition in range(1, 5):
-    #    make_tex_uncertainty_tables(range(1, 8), condition, "condition{0}".format(condition))
-
     # create comprehensive uncertainty table
-    u_path, v_path, w_path = make_csv_uncertainty_tables([7], [1, 2, 3, 4], "uncertainties")
+    u_path, v_path, w_path = make_csv_uncertainty_tables([1, 2, 3, 4, 5, 6, 7], [1, 2], "uncertainties")
     csv_to_tex(u_path,
                caption="Uncertainty in $X$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|ccccccccccc|",
                horizontal_line_rows=[1])
     csv_to_tex(v_path,
                caption="Uncertainty in $Y$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|ccccccccccc|",
                horizontal_line_rows=[1])
     csv_to_tex(w_path,
                caption="Uncertainty in $Z$ direction velocity measurements. Unlabelled units are $m/s$.",
-               justification="|ccccccccccc|",
                horizontal_line_rows=[1])
 
 # test area

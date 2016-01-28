@@ -4,7 +4,7 @@ import pandas as pd
 import os
 
 
-def csv_to_tex(csv_path, caption, justification, horizontal_line_rows=None):
+def csv_to_tex(csv_path, caption, justification=None, horizontal_line_rows=None):
     """
     Quick custom function to write Tex format tables from csv's, with just the most
     critical customization inputs.
@@ -23,6 +23,10 @@ def csv_to_tex(csv_path, caption, justification, horizontal_line_rows=None):
     print("loading from {0}".format(csv_path))
     df = pd.read_csv(csv_path, header=None)
     df = df.dropna(axis=1, how='all')           # drops last column of empty caused by trailing commas
+
+    # auto fill justification to draw vertical lines on the far left and right, all columns centered.
+    if justification is None:
+        justification = "|{0}|".format("c" * len(df.columns))
 
     # write code at the top of the file
     texdata = ["\\renewcommand\\baselinestretch{1.3}\\selectfont",

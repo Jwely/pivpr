@@ -9,6 +9,8 @@ config_root = dirname(abspath(__file__))
 # this prevents plt.tight_layout() from crowding axis labels off the edges of the plot.
 rcParams.update({'figure.autolayout': True})
 
+# aerodynamic params to assume
+AIR_KINEMATIC_VISCOSITY = 15.68e-6      # m^2 / s
 
 # resource filepaths and directories
 EXPERIMENT_TABLE_PATH = abspath(join(config_root, "piv/dat/experiment_table.csv"))
@@ -23,7 +25,7 @@ TEX_MAIN_PATH = abspath(join(config_root, "../texdocs/main.tex"))
 
 
 # when pickling, save only these dynamic components (saves disk space), discard the others
-DYNAMIC_INCLUDES = ['ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
+DYNAMIC_INCLUDES = ['U', 'V', 'ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
 
 
 # statistics variables
@@ -31,15 +33,15 @@ DEFAULT_MIN_POINTS = 20             # minimum number of points required to consi
 
 
 # global plotting variables
-CONTOUR_DEFAULT_LEVELS = 32         # number of discreet colors to use on contour plots
+CONTOUR_DEFAULT_LEVELS = 256        # number of discreet colors to use on contour plots
 CONTOUR_DEFAULT_CMAP = cm.Greys     # default color ramp to use on contour plots (greyscale friendly)
-CONTOUR_DEFAULT_RRANGE = (0, 100)   # default radius range to subset contour plots by
+CONTOUR_DEFAULT_RRANGE = (0, 50)   # default radius range to subset contour plots by
 SCATTER_DEFAULT_CMAP = cm.Greys     # default colormap to use on scatter plots with third variable
 SCATTER_DEFAULT_RLIM = 100          # default plot
-VRANGE_DEFAULT = (1, 99.9)          # default percentile values for defining color ramp boundaries
+VRANGE_DEFAULT = (1, 99)          # default percentile values for defining color ramp boundaries
 
 # attributes of the dataset
 SAMPLING_RATE = 1                   # the sampling rate in Hz. (1/time between vector fields)
 
-
-
+# dictionary that converts kewords notation into tex formatted symbols.
+KW_DICTIONARY = {}

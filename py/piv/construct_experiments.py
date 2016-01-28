@@ -27,6 +27,9 @@ def construct_experiments(experiment_table_path, experiment_directory_path, ids=
                                         probably pretty memory intensive.
     """
 
+    if isinstance(ids, int):
+        ids = [ids]
+
     if not os.path.exists(experiment_table_path):
         raise Exception("Path does not exist at {0}".format(experiment_table_path))
     dataframe = pd.read_csv(experiment_table_path)
@@ -56,6 +59,7 @@ def construct_experiments(experiment_table_path, experiment_directory_path, ids=
                                         force_recalc=force_recalc,
                                         min_points=min_points)
             exp.ingest_axial_vortex(av)
+            exp.to_json(os.path.join(PIV_PICKLE_DIR, "{0}.json".format(name_tag)))
             experiments_list.append(exp)
 
     return experiments_list

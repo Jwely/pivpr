@@ -43,15 +43,20 @@ class ArtificialVecField(VecFieldCartesian):
         delta = data - self.piv_params[component.lower()]
         bias = np.mean(delta)
         stdev = np.ma.std(data)
-        precision = stdev * 2 / (n_measurements ** 0.5)
-        uncertainty = (bias ** 2 + precision ** 2) ** 0.5
+        precision_n = stdev * 2 / (n_measurements ** 0.5)
+        precision_1 = stdev * 2
+        uncertainty_n = (bias ** 2 + precision_n ** 2) ** 0.5
+        uncertainty_1 = (bias ** 2 + precision_1 ** 2) ** 0.5
 
         results.update({"top_dif": results['top'] - results['sim'],
                         "bot_dif": results['bot'] - results['sim'],
                         "bias": bias,
                         "stdev": stdev,
-                        "precision": precision,
-                        "uncertainty": uncertainty})
+                        "precision_1": precision_1,
+                        "uncertainty_1": uncertainty_1,
+                        "precision_n": precision_n,
+                        "uncertainty_n": uncertainty_n,
+                        })
 
         self.error_data[component] = results
         return results
@@ -93,7 +98,7 @@ class ArtificialVecField(VecFieldCartesian):
         plt.axvline(results["bot"], color="navy", linestyle=":", linewidth=1)
 
         plt.xlabel("${0}$  $(m/s)$".format(component.lower()))
-        plt.ylabel("Number of Occurrences")
+        plt.ylabel("Frequency")
         plt.legend(loc=0)
         plt.tight_layout()
 

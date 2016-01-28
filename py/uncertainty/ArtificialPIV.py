@@ -175,8 +175,8 @@ class ArtificialPIV:
                   'r_y_mm': self._eval_cal_equation('r_y_mm', x_px, y_px, z_mm)}
         return result
 
-    @staticmethod
-    def _get_intensities(particles, mesh_dict, particle_size=0.2, particle_scatter=100,
+
+    def _get_intensities(self, particles, mesh_dict, particle_size=0.2, particle_scatter=100,
                          light_sheet_thickness=3.0, subset_radius=2.0):
         """
         Calculate the intensity of light surrounding a particle. Based on work from Raffel et al.
@@ -299,6 +299,8 @@ class ArtificialPIV:
         if output_dir is not None:
             for key in self.images.keys():
                 outname = os.path.join(output_dir, "{0}{1}.tif".format(name, key))
+                if os.path.exists(outname):
+                    os.remove(outname)
                 save_array_as_dtype(self.images[key], dtype, outname)
 
         # now save a json file in the same directory with the parameters of this function
@@ -317,14 +319,14 @@ class ArtificialPIV:
 if __name__ == '__main__':
 
     def main():
-        mdims = (1024/8, 1280/8)
+        mdims = (1024/4, 1280/4)
         apiv = ArtificialPIV(mdims, name="profile_test")
         apiv.load_calibration_file('cal_data/station_7/ely_may28th.cal')
-        apiv.make_image_pairs(n_particles=mdims[0] * mdims[1] / 40,
+        apiv.make_image_pairs(n_particles=mdims[0] * mdims[1] / 10,
                               dt=40,
-                              u=0.0,
-                              v=0.0,
-                              w=0.0,
+                              u=5.6,
+                              v=5.6,
+                              w=19.0,
                               particle_size=0.2,
                               particle_scatter=100,
                               light_sheet_thickness=3.00,

@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from py.piv.VecFieldCartesian import VecFieldCartesian
-from py.utils import Timer, masked_rms, masked_mean
+from py.utils import Timer, masked_rms, masked_mean, get_spatial_derivative
 from py.config import *
 
 
@@ -25,6 +25,9 @@ class MeanVecFieldCartesian:
         self.v3d_paths = v3d_paths
         self.min_points = min_points
         self.velocity_fs = velocity_fs
+
+        # special case
+        self.calculated_turb_viscosity = None   # turbulent viscosity as calculated from velocity data
 
         # attributes that will be inherited from the constituent VecField instances
         self.x_set = None
@@ -75,10 +78,21 @@ class MeanVecFieldCartesian:
                             'uw': None,      # reynolds stress in u/w
                             'vw': None}      # reynolds stress in v/w
 
+        # partial spatial derivatives. the changes with respect to Z will require comparison between
+        # axial vortex datasets taken at multiple stream-wise positions.
+        self.derivative_set = {'dudx': None,
+                               'dudy': None,
+                               'dudz': None,    # special case
+                               'dvdx': None,
+                               'dvdy': None,
+                               'dvdz': None,    # special case
+                               'dwdx': None,
+                               'dwdy': None,
+                               'dwdz': None}    # special case
+
         # Build up the data set
         if v3d_paths is not None:
             self.ingest_paths(v3d_paths, min_points)  # creates constituent_vel_matrix_list from input filepath list
-
 
     def __getitem__(self, key):
         """ allows components of the instance to be accessed more simply through instance[key] """
@@ -92,6 +106,11 @@ class MeanVecFieldCartesian:
         elif key in self.meshgrid.keys():
             return self.meshgrid[key]
 
+        elif key in self.derivative_set.keys():
+            return self.derivative_set[key]
+
+        elif key == "turb_visc":
+            return self.calculated_turb_viscosity
 
     def __setitem__(self, key, value):
         """ allows components of the instance to be set more briefly """
@@ -101,7 +120,6 @@ class MeanVecFieldCartesian:
             self.mean_set[key[::-1]] = value
         else:
             raise AttributeError("instance does not accept __setitem__ for '{0}'".format(key))
-
 
     def ingest_paths(self, filepath_list, min_points=None):
         """
@@ -136,7 +154,6 @@ class MeanVecFieldCartesian:
         self._get_average_and_fluctuating(min_points)
         t.finish()
 
-
     def _get_average_and_fluctuating(self, min_points):
         """  populates all the components in the matrices dynamic_set and mean_set """
 
@@ -168,6 +185,82 @@ class MeanVecFieldCartesian:
         for component in ['u', 'v', 'w', 'uu', 'vv', 'ww', 'ctke', 'uv', 'uw', 'vw']:
             self.mean_set[component] = masked_rms(self.dynamic_set[component], axis=2, mask=mpm)
 
+    def _get_spatial_derivatives(self):
+        """
+        This function computes 6 of the 9 spatial derivatives needed for experimental
+        validation of the turbulent viscosity hypothesis. The others are left zero, which
+        can be acceptable assumptions.
+        """
+        xmesh_m = self['x_mesh'] / 1000
+        ymesh_m = self['y_mesh'] / 1000
+
+        self.derivative_set['dudx'], self.derivative_set['dudy'] = \
+            get_spatial_derivative(self['U'], xmesh_m, ymesh_m)
+
+        self.derivative_set['dvdx'], self.derivative_set['dvdy'] = \
+            get_spatial_derivative(self['V'], xmesh_m, ymesh_m)
+
+        self.derivative_set['dwdx'], self.derivative_set['dwdy'] = \
+            get_spatial_derivative(self['W'], xmesh_m, ymesh_m)
+
+        self.derivative_set['dudz'] = self['W'] * 0
+        self.derivative_set['dvdz'] = self['W'] * 0
+        self.derivative_set['dwdz'] = self['W'] * 0
+
+        return self.derivative_set
+
+    def calculate_turbulent_viscosity(self):
+        """
+        This function estimates turbulent viscosity with the terms available.
+        The assumptions made here and the reasoning behind it are complex. See thesis
+        document for better understanding
+        :return:
+        """
+
+        # populate the spatial derivative attributes
+        self._get_spatial_derivatives()
+
+        # gather up all of our terms
+        uu = self['uu']
+        vv = self['vv']
+        ww = self['ww']
+        uw = self['uw']
+        uv = self['uv']
+        vw = self['vw']
+        dudx = self['dudx']
+        dudy = self['dudy']
+        dudz = self['dudz']             # ok to assume zero
+        dvdx = self['dvdx']
+        dvdy = self['dvdy']
+        dvdz = self['dvdz']             # ok to assume zero
+        dwdx = self['dwdx']
+        dwdy = self['dwdy']
+        dwdz = self['dwdz'] * 0 + 1     # convert this to one so we can still see ww variation
+
+        '''
+        print 'uu', uu.max(), uu.min()
+        print 'vv', vv.max(), vv.min()
+        print 'ww', ww.max(), ww.min()
+        print 'uv', uv.max(), uv.min()
+        print 'uw', uw.max(), uw.min()
+        print 'vw', vw.max(), vw.min()
+
+        print 'dudx', dudx.max(), dudx.min()
+        print 'dudy', dudy.max(), dudy.min()
+        print 'dudz', dudz.max(), dudz.min()
+        print 'dvdx', dvdx.max(), dvdx.min()
+        print 'dvdy', dvdy.max(), dvdy.min()
+        print 'dvdz', dvdz.max(), dvdz.min()
+        print 'dwdx', dwdx.max(), dwdx.min()
+        print 'dwdy', dwdy.max(), dwdy.min()
+        print 'dwdz', dwdz.max(), dwdz.min()
+        '''
+
+        tv = - (1 / 3) * (uu / dudx + vv / dvdy + ww / dwdz) - \
+             2 * ((uw / (dudz + dwdx)) + (uv / (dudy + dvdx)) + (vw / (dvdz + dwdy)))
+
+        self.calculated_turb_viscosity = np.abs(tv)
+        return tv
 
     def show_heatmap(self, component):
         """ prints a quick simple heads up heatmap of input component of the mean_set attribute"""

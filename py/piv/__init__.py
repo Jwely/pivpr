@@ -6,4 +6,5 @@ from construct_experiments import *
 from Experiment import *
 from MeanVecFieldCartesian import *
 from VecFieldCartesian import *
+from shorthand_to_tex import *
 

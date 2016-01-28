@@ -1,0 +1,24 @@
+{
+    "core_location": [
+        -5.6993117180467223, 
+        -4.0302130369927918
+    ], 
+    "velocity_free_stream": 25.36, 
+    "r_mesh_core": 19.295949220284633, 
+    "temp_tunnel": 297.45, 
+    "z_location": 27.875, 
+    "rel_humid": 71.75061545716393, 
+    "wet_bulb": 294.65, 
+    "dry_bulb": 298.4, 
+    "test_date": "3-Jun", 
+    "W_core": 20.7803875, 
+    "q": 380, 
+    "pres_atm": 101120, 
+    "experiment_id": 16, 
+    "v_nominal": 25.0, 
+    "n_samples": 200, 
+    "dt": 25, 
+    "v_fs_mean": 25.36, 
+    "T_max": 5.1688243851462596, 
+    "v_fs_sigma": 0.04
+}
