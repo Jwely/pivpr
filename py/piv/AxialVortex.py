@@ -6,6 +6,7 @@ import os
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 
 # package imports
 from shorthand_to_tex import shorthand_to_tex
@@ -115,7 +116,6 @@ class AxialVortex(MeanVecFieldCartesian):
             new_instance = cPickle.load(f)
 
         print("loaded pkl from {0}".format(pickle_path))
-        new_instance.characterize()
         return new_instance
 
     def _rrange_parser(self, r_range):
@@ -177,10 +177,10 @@ class AxialVortex(MeanVecFieldCartesian):
 
         combined_mask = np.ma.mask_or(distance_mask, angle_mask)
 
-        # take the subsets, allow a string component or a custom input numpy array. (for dynamic data)
+        # take the subsets, allow a string component or a custom input np array. (for dynamic data)
         if isinstance(component, str):
             rt_subset_component = np.ma.masked_array(self[component], mask=combined_mask)
-        elif 'numpy' in str(type(component)):
+        elif 'np' in str(type(component)):
             rt_subset_component = np.ma.masked_array(component, mask=combined_mask)
         else:
             raise Exception("Cannot understand input 'compnonet' of type {0}".format(type(component)))
@@ -363,6 +363,10 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
 # ============== plotting functions=======================
+    def _get_cbar_levels(self, component):
+        comp = self._getitem_by_rt(component).astype('float')
+        return np.nanpercentile(comp.filled(np.nan), range(1, 100))
+
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=100):
         """
         returns the plot extents based on user defined distance to core. If the
@@ -450,7 +454,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return vmin, vmax
 
     @staticmethod
-    def save_or_show(outpath=None):
+    def _save_or_show(outpath=None):
         """
         :param outpath: output filepath to save figure, if left None, figure will be displayed to screen
         """
@@ -460,6 +464,17 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.close()
         else:
             plt.show()
+
+    def _draw_core(self, fig, ax):
+        """ draws a vortex core for reference on any contour plot """
+        # plot the core location for reference
+        if self.core_location[0] is not None:
+            ax.scatter(*self.core_location, marker='+', s=100, c='white')
+
+        if self.core_radius is not None:
+            circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor='w',
+                              linestyle=':', facecolor='none', label="Core Boundary")
+            ax.add_patch(circ)
 
     def get_dvt_dr(self, t_range=None, r_range=None, symmetric=None, outpath=None):
         """
@@ -510,7 +525,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.tight_layout()
 
         if outpath is not False:
-            self.save_or_show(outpath)
+            self._save_or_show(outpath)
         else:
             plt.close()
 
@@ -591,7 +606,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylabel(shorthand_to_tex('T'))
 
         if outpath is not False:
-            self.save_or_show(outpath)
+            self._save_or_show(outpath)
         else:
             plt.close()
         return
@@ -669,7 +684,7 @@ class AxialVortex(MeanVecFieldCartesian):
         ax3.psd(y_sets['mean'], NFFT=64, Fs=SAMPLING_RATE)
         plt.title("log PSD")
 
-        self.save_or_show(outpath)
+        self._save_or_show(outpath)
         return {"t_set": t_set, "y_sets": y_sets}
 
     def scatter_plot(self, component_x, component_y, component_c=None,
@@ -742,7 +757,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylabel(y_label)
         plt.title(title)
 
-        self.save_or_show(outpath)
+        self._save_or_show(outpath)
 
         # return the plotted data
         return {"x": x, "y": y, "c": c}
@@ -782,7 +797,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylim(ylims)
         plt.xlabel("$X$ (mm)")
         plt.ylabel("$Y$ (mm)")
-        self.save_or_show(outpath)
+        self._save_or_show(outpath)
 
     def stream_plot(self, title=None, outpath=None):
         """
@@ -813,10 +828,10 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylim(ylims)
         plt.axis('equal')
 
-        self.save_or_show(outpath)
+        self._save_or_show(outpath)
         return
 
-    def contour_plot(self, component, title=None, outpath=None):
+    def contour_plot(self, component, title=None, outpath=None, log_colorbar=False):
         """
         creates a contour plot of input component
 
@@ -826,24 +841,30 @@ class AxialVortex(MeanVecFieldCartesian):
         :return:
         """
 
+        if isinstance(component, np.ma.MaskedArray):
+            data = component
+        else:
+            data = self._getitem_by_rt(component, CONTOUR_DEFAULT_RRANGE)
+
         if title is None:
             title = shorthand_to_tex(component)
 
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component)
+        if log_colorbar:
+            cf = plt.contourf(self['x_mesh'], self['y_mesh'], data, CONTOUR_DEFAULT_LEVELS,
+                              norm=LogNorm(), cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
+        else:
+            cf = plt.contourf(self['x_mesh'], self['y_mesh'], data, CONTOUR_DEFAULT_LEVELS,
+                              cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
 
-        cf = plt.contourf(self['x_mesh'], self['y_mesh'],
-                          self._getitem_by_rt(component, CONTOUR_DEFAULT_RRANGE),
-                          CONTOUR_DEFAULT_LEVELS, cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
         plt.title(title)
         plt.xlabel("$X$ ($mm$)")
         plt.ylabel("$Y$ ($mm$)")
 
-        # plot the core location for reference
-        if self.core_location[0] is not None:
-            ax.scatter(*self.core_location, marker='+', s=100, c='white')
+        self._draw_core(fig, ax)
 
         plt.tight_layout()
         xlims, ylims = self._get_plot_lims()
@@ -851,7 +872,15 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylim(ylims)
         plt.gca().set_aspect('equal', adjustable='box')
 
-        self.save_or_show(outpath)
+        self._save_or_show(outpath)
+        return
+
+    def hist_plot(self, component, bins=100):
+        """ plots quick and dirty histogram of a component """
+        c = self._getitem_by_rt(component).flatten()
+        fig = plt.figure()
+        plt.hist(c[~c.mask], bins=bins, color="grey")
+        plt.show()
         return
 
 
@@ -861,13 +890,37 @@ if __name__ == "__main__":
     #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-28_Z-31.0_Vfs-29.09.pkl")
     #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-70_Z-40.0_Vfs-33.01.pkl")
 
-    directory = os.path.join(DATA_FULL_DIR, "55")
-    paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
-    mvf = AxialVortex("test", v3d_paths=paths, velocity_fs=23.33, min_points=20)
-    mvf.to_pickle("temp.pkl", include_dynamic=True)
+    #directory = os.path.join(DATA_FULL_DIR, "55")
+    #paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
+    #mvf = AxialVortex("test", v3d_paths=paths, velocity_fs=23.33, min_points=20)
+    #mvf.to_pickle("temp.pkl", include_dynamic=True)
 
-    #mvf = AxialVortex().from_pickle("temp.pkl")
+    mvf = AxialVortex().from_pickle("temp.pkl")
     mvf.find_core()
-    mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
-    mvf.calculate_turbulent_viscosity()
-    mvf.contour_plot('turb_visc')
+    #mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
+    tv = mvf.calculate_turbulent_viscosity()
+    '''
+    mvf.hist_plot('dudx')
+    mvf.hist_plot('dudy')
+    mvf.hist_plot('dvdx')
+    mvf.hist_plot('dvdy')
+    mvf.hist_plot('dwdx')
+    mvf.hist_plot('dwdy')
+    '''
+    mvf.contour_plot('dudx', outpath="dudx_temp.png")
+    mvf.contour_plot('dudy', outpath="dudy_temp.png")
+    mvf.contour_plot('dvdx', outpath="dvdx_temp.png")
+    mvf.contour_plot('dvdy', outpath="dvdy_temp.png")
+    mvf.contour_plot('dwdx', outpath="dwdx_temp.png")
+    mvf.contour_plot('dwdy', outpath="dwdy_temp.png")
+
+    mvf.contour_plot('uu', outpath="uu_temp.png")
+    mvf.contour_plot('uv', outpath="uv_temp.png")
+    mvf.contour_plot('uw', outpath="uw_temp.png")
+    mvf.contour_plot('vw', outpath="vw_temp.png")
+    mvf.contour_plot('vv', outpath="vv_temp.png")
+    mvf.contour_plot('ww', outpath="ww_temp.png")
+
+    #mvf.hist_plot('turb_visc', bins=1000)
+    mvf.contour_plot('turb_visc', log_colorbar=False, outpath="nu_t_temp.png")
+    mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")
