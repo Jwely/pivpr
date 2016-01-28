@@ -10,8 +10,19 @@ def shorthand_to_tex(component):
         shorthand
         """
 
+        # turbulent viscosity is a special case
+        if component == "turb_visc":
+            return "$\\nu_{t}$"
+
+        # turbulent energy is a special case
+        elif component == "ctke":
+            return "$k$"
+
+        elif component == "num":
+            return "$N$"
+
         # handles single components
-        if len(component) == 1:
+        elif len(component) == 1:
 
             # stable components
             if component.isupper():
@@ -28,22 +39,11 @@ def shorthand_to_tex(component):
 
         # handles partial derivatives of format 'dxdy'
         elif len(component) == 4:
-            return "$\\frac{{\\partial {0}}}{{\\partial{1}}}".format(component[1], component[3])
+            return "$\\frac{{\\partial {0}}}{{\\partial {1}}}$".format(component[1], component[3])
 
         # meshgrid attributes
         elif "mesh" in component:
             return component.upper().split("_")[0]
-
-        # turbulent viscosity is a special case
-        elif component == "turb_visc":
-            return "\\nu_{t}"
-
-        # turbulent energy is a special case
-        elif component == "ctke":
-            return "$k$"
-
-        elif component == "num":
-            return "$N$"
 
         # give the user their component string back if nothing matches
         else:
