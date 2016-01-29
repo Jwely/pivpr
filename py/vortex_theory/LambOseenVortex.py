@@ -41,7 +41,7 @@ class LambOseenVortex:
             raise Exception("must use core_radius or time parameter")
 
         # find vtheta
-        exponent = (-1.26 * (r_array / core_radius) ** 2)
+        exponent = (-1.0 * (r_array / core_radius) ** 2)
         vtheta = gamma / (2 * math.pi * r_array) * (1 - numpy.exp(exponent))
 
         if verbose:
