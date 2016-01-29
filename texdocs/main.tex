@@ -50,9 +50,9 @@ Effects in Axial Wake Vortices Via Particle Image Velocimetry}
 
 %=========================================================================
 \abstract{
-	Vortices are a common phenomenon in fluid flows that arise to dissipate 
-	kinetic energy into heat via viscous interaction. They arise naturally at 
-	large scales in the form of dust devils, tornadoes, and in the wake of 
+	Vortices are a common phenomenon in fluid flows that arise as kinetic 
+	energy dissipates into heat via viscous interaction. They arise naturally 
+	at large scales in the form of dust devils, tornadoes, and in the wake of 
 	aircraft. It is important to understand the conditions leading to their 
 	formation, their duration, and their dissipation to prevent undesirable 
 	effects. Among these effects is an decrease in safety of aircraft 
@@ -63,29 +63,29 @@ Effects in Axial Wake Vortices Via Particle Image Velocimetry}
 	remain tightly wound about their cores for as long as they have been 
 	observed to do. The current study builds upon the theoretical work of Ash, 
 	Zardadkhan and Zuckerwar \cite{ash2011}, and tests specific attributes of a 
-	vortex for agreement with non-equilibrium pressure relaxation theory. A 
-	bi-wing vortex generator was constructed, and placed in a low speed wind 
-	tunnel. Stereo particle image velocimetry was employed to map three 
-	dimensional velocity vectors in a plan perpendicular to the free stream 
-	flow direction at a rate of 1Hz for 200 seconds. A Reynolds time averaging 
-	approach was used to synthesize this velocity data into stable and 
-	fluctuating components. Free stream velocity and downstream distance were 
-	varied to create a variety of vortices, and to ensure the availability of 
-	high quality data.
+	vortex for agreement with non-equilibrium pressure relaxation theory. This 
+	theory provides an exact solution to the Navier-Stokes equations for an 
+	axial vortex, with a resulting velocity model that agrees with leading 
+	empirical models. A bi-wing vortex generator was constructed, and placed in 
+	a low speed wind tunnel. Stereo particle image velocimetry was employed to 
+	map three dimensional velocity vectors in a plan perpendicular to the free 
+	stream flow direction at a rate of 1Hz for 200 seconds. A Reynolds time 
+	averaging approach was used to synthesize this velocity data into stable 
+	and fluctuating components at multiple Reynolds numbers and downstream 
+	locations. 
 	}
 
 \beforepreface
 
 %\prefacesection{Acknowledgements}
-
 %text of Acknowledgements goes here any other preface section is inserted 
 %similarly by the command
 
 \prefacesection{Notes}
 Good practice for preserving the code used to perform this research was 
-attempted by use of the Git work flow and a Git repository. All code used to 
-perform data analysis and visualization, along with the raw three dimensional 
-vector dataset can be downloaded for free from 
+attempted by use of git version control software and a git repository. All code 
+used to perform data analysis and visualization, along with the raw three 
+dimensional vector dataset can be downloaded from 
 \url{https://github.com/Jwely/pivpr}.
 	
 
@@ -94,8 +94,38 @@ vector dataset can be downloaded for free from
 %=========================================================================
 % introduction chapter and subdocuments
 \chapter{Introduction}
-\include{docs/intro/prob_statement}
-\include{docs/intro/vortex_modeling}
+Vortices are common natural fluid phenomenon which are extensively scrutinized 
+in the study of turbulent flows. While small vortical structures appear and 
+disappear without notice, some circumstances promote the formation of strong 
+axial vortices that endure. Some such axial vortices are found trailing the 
+wake of aircraft wingtips, and in nature as dust devils, tornadoes, and 
+waterspouts. Wingtip vortices behind large aircraft create unsafe conditions 
+for other aircraft, especially around airport runways. The presence of axial 
+wake vortices is a significant limiting factor on the volume of traffic an 
+airport can accommodate \cite{hallock1991}. While the circumstances that result 
+in the creation of strong axial vortices are well understood, the mechanisms 
+that allow them to stay tightly wound for as long as they do remain mysterious. 
+Due to the spontaneous nature of tornadoes, good experimental data is difficult 
+to acquire and is unrepeatable. Axial wake vortices behave differently for 
+small aircraft or in wind tunnels at low Reynolds number than they do for large 
+aircraft or at high Reynolds numbers \cite{burnam2013}. Multiple empirical and 
+analytical exact solutions exist to describe the velocity profiles of axial 
+vortices, each with varying levels of skill.
+
+In this analysis, A bi-wing vortex generator was constructed, and placed in 
+a low speed wind tunnel. Stereo particle image velocimetry was employed to 
+map three dimensional velocity vectors in a plan perpendicular to the free 
+stream flow direction at a rate of 1Hz for 200 seconds. A Reynolds time 
+averaging approach was used to synthesize this velocity data into stable 
+and fluctuating components. Free stream velocity and downstream distance 
+were varied to create a vortices at a variety of Reynolds numbers and produce a 
+three dimensional perspective. Observed velocity profiles were compared against 
+the predictions of multiple common vortex models. Relationships between 
+Reynolds stresses, turbulent energies, strain rates, and dissipation were
+examined to gain understanding of the compact core behavior, and to help 
+explain the models performance.
+
+\include{docs/intro/vortices}
 \include{docs/intro/piv_fundamentals}
 
 %=========================================================================
