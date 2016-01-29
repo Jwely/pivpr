@@ -1,4 +1,4 @@
-\section{Vortex models}
+\section{Established Vortex models}
 Several vortex models are already commonly used to describe the behavior of 
 axial wake vortices. Among these models are, in order of introduction, the 
 Rankine, Lamb-Oseen, Burnham-Hallock, and Proctor models \cite{ahmad2014}. The 
@@ -20,12 +20,14 @@ v_{\theta}(r) = \frac{\Gamma_0}{2 \pi r}
 \end{equation}
 
 \noindent
-The azimuthal velocity $v_{\theta}$, is proportional to radius $r$, in the core 
-zone, but proportional to $1/r$ in the area outside the core zone. This 
-discontinuity makes the model unsuitable in the vicinity of the core region of 
-the vortex. The model is unsuitable for the study of unsteady flow or 
-turbulence, and the rigid body assumption at the core has been experimentally 
-shown to be invalid.
+Where $\Gamma_0$ is the circulation and $r_{core}$ is the radius of the core, 
+which is defined as the location of the maximum azimuthal velocity, 
+$v_{\theta, max}$. The azimuthal velocity $v_{\theta}$, is proportional to 
+radius $r$, in the core zone, but proportional to $1/r$ in the area outside the 
+core zone. This discontinuity makes the model unsuitable in the vicinity of the 
+core region of the vortex. The model is unsuitable for the study of unsteady 
+flow or turbulence, and the rigid body assumption at the core has been 
+experimentally shown to be invalid.
 
 Significantly later, the Lamb-Oseen vortex model was developed from an 
 analytical solution to the Navier-Stokes equations. In this model, a potential 
@@ -49,8 +51,8 @@ r_{core}(t) = \sqrt{4 \nu t}
 \end{equation}
 
 \noindent
-Alternatively, in terms of the maximum azimuthal velocity, $v_{\theta, max}$  
-can be expressed as
+Alternatively, the azimuthal velocity profile can be expressed in terms of the 
+maximum azimuthal velocity, $v_{\theta, max}$, as
 
 \begin{equation}
 v_{\theta}(r,t) = v_{\theta, max} (1 + \frac{1}{2 \alpha}) \frac{r_{max}}{r} 
@@ -70,10 +72,27 @@ r_{core}(t) = \sqrt{\alpha 4 \nu t}
 Where $\alpha = 1.25643$ \cite{davenport1996}. Like the Rankine vortex, a 
 Lamb-Oseen vortex does not allow for unsteady flow. In addition, the predicted 
 centerline velocity at $r=0$ is undefined. It has utility in estimating average 
-velocity profiles, and has been used to initialize large eddy simulations.
+velocity profiles, and has been used to initialize large eddy 
+simulations \cite{hennemann2011}.
 
-A model which demonstrates great skill at predicting the velocity profiles of 
-large experimental vortices is the Burnham-Hallock model.\cite{burnam2013}.
+A model which is widely used in the study of wake vortices, and demonstrates 
+great skill at predicting the velocity profiles of large experimental vortices 
+is the Burnham-Hallock model \cite{burnham1982}. This empirically based model 
+has been independently discovered by many, and describes the 
+azimuthal velocity profile as
 
-Modeling the turbulence within a large scale vortex 
-is difficult, as all length scales must be considered.
+\begin{equation}
+v_{\theta}(r) = \frac{\Gamma_0}{2 \pi r_{core}} \frac{r^2}{r^2 + r_{core}^2}
+\label{eq:burnham-hallock}
+\end{equation}
+
+\noindent
+Similar to the Lamb-Oseen vortex, the Burnham-Hallock model has been widely 
+used to initialize large eddy simulations and model aircraft response to wake 
+encounters \cite{ahmad2014}.
+
+\section{Vortex Model with non-equilibrium Pressure}
+
+Non equilibrium pressure phenomena arises by the application of the 
+Hamilton variational principle to describe the volume viscosity in fluids.
+
