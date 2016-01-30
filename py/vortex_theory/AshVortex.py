@@ -50,7 +50,7 @@ class AshVortex:
         nu = self.viscosity
 
         Rgamma = gamma / (2 * math.pi * nu)
-        vtheta = (gamma / math.pi) * (2.0 ** 1.5) / (Rgamma * (nu * ettap) ** 0.5) * \
+        vtheta = (gamma / math.pi) * (2.0 ** 0.5) / (Rgamma * (nu * ettap) ** 0.5) * \
                  (r_array / rcore) / ((r_array / rcore) ** 2 + 1)
         return vtheta
 
