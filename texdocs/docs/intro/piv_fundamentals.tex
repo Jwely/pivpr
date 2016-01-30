@@ -159,9 +159,9 @@ stereo PIV \cite{lawson1997b,lawson1997}.
 
 \subsection{Particles}
 
-The "Particles" part of PIV refers to the small, highly reflective solid or 
-liquid spheres that are entrained within a flow. It is assumed that the 
-movement of the particles is representative of the fluid which propels them 
+The "Particles" part of the PIV acronym refers to the small, highly reflective 
+solid or liquid spheres that are entrained within a flow. It is assumed that 
+the movement of the particles is representative of the fluid which propels them 
 through the air, but this assumption deserves further examination 
 \cite{roscoe1952}. Since particles have mass and inertia, the particles motion 
 is a function of the force exerted upon it by the fluid, and by gravitational 
@@ -185,8 +185,30 @@ particle density as in figure \ref{fig:vortex_core_particles}.
 	\label{fig:vortex_core_particles}
 \end{figure}
 
+As a particles inertia and diameter shrinks, it becomes capable of following 
+smaller turbulent length scales, but the prime consideration for particles is 
+the ability to detect them. The intensity of the light reflecting from a 
+particles should be sufficient to reach 30\% to 50\% of the saturation level of 
+the recording medium. The controlling factors for intensity of reflected light 
+are particle size, laser power, and refractive index \cite{adrian2011}. Thus, 
+particles which are small enough to ensure turbulent structures on the time and 
+length scales of interest can be adequately represented in the particles 
+motion, but large enough to be detected must be selected. It has been 
+demonstrated that particles on the scale of one micrometer and between 0.56 and 
+1.62 times the density of the fluid, the particles can accurately represent 
+turbulent structures on the order of many thousand Hertz \cite{mei1996}. In the 
+present study, $CO_2$ filled mineral oil bubbles generated with a Laskin 
+nozzle fog generater were used as particle seed. These droplets have a nominal 
+diameter of 0.6 micrometers and densities of 1.55 times that of air were used.
 
-\subsubsection{Seeding Particles for PIV}
+The density of particle seeding must be sufficient for a correlation to be 
+generated between frames for every small interrogation spot in the survey 
+plane. In an instance where only one or two particles are visible in the first 
+frame at the edge of an interrogation sector, then those particles exit the 
+sector for the second frame, to be replaced by new particles 
+entering the area from the other side, spurious results will be produced. 
+Excessively dense particles 
+
 
 \subsection{Image processing}
 
@@ -197,7 +219,7 @@ taking the inverse fast Fourier transform (FFT) of the product of the FFT of
 the first image, and the complex conjugate of the FFT of the second image, then 
 adjusting for up-sampling by dividing by the original factor as in equation. 
 Displacement is measured by finding the peak of correlation map between a small 
-sector of each image, represented by Equation \ref{eq:correlation_map}.
+sector of each image, represented by Equation \ref{eq:correlation_map}. 
 
 \begin{equation}
 C_{map} = FFT^{-1} * [F_A \times conj(F_B) ]
