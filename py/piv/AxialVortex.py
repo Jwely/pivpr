@@ -537,16 +537,20 @@ class AxialVortex(MeanVecFieldCartesian):
                         "tavg": tavg}
         return results_dict
 
-    def comparison_plot(self, t_range=None, r_range=None, symmetric=None, outpath=None,
-                        kinematic_viscosity=None, time=None):
+    def comparison_plot(self, pressure_relaxation, t_range=None, r_range=None,
+                        symmetric=None, outpath=None, kinematic_viscosity=None, time=None):
         """
         This function is very similar to get_dvt_dr, and is just another step in our evolving understanding
         of what we actually want to show here. It plots the average experimental profile against several
         theoretical vortex profiles including Rankin, Lamb-Oseen, and Ash.
-        :param t_range:
-        :param r_range:
-        :param symmetric:
-        :param outpath:
+
+        :param pressure_relaxation:     the pressure relaxation coefficient in microseconds
+        :param t_range:                 theta range to fit scatter data
+        :param r_range:                 r range to fit scatter data
+        :param symmetric:               use symmetry about each axis
+        :param outpath:                 filepath to save the plot as an image
+        :param kinematic_viscosity:     the kinematic viscosity in units of m^2 / s (read from config file)
+        :param time:                    the age of the vortex in seconds, used for Lamb-Oseen decay simulation
         :return:
         """
 
@@ -583,7 +587,7 @@ class AxialVortex(MeanVecFieldCartesian):
         t_ash = AshVortex(core_radius, vtheta_max=vtheta_max).get_vtheta(r_array)
 
         # ash vortex based on pressure relaxation
-        ettap  = 0.39e-6
+        ettap  = pressure_relaxation / 1e6
         t_ash2 = AshVortex(core_radius, circulation_strength, kinematic_viscosity, ettap).get_vtheta(r_array)
 
         # burnham and hallock vortex
@@ -906,7 +910,7 @@ if __name__ == "__main__":
     mvf.hist_plot('dvdy')
     mvf.hist_plot('dwdx')
     mvf.hist_plot('dwdy')
-    '''
+
     mvf.contour_plot('dudx', outpath="dudx_temp.png")
     mvf.contour_plot('dudy', outpath="dudy_temp.png")
     mvf.contour_plot('dvdx', outpath="dvdx_temp.png")
@@ -920,7 +924,9 @@ if __name__ == "__main__":
     mvf.contour_plot('vw', outpath="vw_temp.png")
     mvf.contour_plot('vv', outpath="vv_temp.png")
     mvf.contour_plot('ww', outpath="ww_temp.png")
-
+    '''
     #mvf.hist_plot('turb_visc', bins=1000)
-    mvf.contour_plot('turb_visc', log_colorbar=False, outpath="nu_t_temp.png")
-    mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")
+
+    mvf.comparison_plot()
+    #mvf.contour_plot('turb_visc', log_colorbar=False, outpath="nu_t_temp.png")
+    #mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")
