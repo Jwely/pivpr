@@ -2,7 +2,7 @@ __author__ = 'Jwely'
 
 import os
 from py.tex.TeXWriter import TeXWriter
-from py.utils import shorthand_to_tex
+from py.piv import shorthand_to_tex
 from py.piv.construct_experiments import construct_experiments
 from py.config import *
 
