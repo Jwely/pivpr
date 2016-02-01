@@ -34,6 +34,7 @@ class Experiment:
         self.experiment_id = experiment_id
         self.n_samples = n_samples
         self.z_location = z_location
+        self.z_location_mm = int(z_location * 25.4 + 0.5)   # convert to mm and rount to integer
         self.v_nominal = v_nominal
         self.dt = dt
         self.test_date = test_date
@@ -68,7 +69,7 @@ class Experiment:
         """
 
         outdict = self.axial_vortex.characterize()
-        atts = ["experiment_id", "n_samples", "z_location", "v_nominal", "dt", "test_date", "v_fs_mean",
+        atts = ["experiment_id", "n_samples", "z_location_mm", "v_nominal", "dt", "test_date", "v_fs_mean",
                 "v_fs_sigma", "q", "pres_atm", "temp_tunnel", "wet_bulb", "dry_bulb", "rel_humid"]
         for att in atts:
                 outdict.update({att: getattr(self, att)})

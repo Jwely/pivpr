@@ -31,7 +31,7 @@ def process_experiments(ids=None, min_points=DEFAULT_MIN_POINTS,
     # build a dataframe, rename the columns to tex formatting
     df = pd.DataFrame(table.values())
 
-    kw_names = ["experiment_id", "z_location", "v_nominal", "dt", "velocity_free_stream", "q", "pres_atm",
+    kw_names = ["experiment_id", "z_location_mm", "v_nominal", "dt", "velocity_free_stream", "q", "pres_atm",
                 "temp_tunnel", "rel_humid", "r_mesh_core", "T_max", "W_core"]
     tex_names = ["Run", "$I_Z$", "$V_nom$", "$dt$", "$V_{fs}$", "$Q$", "$P_{atm}$",
                  "$T_{tunnel}$", "$\phi$", "$R_{core}$", "$\\overline{t}_{max}$", "$\\overline{w}_{core}$"]
@@ -47,4 +47,4 @@ def process_experiments(ids=None, min_points=DEFAULT_MIN_POINTS,
 
 
 if __name__ == "__main__":
-    process_experiments(include_dynamic=True, force_recalc=True)
+    process_experiments(include_dynamic=True, force_recalc=False)
