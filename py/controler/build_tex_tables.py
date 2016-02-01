@@ -37,6 +37,11 @@ def build_tex_tables():
                caption="Summary of Experimental Results",
                horizontal_line_rows=[1])
 
+    # table of uncertainty simulation scenarios
+    csv_to_tex(os.path.join(TEX_TABLE_DIR, "uncertainty_sim_table.csv"),
+               caption="Velocity conditions of Monte Carlo image generation for uncertainty analysis.",
+               horizontal_line_rows=[2])
+
 
 if __name__ == "__main__":
     build_tex_tables()

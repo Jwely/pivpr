@@ -42,7 +42,9 @@ def csv_to_tex(csv_path, caption, justification=None, horizontal_line_rows=None)
         row = [element if element != "nan" else " " for element in map(str, row)]
         if any([i == ix for ix in horizontal_line_rows]):
             texdata.append("\t\\hline")
-        texdata.append("\t" + " & ".join(row) + "\\\\")
+
+        if not all([entry == " " for entry in row]):     # ignores entirely blank lines
+            texdata.append("\t" + " & ".join(row) + "\\\\")
 
 
     texdata += ["\t\\hline",

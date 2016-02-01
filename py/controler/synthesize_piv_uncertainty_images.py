@@ -18,11 +18,11 @@ def synthesize_piv_uncertainty_images(uncertainty_image_dir):
     """
 
     velocity_order = ['dt25', 'dt40']
-    velocity_sets = {'dt40': {'dt': 40, 'u': 5.60, 'v': 5.60, 'w': 16.0},
-                     'dt25': {'dt': 25, 'u': 6.15, 'v': 6.15, 'w': 24.0}}
+    velocity_sets = {'dt40': {'dt': 40, 'u': 3.3, 'v': 3.3, 'w': 19.0},
+                     'dt25': {'dt': 25, 'u': 4.9, 'v': 4.9, 'w': 29.0}}
 
 
-    calibrations = [1]
+    calibrations = [7, 6, 5, 4, 3, 2, 1]
 
     dimensions = (1024, 1280)
 
