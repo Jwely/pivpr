@@ -29,7 +29,7 @@ def csv_to_tex(csv_path, caption, justification=None, horizontal_line_rows=None)
         justification = "|{0}|".format("c" * len(df.columns))
 
     # write code at the top of the file
-    texdata = ["\\renewcommand\\baselinestretch{1.3}\\selectfont",
+    texdata = [#"\\renewcommand\\baselinestretch{1.3}\\selectfont",
                "\\begin{table}[H]",
                "\\begin{center}",
                "\\begin{tabular}{%s}" % justification,
@@ -51,7 +51,8 @@ def csv_to_tex(csv_path, caption, justification=None, horizontal_line_rows=None)
                 "\\label{table:%s}" % os.path.basename(csv_path).replace(".csv", ""),
                 "\\end{center}",
                 "\\end{table}",
-                "\\renewcommand\\baselinestretch{2}\\selectfont"]
+                #"\\renewcommand\\baselinestretch{2}\\selectfont"
+                ]
 
 
     outpath = csv_path.replace(".csv", ".tex")
