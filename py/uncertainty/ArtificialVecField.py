@@ -24,15 +24,33 @@ class ArtificialVecField(VecFieldCartesian):
         self.piv_params = json.loads(open(params_filepath).read())
         VecFieldCartesian.__init__(self, v3d_path, velocity_fs=self.piv_params['w'])
         self.error_data = {}
+        self.edge_clip = 0.10       # fraction of the image to trim from all edges.
 
         # correction factor for directional convention in Y direction
         self.vel_matrix['V'] *= -1
 
 
+    def subset_center(self, component):
+        """
+        removes the edges of the image, taking a center subset based on the edge_clip
+        attribute. This was done because the uncertainty of a vector field is much higher
+        at the edges where the data isn't as important, and this inflates the expectation
+        of error to unreasonable levels (is suspected to anyway).
+        """
+
+        y,x = self[component].shape
+
+        yslice = slice(y * self.edge_clip, y * (1 - self.edge_clip))
+        xslice = slice(x * self.edge_clip, x * (1 - self.edge_clip))
+
+        data = self[component][yslice, xslice].flatten()
+        return data
+
+
     def get_error(self, component, n_measurements):
 
         # compile some numerical results from the data to return.
-        data = self[component].flatten()
+        data = self.subset_center(component)
         results = {"top": np.nanpercentile(data.filled(np.nan), 97.5),
                    "bot": np.nanpercentile(data.filled(np.nan), 2.5),
                    "mean": np.mean(data),
