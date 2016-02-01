@@ -156,7 +156,7 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
                            "$P_{{\\bar{{{c}}}}}$", "$U_{{{c}^{{\prime}}}}$", "$U_{{\\bar{{{c}}}}}$"]
         headers = [head.format(c=comp) for head in headers]
         df = df[headers]
-        df.to_csv(fpath, index=False)
+        df.to_csv(fpath, index=False, float_format='%.3f')
         returnlist.append(fpath)
 
         if verbose:
