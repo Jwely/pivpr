@@ -310,7 +310,7 @@ class ArtificialPIV:
             argdict[arg] = locals()[arg]
 
         with open(os.path.join(output_dir, "{0}.json".format(name)), 'w+') as logfile:
-            logfile.write(json.dumps(argdict))
+            logfile.write(json.dumps(argdict, indent=4))
 
         print("time = {0} hours".format((datetime.now() - start).seconds / 3600.00))
 
