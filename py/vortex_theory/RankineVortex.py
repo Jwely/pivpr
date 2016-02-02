@@ -7,7 +7,7 @@ class RankineVortex:
 
     def __init__(self, core_radius, circulation_strength):
         """
-        Creates a Rankine vortex with points across
+        Creates a Rankine vortex
         :param core_radius: the core radius in (meters)
         :param circulation_strength: the circulation strength of the vortex
         :return:

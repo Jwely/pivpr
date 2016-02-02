@@ -7,7 +7,7 @@ import numpy
 class LambOseenVortex:
     def __init__(self, circulation_strength, viscosity):
         """
-        Creates a Rankine vortex with points across
+        Creates a Lamb Oseen vortex
         :param circulation_strength:    The circulation strength of the vortex
         :param viscosity:               The kinematic viscosity in units of (m^2/s)
                                         is about 0.154 for air at room temperature
