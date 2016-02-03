@@ -270,7 +270,7 @@ class ArtificialPIV:
 
         # compute the dt based meshgrid with z_mm displacement
         mesh_t0 = self.get_mm_coords(self.mesh['x_px'], self.mesh['y_px'], z_mm=0)
-        mesh_t1 = self.get_mm_coords(self.mesh['x_px'], self.mesh['y_px'], z_mm=0) # experimental
+        mesh_t1 = mesh_t0   # attempt fix of issue 6
 
         # make sure the particles are randomly placed within the field of view of BOTH cameras
         fov = self._get_overlap_fov(mesh_t0)
