@@ -52,6 +52,7 @@ class AxialVortex(MeanVecFieldCartesian):
         self.core_radius = None             # distance between core and Tmax location (mm)
         self.Tmax = None                    # maximum tangential velocity
         self.Wcore = None                   # axial velocity at the core
+        self.Wmean = None                   # average axial velocity within the good data range
         self.circulation_strength = None    # -flag
 
         # update the coordinate meshgrid
@@ -199,15 +200,18 @@ class AxialVortex(MeanVecFieldCartesian):
 
         self.core_radius, self.Tmax = self._get_rcore_tmax()
         self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
+        self.Wmean = self._getitem_by_rt('W', r_range=(0, 80)).mean()
 
         # print a summary of characteristics
         if verbose:
-            message_fmt = "Core specs: radius={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Vfree={vf:2.2f}"
-            print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore, vf=self.velocity_fs))
+            message_fmt = "Core specs: r={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Wmean={wavg:2.2f}, Vfree={vf:2.2f}"
+            print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore,
+                                     wavg=self.Wmean, vf=self.velocity_fs))
 
         char_dict = {"T_max": self.Tmax,
                      "r_mesh_core": self.core_radius,
                      "W_core": self.Wcore,
+                     "W_mean": self.Wmean,
                      "velocity_free_stream": self.velocity_fs,
                      "core_location": self.core_location}
 
