@@ -96,6 +96,7 @@ class MeanVecFieldCartesian:
 
     def __getitem__(self, key):
         """ allows components of the instance to be accessed more simply through instance[key] """
+
         if key in self.mean_set.keys():
             return self.mean_set[key]
 
@@ -114,10 +115,16 @@ class MeanVecFieldCartesian:
 
     def __setitem__(self, key, value):
         """ allows components of the instance to be set more briefly """
+
         if key in self.mean_set.keys():
             self.mean_set[key] = value
+
         elif key[::-1] in self.mean_set.keys():
             self.mean_set[key[::-1]] = value
+
+        elif key in self.derivative_set.keys():
+            self.derivative_set[key] = value
+
         else:
             raise AttributeError("instance does not accept __setitem__ for '{0}'".format(key))
 

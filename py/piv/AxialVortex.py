@@ -12,7 +12,7 @@ from matplotlib.colors import LogNorm
 from shorthand_to_tex import shorthand_to_tex
 from py.piv.MeanVecFieldCartesian import MeanVecFieldCartesian
 from py.vortex_theory import AshVortex, LambOseenVortex, RankineVortex, BurnhamHallockVortex
-from py.utils import cart2cyl_vector, masked_rms, masked_mean, smooth_filt, get_spatial_derivative
+from py.utils import cart2cyl_vector, masked_rms, masked_mean, smooth_filt, get_spatial_derivative, dbz
 from py.config import *
 
 
@@ -88,6 +88,24 @@ class AxialVortex(MeanVecFieldCartesian):
                                  'rt': None,  # reynolds stress in r/t
                                  'rw': None,  # reynolds stress in r/w
                                  'tw': None})  # reynolds stress in t/w
+
+        # standard cylindrical derivatives which aren't already covered in parent class
+        self.derivative_set.update({'drdr': None,
+                                    'drdt': None,
+                                    'drdz': None,    # special case
+                                    'dtdr': None,
+                                    'dtdt': None,
+                                    'dtdz': None,    # special case
+                                    'dwdr': None,
+                                    'dwdt': None})
+
+        self.derivative_set.update({'sr_cx1': None,   # first cylindrical strain rate term approx on X axis
+                                    'sr_cx2': None,   # second cylindrical strain rate term approx on X axis
+                                    'sr_cx3': None,   # third cylindrical strain rate term approx on X axis
+                                    'sr_cx4': None,   # fourth cylindrical strain rate term approx on X axis
+                                    'sr_cx_tot': None,  # the sum of all cylindrical strain rate terms approx on X axis
+                                    })
+
 
     def to_pickle(self, pickle_path, include_dynamic=False):
         """ dumps the contents of this object to a pickle """
@@ -188,35 +206,6 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return rt_subset_component
 
-    def characterize(self, verbose=True):
-        """
-        Characterizes this vortex with a variety of scalar metrics such as the radius,
-        the maximum tangential velocity, the maximum axial velocities, axial velocities at
-        the very center of the core, etc.
-
-        :param verbose: prints outputs
-        :return characteristics_dict:
-        """
-
-        self.core_radius, self.Tmax = self._get_rcore_tmax()
-        self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
-        self.Wmean = self._getitem_by_rt('W', r_range=(0, 80)).mean()
-
-        # print a summary of characteristics
-        if verbose:
-            message_fmt = "Core specs: r={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Wmean={wavg:2.2f}, Vfree={vf:2.2f}"
-            print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore,
-                                     wavg=self.Wmean, vf=self.velocity_fs))
-
-        char_dict = {"T_max": self.Tmax,
-                     "r_mesh_core": self.core_radius,
-                     "W_core": self.Wcore,
-                     "W_mean": self.Wmean,
-                     "velocity_free_stream": self.velocity_fs,
-                     "core_location": self.core_location}
-
-        return char_dict
-
     def _get_rcore_tmax(self):
         r = self._getitem_by_rt('r_mesh').flatten()
         t = self._getitem_by_rt('T').flatten()
@@ -258,10 +247,11 @@ class AxialVortex(MeanVecFieldCartesian):
         core_location = (xc, yc)
         return core_location
 
-    def find_core(self, crange=20, core_radius_range=(10.0, 25.0), vtheta_max_range=(3.0, 10.0)):
+    def find_core(self, crange=20, core_radius_range=(10.0, 25.0), vtheta_max_range=(3.0, 10.0), verbose=True):
         """
         Attempts to find the core near the center of the matrix by restricting the search area
-        iteratively.
+        iteratively. characterizes the vortex once a core is found.
+
         :param crange:              the number of grid points away from geometric center to search
                                     for a minimum in plane velocity.
         :param core_radius_range:   the range in mm to look for a vtehta_max, a core radius outside this
@@ -292,8 +282,25 @@ class AxialVortex(MeanVecFieldCartesian):
         self.Tmax = t_max
         self.core_radius = r_core
         self.core_location = core_location
-        self.characterize(verbose=True)
-        return self.core_location
+        self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
+        self.Wmean = self._getitem_by_rt('W', r_range=(0, 80)).mean()
+
+        # if free stream velocity isn't specified, infer it from mean axial velocity.
+        if self.velocity_fs is None:
+            self.velocity_fs = self.Wmean
+
+        if verbose:
+            message_fmt = "Core specs: r={r:2.2f}mm, Tmax={t:2.2f}, Wmin={w:2.2f}, Vfree={vf:2.2f}"
+            print(message_fmt.format(r=self.core_radius, t=self.Tmax, w=self.Wcore, vf=self.velocity_fs))
+
+        char_dict = {"T_max": self.Tmax,
+                     "r_mesh_core": self.core_radius,
+                     "W_core": self.Wcore,
+                     "W_mean": self.Wmean,
+                     "velocity_free_stream": self.velocity_fs,
+                     "core_location": self.core_location}
+
+        return char_dict
 
     def _get_cylindrical_meshgrids(self, core_location_tuple):
         """
@@ -364,6 +371,86 @@ class AxialVortex(MeanVecFieldCartesian):
         gamma = vtheta_max * 4 * math.pi * core_radius
         self.circulation_strength = gamma
         return gamma
+
+    def get_spatial_derivatives_cylindrical(self):
+        """
+        Function obtains spatial derivatives in cylindrical coordinates. Using the chain
+        rule to convert spatial derivatives from dfdx, dfdy into dfdr, and dfdt.
+        :return:
+        """
+
+        # use the divide by zero function (dbz) to chain rule out the partial derivatives
+        # shorten notation for r and t coordinates and convert to meters from mm
+        r = self['r_mesh'] / 1000
+        t = self['t_mesh']
+
+        # chain rule the radial velocity derivatives
+        drdx, drdy = get_spatial_derivative(self['R'], self['x_mesh'], self['y_mesh'])
+        self.derivative_set['drdr'] = (dbz(drdx, np.cos(t)) +
+                                       dbz(drdy, np.sin(t))) / 2
+        self.derivative_set['drdt'] = (dbz(drdx, (1 / r) * np.cos(t)) +
+                                       dbz(drdy, (-1 / r) * np.sin(t))) / 2
+
+        # chain rule the tangential velocity derivatives
+        dtdx, dtdy = get_spatial_derivative(self['T'], self['x_mesh'], self['y_mesh'])
+        self.derivative_set['dtdr'] = (dbz(dtdx, np.cos(t)) +
+                                       dbz(dtdy, np.sin(t))) / 2
+        self.derivative_set['dtdt'] = (dbz(dtdx, (1 / r) * np.cos(t)) +
+                                       dbz(dtdy, (-1 / r) * np.sin(t))) / 2
+
+        # chain rule the axial velocity derivatives
+        dwdx, dwdy = get_spatial_derivative(self['W'], self['x_mesh'], self['y_mesh'])
+        self.derivative_set['dwdr'] = (dbz(dwdx, np.cos(t)) +
+                                       dbz(dwdy, np.sin(t))) / 2
+        self.derivative_set['dwdt'] = (dbz(dwdx, (1 / r) * np.cos(t)) +
+                                       dbz(dtdy, (-1 / r) * np.sin(t))) / 2
+
+        # assume indeterminite z partial derivatives are zero.
+        self.derivative_set['drdz'] = self['W'] * 0
+        self.derivative_set['dtdz'] = self['W'] * 0
+        self.derivative_set['dwdz'] = self['W'] * 0
+
+        # correction function!
+        # there needs to be a correction function here!
+
+        return self.derivative_set
+
+    def get_x_axis_strain_rates(self):
+        """
+        This function obtains strain rate terms in CARTESIAN coordinates that approximate
+        cylindrical coordinates on the x axis because here. r ~ x and y ~ theta.
+        :return:
+        """
+
+        r = self['r_mesh'] / 1000
+        x = self['x_mesh'] / 1000
+        y = self['y_mesh'] / 1000
+        t = self['t_mesh']
+
+        # get the first term
+        a = r * self['T']
+        dadx, _ = get_spatial_derivative(a, x, y)
+        term1, _ = get_spatial_derivative(dadx / r, x, y)
+        self['sr_cx1'] = term1
+        print 'term1', term1.max(), term1.min()
+
+        # second term
+        _, dtdy = get_spatial_derivative(self['T'], x, y)
+        _, dtdy2 = get_spatial_derivative(dtdy, x, y)
+        term2 = dtdy2 / (r * r)
+        self['sr_cx2'] = term2
+
+        # third term (unknown)
+        term3 = term2 * 0
+        self['sr_cx3'] = term3
+
+        # fourth term
+        _, drdy = get_spatial_derivative(self['R'], x, y)
+        term4 = 2 * drdy / (r * r)
+        self['sr_cx4'] = term4
+
+        self.derivative_set['sr_cx_tot'] = term1 + term2 + term3 + term4
+        return self.derivative_set
 
 
 # ============== plotting functions=======================
@@ -839,7 +926,8 @@ class AxialVortex(MeanVecFieldCartesian):
         self._save_or_show(outpath)
         return
 
-    def contour_plot(self, component, title=None, outpath=None, log_colorbar=False):
+    def contour_plot(self, component, t_range=None, r_range=None, symmetric=False,
+                     title=None, outpath=None, log_colorbar=False):
         """
         creates a contour plot of input component
 
@@ -852,7 +940,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if isinstance(component, np.ma.MaskedArray):
             data = component
         else:
-            data = self._getitem_by_rt(component, CONTOUR_DEFAULT_RRANGE)
+            data = self._getitem_by_rt(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
 
         if title is None:
             title = shorthand_to_tex(component)
@@ -892,21 +980,30 @@ class AxialVortex(MeanVecFieldCartesian):
         return
 
 
+
+
 if __name__ == "__main__":
 
-    #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-55_Z-38.0_Vfs-23.33.pkl")
-    #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-28_Z-31.0_Vfs-29.09.pkl")
-    #mvf = AxialVortex().from_pickle(r"C:\Users\Jeff\Desktop\Github\pivpr\py\piv\pickles\ID-70_Z-40.0_Vfs-33.01.pkl")
+    exp_num = 55
+    if not os.path.exists("temp{0}.pkl".format(exp_num)):
+        directory = os.path.join(DATA_FULL_DIR, str(exp_num))
+        paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
+        mvf = AxialVortex("temp{0}".format(exp_num), v3d_paths=paths, min_points=20)
+        mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=True)
+    else:
+        mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
-    #directory = os.path.join(DATA_FULL_DIR, "55")
-    #paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
-    #mvf = AxialVortex("test", v3d_paths=paths, velocity_fs=23.33, min_points=20)
-    #mvf.to_pickle("temp.pkl", include_dynamic=True)
-
-    mvf = AxialVortex().from_pickle("temp.pkl")
     mvf.find_core()
-    #mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
-    tv = mvf.calculate_turbulent_viscosity()
+    #mvf.comparison_plot(pressure_relaxation=0.6, r_range=(0, 60), t_range=(0, 90), symmetric=True)
+    mvf.calculate_turbulent_viscosity()
+    mvf.get_x_axis_strain_rates()
+    mvf.scatter_plot('r_mesh', 'sr_cx1', t_range=(0, 1), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 1), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'sr_cx4', t_range=(0, 1), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 1), symmetric=True)
+    #mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")
+
+
     '''
     mvf.hist_plot('dudx')
     mvf.hist_plot('dudy')
@@ -929,8 +1026,4 @@ if __name__ == "__main__":
     mvf.contour_plot('vv', outpath="vv_temp.png")
     mvf.contour_plot('ww', outpath="ww_temp.png")
     '''
-    #mvf.hist_plot('turb_visc', bins=1000)
 
-    mvf.comparison_plot()
-    #mvf.contour_plot('turb_visc', log_colorbar=False, outpath="nu_t_temp.png")
-    #mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")

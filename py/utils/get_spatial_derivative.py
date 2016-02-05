@@ -12,12 +12,19 @@ def dbz(a, b):
     :param b:  the denominator
     :return:   a / b
     """
+
+    if isinstance(a, np.ma.MaskedArray):
+        mask = a.mask
+        a = a.data
+    if isinstance(b, np.ma.MaskedArray):
+        b = b.data
+
     q = a / b
     q[q > 1e100] = 0
     q[q == np.nan] = 0
     q[q == -np.inf] = 0
     q[q == np.inf] = 0
-    return q
+    return np.ma.masked_array(q, mask=mask)
 
 
 def get_spatial_derivative(f, x, y):
