@@ -222,6 +222,57 @@ result of averaging many measurements, and was calculated by using an $N$ value
 of 200 in the precision Equations \ref{eq:Uprec} through \ref{eq:Wprec}.
 
 
-The Monte Carlo analysis shows....
+\subsection{Uncertainty Analysis Results}
+The Monte Carlo analysis was performed for each station at two scenarios. 
+Uncertainty in the measurements by $u, v$ and $w$ 
+components are tabulated in Tables \ref{table:uncertainties_u} through 
+\ref{table:uncertainties_w}. For the $u$ velocity components in the $X$ 
+direction, the measurement is $\bar{u}$, bias are reported as $\beta_u$, 
+precisions are reported for both single sample measurements and with 
+measurements comprised of 200 averages by $P_{u^\prime}$ and $P_{\bar{u}}$ 
+respectively, and total uncertainties are reported as $U_{u^\prime}$ and 
+$U_{\bar{u}}$. 
 
-(flag, unfinished, need to run new Monte Carlo code)
+\input{tables/uncertainties_u}
+\input{tables/uncertainties_v}
+\input{tables/uncertainties_w}
+
+The results of the Monte Carlo analysis held some surprises. Uncertainties in 
+the $X$ and $Y$ direction were comparable in some cases, while in others $Y$ 
+uncertainties were half as high as those in $X$. At all velocities, poor 
+precision in the individual measurements was the primary driver of total 
+uncertainty, while high bias was the driver for uncertainties in the 
+measurements comprised of time averages of 200 samples. Spectral analysis of 
+the turbulence over the observation time is subject to the very high 
+uncertainties associated with that of individual measurements. Time averaged 
+velocities, and the derived Reynolds stresses are best characterized by the 
+better precision offered by many samples. While 200 is nominally used as $N$, 
+each grid point may have between 20 and 200 valid vectors making up the set, so 
+some areas where vectors were less frequently resolved successfully may be 
+characterized with greater uncertainty.
+
+In the axial $Z$ direction, the PIV was found to have an extreme bias to 
+underestimate velocities according to the Monte Carlo simulation. This bias 
+starts at over 30\% at the closest station, and diminishes regularly with 
+downstream position and decreasing velocity . However, experimental data shows 
+axial velocity was consistently a few percent above free stream velocity 
+measured in the wind tunnel by dynamic pressure as expected, as shown in Tables
+\ref{table:experiment_results_1} through \ref{table:experiment_results_7}. 
+Therefore, uncertainties in the $Z$ direction are overestimated by the 
+technique. The stable component of Reynolds decomposition is heavily influenced 
+by a high bias, but the fluctuating component is entirely sensitive to 
+precision. The Reynolds stress and turbulence values which are great importance 
+in this study included contributions of velocity fluctuations in the axial 
+direction, which are not impacted by any bias that does exist. Experimental 
+data was examined for possible misrepresentation of measurement uncertainty in 
+the $X$ and $Y$ direction, but no statistically meaningful discrepancies were 
+found.
+
+\input{tables/experiment_results_1}
+\input{tables/experiment_results_2}
+\input{tables/experiment_results_3}
+\input{tables/experiment_results_4}
+\input{tables/experiment_results_5}
+\input{tables/experiment_results_6}
+\input{tables/experiment_results_7}
+

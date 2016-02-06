@@ -7,6 +7,7 @@
 \usepackage[english]{babel}
 \usepackage{graphicx}
 
+\usepackage{url}			% allows embedded URLs to link
 \usepackage{ODUthesis} 		% custom template specific to ODU thesis.
 \usepackage{indentfirst} 	% indents first line of a section (style guide)
 \usepackage{hyperref} 		% allows use of hyperlinks
@@ -162,23 +163,19 @@ used in these experiments had a center body with a 1 inch diameter, and thus
 produced two co-rotating vortices that merge together as they move downstream. 
 The first three stations display characteristics that resemble co-rotating 
 vortices that had not yet finished merging. Furthermore, analysis shows that 
-the uncertainty in measurements increases significantly as the interrogation 
-plane moves upstream. Data taken at the first three stations can thus be 
-excluded from the discussion of results.
-
-The uncertainty analysis also demonstrates that, while the time averaged 
-velocity components are relatively precise and unbiased, the uncertainty in the 
-measurement of any one of the 200 samples was very poor, typically on the order 
-of $\pm 1.0 m/s$. The unexpectedly high uncertainty in individual measurements 
-combined with the low sampling rate of 1Hz yielded a data set with limited 
-utility for the examination of turbulence, but results will be compared with 
-similar hot-wire anemometry experiments conducted by Thompson 
+the uncertainty in measurements decreases significantly as the interrogation 
+plane moves down stream. Therefore, results from only a few vortices at 
+downstream locations of  will be 
+discussed here. Full results for all vortices generated can be 
+obtained from an online public repository 
+\footnote{Full results may be obtained from the release page of
+\url{https://github.com/Jwely/pivpr}}. Turbulent quantities will be 
+compared to hot-wire anemometry experiments conducted by Thompson 
 \cite{thompson2016}.
 
-\input{docs/experiment_results/piv_uncertainty}
 \input{docs/experiment_results/discussion}
 \input{docs/experiment_results/conclusions}
-
+\input{docs/experiment_results/piv_uncertainty}
 
 %=========================================================================
 % constructs the bibliography
