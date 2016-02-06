@@ -42,7 +42,6 @@ class AxialVortex(MeanVecFieldCartesian):
         MeanVecFieldCartesian.__init__(self, name_tag=name_tag, v3d_paths=v3d_paths,
                                        velocity_fs=velocity_fs, min_points=min_points)
         self.name_tag = name_tag
-        self.calculated_turb_viscosity = None   # turbulent viscosity as calculated from velocity data
 
         # vortex cylindrical specific attributes
         self.z_location = z_location        # the position of this vortex downstream. in mm
@@ -106,9 +105,9 @@ class AxialVortex(MeanVecFieldCartesian):
                                     'sr_cx_tot': None,  # the sum of all cylindrical strain rate terms approx on X axis
                                     })
 
-        self.equation_terms.update({'turb_visc': None,
-                                    'turb_visc_ettap': None
+        self.equation_terms.update({'turb_visc_ettap': None     # for turbulent viscosity by pressure relaxation calc
                                     })
+
 
     def to_pickle(self, pickle_path, include_dynamic=False):
         """ dumps the contents of this object to a pickle """
@@ -476,6 +475,43 @@ class AxialVortex(MeanVecFieldCartesian):
 
 
         return self.derivative_set
+
+    def get_pressure_relax_turb_visc(self):
+        """
+        Calculates the relatinshib between reynolds stress and turbulent viscosity as derived by the
+        pressure relaxation equations.
+
+        #Function uses the approximation for the x axis where x ~ r and y ~ theta.
+        function uses actual cylindrical derivatives
+        :return:
+        """
+
+        def raidus_chain_rule(quantity, x, y, r, t):
+            """ takes radial derivatives by using coordinate transform chain rule """
+            dqdx, dqdy = get_spatial_derivative(quantity, x, y)
+            dqdr = (dbz(dqdx, np.cos(t)) + dbz(dqdy, np.sin(t))) / 2
+            return dqdr
+
+        # top = 1/r*2 * d/dr(r^2 * vtheta_vr reynolds stress)
+        # bottom = second derivative of vtheta with respect to r +  d/dr(vtheta / r)
+        # result = top / bottom
+
+        r = self['r_mesh'] / 1000
+        x = self['x_mesh'] / 1000
+        y = self['y_mesh'] / 1000
+        t = self['t_mesh']
+
+        top_dadr = raidus_chain_rule(self['rt'], x, y, r, t)
+        top = top_dadr / (r ** 2)
+
+        bot_dTdr = raidus_chain_rule(self['T'], x, y, r, t)
+        bot_dTdr2 = raidus_chain_rule(bot_dTdr, x, y, r, t)
+        bot_dTrdr = raidus_chain_rule(self['T'] / r, x, y, r, t)
+        bottom = bot_dTdr2 + bot_dTrdr
+
+        turb_visc_ettap = dbz(top, bottom)  # use divide by zero conditions
+        self.equation_terms['turb_visc_ettap'] = turb_visc_ettap
+        return turb_visc_ettap
 
 
 # ============== plotting functions=======================
@@ -1021,7 +1057,8 @@ class AxialVortex(MeanVecFieldCartesian):
 if __name__ == "__main__":
 
     exp_num = 55
-    if not os.path.exists("temp{0}.pkl".format(exp_num)):
+    force = True
+    if not os.path.exists("temp{0}.pkl".format(exp_num)) or force:
         directory = os.path.join(DATA_FULL_DIR, str(exp_num))
         paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
         mvf = AxialVortex("temp{0}".format(exp_num), v3d_paths=paths, min_points=20)
@@ -1031,7 +1068,8 @@ if __name__ == "__main__":
 
     mvf.find_core()
     mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
-    #mvf.calculate_turbulent_viscosity()
+    mvf.get_pressure_relax_turb_visc()
+    mvf.contour_plot('turb_visc_ettap')
     #mvf.get_cylindrical_strain_rates()
     #mvf.scatter_plot('r_mesh', 'sr_cx1', component_c='t_mesh', t_range=(40, 50), symmetric=True, log_y=True)
     #mvf.contour_plot('sr_cx1', t_range=(40, 50), symmetric=True)

@@ -26,9 +26,6 @@ class MeanVecFieldCartesian:
         self.min_points = min_points
         self.velocity_fs = velocity_fs
 
-        # special case
-        self.calculated_turb_viscosity = None   # turbulent viscosity as calculated from velocity data
-
         # attributes that will be inherited from the constituent VecField instances
         self.x_set = None
         self.y_set = None
@@ -90,7 +87,7 @@ class MeanVecFieldCartesian:
                                'dwdy': None,
                                'dwdz': None}    # special case
 
-        self.equation_terms = {}                # empty dictionary for complex quantities for verifying equations
+        self.equation_terms = {'turb_visc': None}
 
 
         # Build up the data set
@@ -272,8 +269,9 @@ class MeanVecFieldCartesian:
         tv = - (1 / 3) * (uu / dudx + vv / dvdy + ww / dwdz) - \
              2 * ((uw / (dudz + dwdx)) + (uv / (dudy + dvdx)) + (vw / (dvdz + dwdy)))
 
-        self.calculated_turb_viscosity = np.abs(tv)
+        self['turb_visc'] = np.abs(tv)
         return tv
+
 
     def show_heatmap(self, component):
         """ prints a quick simple heads up heatmap of input component of the mean_set attribute"""
