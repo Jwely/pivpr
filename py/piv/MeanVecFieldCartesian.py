@@ -90,6 +90,9 @@ class MeanVecFieldCartesian:
                                'dwdy': None,
                                'dwdz': None}    # special case
 
+        self.equation_terms = {}                # empty dictionary for complex quantities for verifying equations
+
+
         # Build up the data set
         if v3d_paths is not None:
             self.ingest_paths(v3d_paths, min_points)  # creates constituent_vel_matrix_list from input filepath list
@@ -110,8 +113,8 @@ class MeanVecFieldCartesian:
         elif key in self.derivative_set.keys():
             return self.derivative_set[key]
 
-        elif key == "turb_visc":
-            return self.calculated_turb_viscosity
+        elif key in self.equation_terms.keys():
+            return self.equation_terms[key]
 
     def __setitem__(self, key, value):
         """ allows components of the instance to be set more briefly """
@@ -124,6 +127,9 @@ class MeanVecFieldCartesian:
 
         elif key in self.derivative_set.keys():
             self.derivative_set[key] = value
+
+        elif key in self.equation_terms.keys():
+            self.equation_terms[key] = value
 
         else:
             raise AttributeError("instance does not accept __setitem__ for '{0}'".format(key))
