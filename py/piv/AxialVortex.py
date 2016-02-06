@@ -106,13 +106,17 @@ class AxialVortex(MeanVecFieldCartesian):
                                     'sr_cx_tot': None,  # the sum of all cylindrical strain rate terms approx on X axis
                                     })
 
+        self.equation_terms.update({'turb_visc': None,
+                                    'turb_visc_ettap': None
+                                    })
 
     def to_pickle(self, pickle_path, include_dynamic=False):
         """ dumps the contents of this object to a pickle """
 
         # delete the constituent objects with hundreds of additional matrices to reduce pkl size
         if not include_dynamic:
-            del self.dynamic_set
+            for key in self.dynamic_set.keys():
+                self.dynamic_set[key] = None
         else:
             for key in self.dynamic_set.keys():
                 if key not in DYNAMIC_INCLUDES:
@@ -435,8 +439,8 @@ class AxialVortex(MeanVecFieldCartesian):
         print 'term1', term1.max(), term1.min()
 
         # second term
-        _, dtdy = get_spatial_derivative(self['T'], x, y)
-        _, dtdy2 = get_spatial_derivative(dtdy, x, y)
+        _, dtdy = get_spatial_derivative(self['T'], x, y * r)
+        _, dtdy2 = get_spatial_derivative(dtdy, x, y * r)
         term2 = dtdy2 / (r * r)
         self['sr_cx2'] = term2
 
@@ -450,6 +454,27 @@ class AxialVortex(MeanVecFieldCartesian):
         self['sr_cx4'] = term4
 
         self.derivative_set['sr_cx_tot'] = term1 + term2 + term3 + term4
+        return self.derivative_set
+
+    def get_cylindrical_strain_rates(self):
+
+        r = self['r_mesh'] / 1000
+        x = self['x_mesh'] / 1000
+        y = self['y_mesh'] / 1000
+        t = self['t_mesh']
+
+        # get the first term
+        a = r * self['T']
+        dadx, dady = get_spatial_derivative(a, x, y)
+        dadr = (dbz(dadx, np.cos(t)) + dbz(dady, np.sin(t))) / 2
+        dadr /= r
+        dbdx, dbdy = get_spatial_derivative(dadr, x, y)
+        term1 = (dbz(dbdx, np.cos(t)) + dbz(dbdy, np.sin(t))) / 2
+
+        self['sr_cx1'] = term1
+        print 'term1', term1.max(), term1.min()
+
+
         return self.derivative_set
 
 
@@ -521,7 +546,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return y_sets, t_set
 
-    def _get_vrange(self, component, low_percentile=None, high_percentile=None):
+    def _get_vrange(self, component, low_percentile=None, high_percentile=None,
+                    r_range=None, t_range=None, symmetric=None):
         """
         Gets the percentile range for color bar scaling on a given component matrix. Used
         to ensure spurious high and low values do not over stretch the color ramps on plots.
@@ -539,7 +565,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if high_percentile is None:
             high_percentile = VRANGE_DEFAULT[1]
 
-        comp = self._getitem_by_rt(component).astype('float')
+        comp = self._getitem_by_rt(component, r_range=r_range, t_range=t_range, symmetric=symmetric).astype('float')
         vmin = np.nanpercentile(comp.filled(np.nan), low_percentile)
         vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
         return vmin, vmax
@@ -628,7 +654,7 @@ class AxialVortex(MeanVecFieldCartesian):
                         "tavg": tavg}
         return results_dict
 
-    def comparison_plot(self, pressure_relaxation, t_range=None, r_range=None,
+    def comparison_plot(self, pressure_relaxation=None, t_range=None, r_range=None,
                         symmetric=None, outpath=None, kinematic_viscosity=None, time=None):
         """
         This function is very similar to get_dvt_dr, and is just another step in our evolving understanding
@@ -672,14 +698,16 @@ class AxialVortex(MeanVecFieldCartesian):
         t_rankine = RankineVortex(core_radius, circulation_strength).get_vtheta(r_array)
 
         # lamb oseen vortex based on core_radius
-        t_lamboseen = LambOseenVortex(circulation_strength, kinematic_viscosity).get_vtheta(r_array, core_radius)
+        lamboseen = LambOseenVortex(circulation_strength, kinematic_viscosity)
+        t_lamboseen = lamboseen.get_vtheta(r_array, vtheta_max=vtheta_max, core_radius=core_radius)
 
         # ash vortex based on vtheta max
         t_ash = AshVortex(core_radius, vtheta_max=vtheta_max).get_vtheta(r_array)
 
         # ash vortex based on pressure relaxation
-        ettap  = pressure_relaxation / 1e6
-        t_ash2 = AshVortex(core_radius, circulation_strength, kinematic_viscosity, ettap).get_vtheta(r_array)
+        if pressure_relaxation is not None:
+            ettap  = pressure_relaxation / 1e6
+            t_ash2 = AshVortex(core_radius, circulation_strength, kinematic_viscosity, ettap).get_vtheta(r_array)
 
         # burnham and hallock vortex
         #t_burnhamhallock = BurnhamHallockVortex(core_radius, circulation_strength).get_vtheta(r_array)
@@ -689,11 +717,11 @@ class AxialVortex(MeanVecFieldCartesian):
 
         plt.scatter(r_scatter * 1000, t_scatter, marker='.', color='lightgray', s=0.4, label="Experimental Data")
         plt.plot(r_array * 1000, t_exp, linestyle='-', color='black', label="Experimental Fit")
-        plt.plot(r_array * 1000, t_rankine, linestyle='--', color='firebrick', label="Rankine")
-        plt.plot(r_array * 1000, t_lamboseen, linestyle=':', color='navy', label="Lamb-Oseen")
-        plt.plot(r_array * 1000, t_ash, linestyle='-.', color='purple', label="Ash - $V_{\\theta, max}$")
-        plt.plot(r_array * 1000, t_ash2, linestyle='-.', color='darkgreen', label="Ash")
-        #plt.plot(r_array * 1000, t_burnhamhallock, linestyle=':', color='red', label="Burnham-Hallock")
+        plt.plot(r_array * 1000, t_rankine, linestyle='--', color='firebrick', label="Rankine: $r_{core}$")
+        plt.plot(r_array * 1000, t_lamboseen, linestyle=':', color='navy', label="Lamb-Oseen: $V_{\\theta, max}$")
+        plt.plot(r_array * 1000, t_ash, linestyle='-.', color='purple', label="Ash: $V_{\\theta, max}$")
+        if pressure_relaxation is not None:
+            plt.plot(r_array * 1000, t_ash2, linestyle='-.', color='darkgreen', label="Ash: $\etta_p$")
         plt.legend()
         plt.xlim(xmin=0)
         plt.ylim(ymin=0)
@@ -785,7 +813,7 @@ class AxialVortex(MeanVecFieldCartesian):
     def scatter_plot(self, component_x, component_y, component_c=None,
                      title=None, x_label=None, y_label=None, c_label=None, cmap=None,
                      x_range=None, y_range=None, r_range=None, t_range=None, symmetric=None,
-                     tight=False, figsize=None, outpath=None):
+                     tight=False, figsize=None, outpath=None, log_y=None):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -821,6 +849,11 @@ class AxialVortex(MeanVecFieldCartesian):
         x = self._getitem_by_rt(component_x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
         y = self._getitem_by_rt(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
+        if log_y is None:
+            log_y = False
+        elif log_y is True:
+            y = abs(y)
+
         fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
         if component_c is not None:
             c = self._getitem_by_rt(component_c, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
@@ -847,6 +880,9 @@ class AxialVortex(MeanVecFieldCartesian):
 
         if tight:
             plt.tight_layout()
+
+        if log_y:
+            plt.yscale('log')
 
         plt.xlabel(x_label)
         plt.ylabel(y_label)
@@ -946,7 +982,7 @@ class AxialVortex(MeanVecFieldCartesian):
             title = shorthand_to_tex(component)
 
         fig, ax = plt.subplots()
-        vmin, vmax = self._get_vrange(component)
+        vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
         if log_colorbar:
             cf = plt.contourf(self['x_mesh'], self['y_mesh'], data, CONTOUR_DEFAULT_LEVELS,
                               norm=LogNorm(), cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
@@ -994,13 +1030,17 @@ if __name__ == "__main__":
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
     mvf.find_core()
-    #mvf.comparison_plot(pressure_relaxation=0.6, r_range=(0, 60), t_range=(0, 90), symmetric=True)
-    mvf.calculate_turbulent_viscosity()
-    mvf.get_x_axis_strain_rates()
-    mvf.scatter_plot('r_mesh', 'sr_cx1', t_range=(0, 1), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 1), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'sr_cx4', t_range=(0, 1), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 1), symmetric=True)
+    mvf.comparison_plot(r_range=(0, 60), t_range=(0, 90), symmetric=True)
+    #mvf.calculate_turbulent_viscosity()
+    #mvf.get_cylindrical_strain_rates()
+    #mvf.scatter_plot('r_mesh', 'sr_cx1', component_c='t_mesh', t_range=(40, 50), symmetric=True, log_y=True)
+    #mvf.contour_plot('sr_cx1', t_range=(40, 50), symmetric=True)
+    #mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 2), symmetric=True)
+    #mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 2), symmetric=True)
+    #mvf.scatter_plot('r_mesh', 'turb_visc', t_range=(0, 2), symmetric=True)
+    #mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 1), symmetric=True)
+    #mvf.scatter_plot('r_mesh', 'sr_cx4', t_range=(0, 1), symmetric=True)
+    #mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 1), symmetric=True)
     #mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")
 
 
