@@ -32,5 +32,5 @@ Folder to place full set of processed 3d vector files. Controllers in the `py` p
 #### data_test
 Small limited subset of vector files initially used for testing and development.
 
-#### A graph! yay graphs!
-![A graph](/texdocs/figs/example_vortex_figs/example_TscatterTKE.png)
+##### Notes
+The intention was to eventually use [OpenPIV](https://github.com/OpenPIV/openpiv-python) to perform computation, but that repository at the time of this research still needed a lot of work. This approach was abandoned, but I encourage future users of PIV and python to check it out.
