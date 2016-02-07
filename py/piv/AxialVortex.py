@@ -1038,20 +1038,22 @@ class AxialVortex(MeanVecFieldCartesian):
         if title is None:
             title = shorthand_to_tex(component)
 
+        xplot_mesh = (self['x_mesh'] + self.core_location[0]) / self.core_radius
+        yplot_mesh = (self['y_mesh'] + self.core_location[1]) / self.core_radius
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
         if log_colorbar:
-            cf = plt.contourf(self['x_mesh'], self['y_mesh'], data, CONTOUR_DEFAULT_LEVELS,
+            cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,
                               norm=LogNorm(), cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
         else:
-            cf = plt.contourf(self['x_mesh'], self['y_mesh'], data, CONTOUR_DEFAULT_LEVELS,
+            cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,
                               cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
 
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
         plt.title(title)
-        plt.xlabel("$X$ ($mm$)")
-        plt.ylabel("$Y$ ($mm$)")
+        plt.xlabel("$X/r_{core}$")
+        plt.ylabel("$Y/r_{core}$")
 
         self._draw_core(fig, ax)
 
