@@ -69,11 +69,7 @@ class TeXFigureGenerator():
             kwargs = {}
 
         kwargs['outpath'] = self.absolute_filepath      # add outpath kwarg
-        try:
-            function(**kwargs)
-        except TypeError:
-            traceback.print_exc()
-            raise TypeError("function {0} did not accept arguments {1}".format(function, kwargs))
+        function(**kwargs)
 
 
     def get_tex(self):
