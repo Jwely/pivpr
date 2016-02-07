@@ -87,6 +87,5 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
 if __name__ == "__main__":
     run_ids = range(1, 71)
-    run_ids = [1, 10, 11]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, force_recalc=False)
