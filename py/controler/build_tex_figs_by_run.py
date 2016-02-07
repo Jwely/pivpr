@@ -67,17 +67,17 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
     # logarithmic plots wtih kwqargs
     log_kwargs = merge_dicts(scatter_kwargs, {"log_y": True,
-                                              "y_range": (1e4, 1e9),
-                                              "y_label": "",
+                                              "y_range": (1e3, 1e9),
+                                              "y_label": " ",
                                               "t_range": (10, 80),
                                               "symmetric": True})
 
-    kwargs = merge_dicts(log_kwargs, {"title": "$\\frac{1}{r^2}\\frac{d}{dr}[r^2 t^\\prime r^\\prime]$"})
+    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{1}{r^2}\frac{d}{dr}[r^2 \overline{t^\prime r^\prime}]$"})
     caption = "Scatter plot of reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
         z_location, av.velocity_fs, station_id)
     figdoc.add_scatter_plot('r_mesh', 'turb_visc_ettap_top', caption, scatter_width, create_kwargs=kwargs)
 
-    kwargs = merge_dicts(log_kwargs, {"title": "$\\frac{d^2\\overbar{t}}{dr^2} + \\frac{d}{dr}\\frac{\\overbar{t}}{r}$"})
+    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}\Big(\frac{\bar{t}}{r}\Big)$"})
     caption = "Scatter plot of velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
         z_location, av.velocity_fs, station_id)
     figdoc.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs)
@@ -89,6 +89,5 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
 if __name__ == "__main__":
     run_ids = range(1, 71)
-    run_ids = [1]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, force_recalc=True)

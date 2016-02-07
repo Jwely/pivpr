@@ -909,7 +909,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if c_label is None and component_c is not None:
             c_label = shorthand_to_tex(component_c)
         if figsize is None:
-            figsize = (14, 7)
+            figsize = (10, 5)
         if cmap is None:
             cmap = SCATTER_DEFAULT_CMAP
 
@@ -1051,7 +1051,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
         yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
-        fig, ax = plt.subplots(figsize=(12, 8), dpi=DEFAULT_DPI)
+        fig, ax = plt.subplots(figsize=(7, 7), dpi=DEFAULT_DPI)
         vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
         if log_colorbar:
             cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,
@@ -1065,10 +1065,8 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.title(title, fontsize=DEFAULT_TITLE_SIZE, y=1.04)
         plt.xlabel("$X/r_{core}$")
         plt.ylabel("$Y/r_{core}$")
-        if r_range is not None:
-            plt.ylim(-r_range[1], r_range[1])
-        else:
-            plt.ylim(-5, 5)
+        plt.xlim(-5, 5)
+        plt.ylim(-5, 5)
 
         self._draw_core(fig, ax, normalized=True)
         plt.tight_layout()
@@ -1099,7 +1097,7 @@ if __name__ == "__main__":
         mvf.find_core()
         mvf.get_cart_turbulent_viscosity()
         mvf.get_pressure_relax_turb_visc()
-        mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=True)
+        mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=False)
     else:
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
