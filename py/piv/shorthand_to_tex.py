@@ -43,7 +43,7 @@ def shorthand_to_tex(component):
 
         # meshgrid attributes
         elif "mesh" in component:
-            return component.upper().split("_")[0]
+            return "${0}$".format(component.upper().split("_")[0])
 
         # give the user their component string back if nothing matches
         else:
