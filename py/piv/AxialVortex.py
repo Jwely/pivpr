@@ -1092,7 +1092,7 @@ if __name__ == "__main__":
         paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
         mvf = AxialVortex("temp{0}".format(exp_num), v3d_paths=paths, min_points=20)
         mvf.find_core()
-        mvf.calculate_turbulent_viscosity()
+        mvf.get_cart_turbulent_viscosity()
         mvf.get_pressure_relax_turb_visc()
         mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=True)
     else:

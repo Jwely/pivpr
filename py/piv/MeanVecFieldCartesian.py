@@ -219,7 +219,7 @@ class MeanVecFieldCartesian:
 
         return self.derivative_set
 
-    def calculate_turbulent_viscosity(self):
+    def get_cart_turbulent_viscosity(self):
         """
         This function estimates turbulent viscosity with the terms available.
         The assumptions made here and the reasoning behind it are complex. See thesis
