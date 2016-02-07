@@ -2,12 +2,12 @@ __author__ = 'Jwely'
 
 from matplotlib import cm
 from py.tex import TeXRunFigurePage
-from py.utils import shorthand_to_tex as stt
+from py.piv import shorthand_to_tex as stt
 from py.config import *
 
 
 
-def build_piv_tex_figures(run_id):
+def build_tex_figs_by_run(run_id):
     """
     Processes all vortex PIV data. At this point, everything has become a little convoluted, but running this
     function will complete all processing for input run_id and produce all the relevant figures which embody the
@@ -34,21 +34,32 @@ def build_piv_tex_figures(run_id):
     stream_width = '5in'
 
     figdoc = TeXRunFigurePage(TEX_MAIN_PATH,
-                              "appendix_run_id_{0}".format(run_id),     # note the color scheme tag
+                              "appendix_run_id_{0}".format(run_id),
                               run_id,
                               force_recalc=False)
+    av = figdoc.axial_vortex
 
     # populate the figdoc with content
     figdoc.add_text("\subsection{{Run ID {0}}}".format(run_id))
-    #figdoc.add_quiver_plot("Quiver plot of run ID {0}.".format(run_id), quiver_width)
-    figdoc.add_stream_plot("Stream plot of run ID {0}.".format(run_id), stream_width)
-    contour_component_plotter(['num', 'ctke'])
 
-    contour_component_plotter(['R', 'T', 'W', 'rt', 'rw', 'tw', 'rr', 'tt', 'ww'])
+    # add contour plots
+    for component in ['R', 'T', 'W', 'rt', 'rw', 'tw', 'rr', 'tt', 'ww', 'ctke']:
+
+        caption_fmt = "Contour plot of {0} for run {1} at $z/c$={2}, $V_{{free}}$={3}"
+        caption = caption_fmt.format(stt(component), run_id, av.z_location, av.velocity_fs)
+        figdoc.add_contour_plot(component, caption, contour_width)
+
+    # add scatter plots
+    scatter_kwargs = {"t_range": (10, 80),
+                      "r_range": (0, 100),
+                      "symmetric": True}
+    #t_kwargs = scatter_kwargs.update()
+    #figdoc.add_scatter_plot('r_mesh', 'T', t_kwargs)
+
     figdoc.write()
 
 
 if __name__ == "__main__":
     run_ids = range(1,71)
     for run_id in run_ids:
-        build_piv_tex_figures(run_id)
+        build_tex_figs_by_run(run_id)
