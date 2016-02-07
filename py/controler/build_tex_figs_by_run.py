@@ -28,8 +28,8 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
     tfp = TeXRunFigurePage(TEX_MAIN_PATH, "run_{0}".format(run_id), exp, force_recalc=force_recalc)
 
     av = exp.axial_vortex
-    station_id = ((run_id + 9) % 10)
-    z_location = av.z_location / 101.6
+    station_id = (int((run_id - 1) / 10) + 1)
+    z_location = "{0:2.2f}".format(av.z_location / 101.6)
 
     # add stream plot
     caption = "Stream plot at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
@@ -87,5 +87,6 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
 if __name__ == "__main__":
     run_ids = range(1, 71)
+    run_ids = [1, 10, 11]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, force_recalc=False)
