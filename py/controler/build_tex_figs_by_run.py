@@ -77,7 +77,7 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
         z_location, av.velocity_fs, station_id)
     figdoc.add_scatter_plot('r_mesh', 'turb_visc_ettap_top', caption, scatter_width, create_kwargs=kwargs)
 
-    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}\Big(\frac{\bar{t}}{r}\Big)$"})
+    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}(\frac{\bar{t}}{r}$"})
     caption = "Scatter plot of velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
         z_location, av.velocity_fs, station_id)
     figdoc.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs)
