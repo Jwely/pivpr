@@ -52,10 +52,7 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
 
     # radius scatter plots with kwargs
-    scatter_kwargs = {"t_range": (10, 80),  # theta ploting range in degrees (symmetric)
-                      "r_range": (0, 60),  # radius range in mm
-                      "symmetric": True,
-                      "x_range": (0, 6)}
+    scatter_kwargs = {"x_range": (0, 4)}
 
     t_kwargs = merge_dicts(scatter_kwargs, {"title": "Azimuthal Velocity vs Radius"})
     caption = "Scatter plot of azimuthal velocity vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
@@ -71,7 +68,9 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
     # logarithmic plots wtih kwqargs
     log_kwargs = merge_dicts(scatter_kwargs, {"log_y": True,
                                               "y_range": (1e4, 1e9),
-                                              "y_label": ""})
+                                              "y_label": "",
+                                              "t_range": (10, 80),
+                                              "symmetric": True})
 
     kwargs = merge_dicts(log_kwargs, {"title": "$\\frac{1}{r^2}\\frac{d}{dr}[r^2 t^\\prime r^\\prime]$"})
     caption = "Scatter plot of reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
