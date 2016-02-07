@@ -183,7 +183,7 @@ class AxialVortex(MeanVecFieldCartesian):
             symmetric = False
 
         if r_range is None:
-            r_range = (0, 50)
+            r_range = (0, 60)
         else:
             r_range = self._rrange_parser(r_range)
 
@@ -638,16 +638,25 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.show()
 
-    def _draw_core(self, fig, ax):
+    def _draw_core(self, fig, ax, normalized=False):
         """ draws a vortex core for reference on any contour plot """
         # plot the core location for reference
-        if self.core_location[0] is not None:
-            ax.scatter(*self.core_location, marker='+', s=100, c='white')
+        if normalized:
+            if self.core_location[0] is not None:
+                ax.scatter(0, 0, marker='+', s=100, c='white')
 
-        if self.core_radius is not None:
-            circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor='w',
-                              linestyle=':', facecolor='none', label="Core Boundary")
-            ax.add_patch(circ)
+            if self.core_radius is not None:
+                circ = plt.Circle((0, 0), radius=1, edgecolor='w',
+                                  linestyle=':', facecolor='none', label="Core Boundary")
+        else:
+            if self.core_location[0] is not None:
+                ax.scatter(*self.core_location, marker='+', s=100, c='white')
+
+            if self.core_radius is not None:
+                circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor='w',
+                                  linestyle=':', facecolor='none', label="Core Boundary")
+        ax.add_patch(circ)
+
 
     def get_dvt_dr(self, t_range=None, r_range=None, symmetric=None, outpath=None):
         """
@@ -911,6 +920,10 @@ class AxialVortex(MeanVecFieldCartesian):
         elif log_y is True:
             y = abs(y)
 
+        # if the x axis is the core radius, normalize by the radius of the core.
+        if component_x == "r_mesh":
+            x /= self.core_radius
+
         fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
         if component_c is not None:
             c = self._getitem_by_rt(component_c, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
@@ -928,10 +941,7 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.ylim(vmin - 0.1, vmax * 1.1)
         else:
             plt.ylim(y_range[0], y_range[1])
-        if x_range is None:
-            vmin, vmax = self._get_vrange(component_x, 0, 100)
-            plt.xlim(vmin - 0.1, vmax * 1.1)
-        else:
+        if x_range is not None:
             plt.xlim(x_range[0], x_range[1])
         if tight:
             plt.tight_layout()
@@ -1038,8 +1048,8 @@ class AxialVortex(MeanVecFieldCartesian):
         if title is None:
             title = shorthand_to_tex(component)
 
-        xplot_mesh = (self['x_mesh'] + self.core_location[0]) / self.core_radius
-        yplot_mesh = (self['y_mesh'] + self.core_location[1]) / self.core_radius
+        xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
+        yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
         fig, ax = plt.subplots()
         vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
         if log_colorbar:
@@ -1055,12 +1065,8 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.xlabel("$X/r_{core}$")
         plt.ylabel("$Y/r_{core}$")
 
-        self._draw_core(fig, ax)
-
+        self._draw_core(fig, ax, normalized=True)
         plt.tight_layout()
-        xlims, ylims = self._get_plot_lims()
-        plt.xlim(xlims)
-        plt.ylim(ylims)
         plt.gca().set_aspect('equal', adjustable='box')
 
         self._save_or_show(outpath)
@@ -1092,12 +1098,13 @@ if __name__ == "__main__":
     else:
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
-    mvf.contour_plot('T')
-    mvf.comparison_plot()
-    mvf.get_pressure_relax_turb_visc()
-    mvf.scatter_plot('r_mesh', 'turb_visc_ettap_top', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
-    mvf.scatter_plot('r_mesh', 'turb_visc_ettap_bot', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
-    mvf.scatter_plot('r_mesh', 'turb_visc_ettap', t_range=(10, 80), symmetric=True, show_grid=True)
+    mvf.scatter_plot('r_mesh','T', t_range=(10, 80), r_range=(0, 100), symmetric=True,
+                     x_range=(0, 6), title="Azimuthal Velocity vs Radius")
+    #mvf.comparison_plot()
+    #mvf.get_pressure_relax_turb_visc()
+    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap_top', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap_bot', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', t_range=(10, 80), symmetric=True, show_grid=True)
 
     #mvf.get_cylindrical_strain_rates()
     #mvf.scatter_plot('r_mesh', 'sr_cx1', component_c='t_mesh', t_range=(40, 50), symmetric=True, log_y=True)
