@@ -68,7 +68,7 @@ class Experiment:
         :return:
         """
 
-        outdict = self.axial_vortex.find_core()
+        outdict = self.axial_vortex.char_dict
         atts = ["experiment_id", "n_samples", "z_location_mm", "v_nominal", "dt", "test_date", "v_fs_mean",
                 "v_fs_sigma", "q", "pres_atm", "temp_tunnel", "wet_bulb", "dry_bulb", "rel_humid"]
         for att in atts:
