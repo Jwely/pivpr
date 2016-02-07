@@ -167,3 +167,21 @@ class TeXRunFigurePage(TeXWriter):
         figure_filename = "{0}_{1}_{2}_dynamic.png".format(self.tex_title, component_y, special_tag)
         figure_path = os.path.join(self.figure_dir, figure_filename)
         TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
+
+
+    def add_comparison_plot(self, caption, width, create_kwargs=None):
+        """
+        Adds a comparison plot to the texdoc
+
+        :param caption:         Tex caption to add to figure
+        :param width:           the width of the plot on the page such as '5in'
+        """
+
+        if create_kwargs is None:
+            create_kwargs = {}
+
+        create_from_function = self.axial_vortex.comparison_plot
+
+        figure_filename = "{0}_comparison.png".format(self.tex_title)
+        figure_path = os.path.join(self.figure_dir, figure_filename)
+        TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
