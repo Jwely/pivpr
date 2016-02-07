@@ -685,7 +685,7 @@ class AxialVortex(MeanVecFieldCartesian):
         r_t_max = ravg[np.unravel_index(np.ma.argmax(tavg), tavg.shape)]
 
         # set up plots with sizing and labels
-        fig, ax1 = plt.subplots(figsize=(8, 4), dpi=200, facecolor='w')
+        fig, ax1 = plt.subplots(figsize=(8, 4), dpi=DEFAULT_DPI, facecolor='w')
         smooth_label = shorthand_to_tex('T')
         deriv_label = "$\\frac{{\\partial \\overline{t}}}{{\partial R}}$"
 
@@ -773,7 +773,7 @@ class AxialVortex(MeanVecFieldCartesian):
         #t_burnhamhallock = BurnhamHallockVortex(core_radius, circulation_strength).get_vtheta(r_array)
 
         # set up plots with sizing and labels
-        fig, ax1 = plt.subplots(figsize=(10, 5), dpi=120, facecolor='w')
+        fig, ax1 = plt.subplots(figsize=(10, 5), dpi=DEFAULT_DPI, facecolor='w')
 
         r_plot = r_array / core_radius
         r_scat = r_scatter / 1000 / core_radius
@@ -836,7 +836,7 @@ class AxialVortex(MeanVecFieldCartesian):
         y_sets, t_set = self._get_dynamic_subsets(component_y, **subset_kwargs)
 
         # now make the figure
-        fig = plt.figure(figsize=figsize, dpi=200, facecolor='w')
+        fig = plt.figure(figsize=figsize, dpi=DEFAULT_DPI, facecolor='w')
 
         # first plot
         gs = plt.GridSpec(100, 100, bottom=0.15, left=0.02, right=0.98)
@@ -908,7 +908,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if c_label is None and component_c is not None:
             c_label = shorthand_to_tex(component_c)
         if figsize is None:
-            figsize = (12, 6)
+            figsize = (14, 7)
         if cmap is None:
             cmap = SCATTER_DEFAULT_CMAP
 
@@ -924,7 +924,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if component_x == "r_mesh":
             x /= self.core_radius
 
-        fig = plt.figure(figsize=figsize, dpi=120, facecolor='w', edgecolor='k')
+        fig = plt.figure(figsize=figsize, dpi=DEFAULT_DPI, facecolor='w', edgecolor='k')
         if component_c is not None:
             c = self._getitem_by_rt(component_c, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
             vmin, vmax = self._get_vrange(component_c, r_range=r_range, t_range=t_range)
@@ -952,7 +952,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         plt.xlabel(x_label)
         plt.ylabel(y_label)
-        plt.title(title)
+        plt.title(title, fontsize=20)
 
 
         self._save_or_show(outpath)
@@ -1050,7 +1050,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
         yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(14, 10), dpi=DEFAULT_DPI)
         vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
         if log_colorbar:
             cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,
@@ -1061,7 +1061,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
-        plt.title(title)
+        plt.title(title, fontsize=20)
         plt.xlabel("$X/r_{core}$")
         plt.ylabel("$Y/r_{core}$")
 
