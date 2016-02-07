@@ -1051,7 +1051,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
         yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
-        fig, ax = plt.subplots(figsize=(7, 7), dpi=DEFAULT_DPI)
+        fig, ax = plt.subplots(figsize=(8, 7), dpi=DEFAULT_DPI)
         vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
         if log_colorbar:
             cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,

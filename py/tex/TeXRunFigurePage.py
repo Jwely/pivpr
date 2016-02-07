@@ -2,13 +2,13 @@ __author__ = 'Jwely'
 
 import os
 from py.tex.TeXWriter import TeXWriter
-from py.piv import shorthand_to_tex
+from py.piv import Experiment, shorthand_to_tex
 from py.piv.construct_experiments import construct_experiments
 from py.config import *
 
 
 class TeXRunFigurePage(TeXWriter):
-    def __init__(self, main_path, tex_title, experiment_id, force_recalc=False):
+    def __init__(self, main_path, tex_title, experiment_instance, force_recalc=False):
         """
         This class uses constructors to build up a data set from the raw v3d files, perform all processing,
         create figures, and compile a publication ready .tex file from all the arguments. It places all outputs
@@ -16,14 +16,14 @@ class TeXRunFigurePage(TeXWriter):
 
         :param main_path:           filepath to main.tex
         :param tex_title:           title for this tex file. will be placed in texdocs/figs/tex
-        :param experiment_id:       an integer experiment ID from which to synthesize plots
+        :param experiment_instance: an experiment instance created by construct_experiments
         :param force_recalc:
         :return:
         """
 
         # invoke parent class init and add a few other attributes
         main_dir = os.path.dirname(os.path.abspath(main_path))
-        self.experiment_id = experiment_id
+        self.experiment_id = experiment_instance.experiment_id
         self.tex_title = tex_title
         self.figure_dir = os.path.join(main_dir, "figs/{0}".format(self.tex_title))
         if not os.path.exists(self.figure_dir):
@@ -31,18 +31,26 @@ class TeXRunFigurePage(TeXWriter):
         TeXWriter.__init__(self, main_path, os.path.join(main_dir, "figs/tex/{0}.tex".format(self.tex_title)))
 
         # ensure inputs are properly formatted
-        if not isinstance(experiment_id, int):
-            raise Exception("please input experiment ID as an integer")
+        if not isinstance(experiment_instance, Experiment):
+            raise Exception("invalid input for experiment instance")
 
-        self.experiment = construct_experiments(experiment_table_path=EXPERIMENT_TABLE_PATH,
-                                                experiment_directory_path=DATA_FULL_DIR,
-                                                ids=[experiment_id],
-                                                min_points=DEFAULT_MIN_POINTS,
-                                                force_recalc=force_recalc)[0]
+        self.experiment = experiment_instance
         self.axial_vortex = self.experiment.axial_vortex
 
 
-    def add_contour_plot(self, component, caption, width, special_tag=None, create_kwargs=None):
+    def _write_or_log(self, figure_path, caption, width, create_from_function, create_kwargs, write_unique):
+
+        if write_unique:
+            head, tail = os.path.split(figure_path)
+            texfile_path = os.path.join(head, tail.replace("png","tex"))
+            tw = TeXWriter(self.main_path, texfile_path)
+            tw.add_figure(figure_path, caption, width, create_from_function, create_kwargs)
+            tw.write()
+
+        TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
+
+
+    def add_contour_plot(self, component, caption, width, special_tag=None, create_kwargs=None, write_unique=False):
         """
         wraps TeXWriter.add_figure and the AxialVortex.contour_plot functions to add a contour
         plot figure to the TeXRunFigurePage with all the bells and whistles taken care of
@@ -53,6 +61,7 @@ class TeXRunFigurePage(TeXWriter):
         :param caption:         Tex caption to add to figure
         :param width:           the width of the plot on the page such as '5in'
         :param create_kwargs:   manual kwargs for the contour_plot function
+        :param write_unique:    set to True to immediately save a tex file with just this figure within it
         :return:
         """
 
@@ -66,13 +75,13 @@ class TeXRunFigurePage(TeXWriter):
 
         create_from_function = self.axial_vortex.contour_plot
 
-        figure_filename = "{0}_{1}_{2}_contour.png".format(self.tex_title, component, special_tag)
+        figure_filename = "{0}contour.png".format("_".join(map(str, [self.tex_title, component, special_tag])))
         figure_path = os.path.join(self.figure_dir, figure_filename)
-        TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
+        self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
 
     def add_scatter_plot(self, component_x, component_y, caption, width,
-                         special_tag=None, create_kwargs=None):
+                         special_tag=None, create_kwargs=None, write_unique=False):
         """
         wraps TeXWriter.add_figure and the AxialVortex.scatter_plot functions to add a contour
         plot figure to the TeXRunFigurePage with all the bells and whistles taken care of
@@ -101,14 +110,13 @@ class TeXRunFigurePage(TeXWriter):
 
         create_from_function = self.axial_vortex.scatter_plot
 
-        figure_filename = "{0}_{1}vs{2}_{3}_scatter.png".format(
-            self.tex_title, component_y, component_x, special_tag)
-
+        figure_filename = "{0}scatter.png".format(
+            "_".join(map(str, [self.tex_title, component_y, "vs", component_x, special_tag])))
         figure_path = os.path.join(self.figure_dir, figure_filename)
-        TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
+        self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
 
-    def add_stream_plot(self, caption, width):
+    def add_stream_plot(self, caption, width, write_unique=False):
         """
         Adds a stream plot to the texdoc, has no special arguments.
 
@@ -121,10 +129,10 @@ class TeXRunFigurePage(TeXWriter):
 
         figure_filename = "{0}_stream.png".format(self.tex_title)
         figure_path = os.path.join(self.figure_dir, figure_filename)
-        TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
+        self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
 
-    def add_quiver_plot(self, caption, width):
+    def add_quiver_plot(self, caption, width, write_unique=False):
         """
         Adds a quiver plot to the texdoc, has no special arguments.
 
@@ -140,7 +148,7 @@ class TeXRunFigurePage(TeXWriter):
         TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
 
 
-    def add_dynamic_plot(self, component_y, caption, width, special_tag=None, create_kwargs=None):
+    def add_dynamic_plot(self, component_y, caption, width, special_tag=None, create_kwargs=None, write_unique=False):
         """
         wraps TeXWriter.add_figure and the AxialVortex.dynamic functions to add a dynamic plot
         to the page
@@ -164,12 +172,12 @@ class TeXRunFigurePage(TeXWriter):
 
         create_from_function = self.axial_vortex.dynamic_plot
 
-        figure_filename = "{0}_{1}_{2}_dynamic.png".format(self.tex_title, component_y, special_tag)
+        figure_filename = "{0}dynamic.png".format("_".join(map(str, self.tex_title, component_y, special_tag)))
         figure_path = os.path.join(self.figure_dir, figure_filename)
-        TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
+        self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
 
-    def add_comparison_plot(self, caption, width, create_kwargs=None):
+    def add_comparison_plot(self, caption, width, create_kwargs=None, write_unique=False):
         """
         Adds a comparison plot to the texdoc
 
@@ -184,4 +192,4 @@ class TeXRunFigurePage(TeXWriter):
 
         figure_filename = "{0}_comparison.png".format(self.tex_title)
         figure_path = os.path.join(self.figure_dir, figure_filename)
-        TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
+        self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)

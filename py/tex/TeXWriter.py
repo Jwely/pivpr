@@ -9,7 +9,7 @@ class TeXWriter:
     def __init__(self, main_path, texfile_path):
 
         self.main_path = os.path.abspath(main_path)
-        self.texfile_path = texfile_path
+        self.texfile_path = os.path.abspath(texfile_path)
 
         self.content = []           # a list of content strings
 
@@ -50,7 +50,7 @@ class TeXWriter:
         self.content += ["\\chapter{{{0}}}".format(name)]
 
 
-    def write(self, verbose=False):
+    def write(self, verbose=False, reset_content=False):
         """ Writes a `.tex` file with the current text and figures """
 
         with open(self.texfile_path, 'w+') as f:
@@ -59,3 +59,7 @@ class TeXWriter:
                     print(line)
                 f.write(line + "\n")
         print("Wrote tex file at {0}".format(self.texfile_path))
+
+        # resets the content to ensure figure is only writen once, not subsequently
+        if reset_content:
+            self.content = []

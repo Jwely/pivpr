@@ -1,47 +1,48 @@
 __author__ = 'Jwely'
 
 from py.tex import TeXRunFigurePage
+from py.piv import construct_experiments
 from py.piv import shorthand_to_tex as stt
 from py.config import *
 from py.utils import merge_dicts
 
 
-
-def built_discussion_figs_by_run(run_id, force_recalc=False):
+def build_tex_figs_by_run(run_id, force_recalc=False):
     """
     Very similar to build_appendix_figs_by_run, but this function creates a separate
     tex document for every figure to include in the discussion section where lots of text will
     be manually placed between images.
     """
 
-    contour_width = '5in'
-    scatter_width = '7in'
-    quiver_width = '5in'
-    stream_width = '5in'
+    contour_width = '4.5in'
+    scatter_width = '6in'
+    stream_width = '4.5in'
 
-    figdoc = TeXRunFigurePage(TEX_MAIN_PATH,
-                              "run_id_{0}".format(run_id),
-                              run_id,
-                              force_recalc=force_recalc)
-    av = figdoc.axial_vortex
+    # create the experiment.
+    exp = construct_experiments(experiment_table_path=EXPERIMENT_TABLE_PATH,
+                                experiment_directory_path=DATA_FULL_DIR,
+                                ids=[run_id],
+                                min_points=DEFAULT_MIN_POINTS,
+                                force_recalc=force_recalc,
+                                include_dynamic=False)[0]
+    tfp = TeXRunFigurePage(TEX_MAIN_PATH, "run_{0}".format(run_id), exp, force_recalc=force_recalc)
 
-    # populate the figdoc with content
-    figdoc.add_text("\subsection{{Run ID {0}}}".format(run_id))
-
+    av = exp.axial_vortex
     station_id = ((run_id + 9) % 10)
     z_location = av.z_location / 101.6
 
     # add stream plot
     caption = "Stream plot at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
-    figdoc.add_stream_plot(caption, stream_width)
-    figdoc.write
+    name = "{0}_stream_plot".format(run_id)
+    tfp.add_stream_plot(caption, stream_width)
 
     # full contour plots with no radial or angular subseting
     for component in ['R', 'T', 'W', 'rt', 'rw', 'tw', 'rr', 'tt', 'ww', 'ctke', 'num']:
         contour_kwargs = {"r_range": ('0r', '6r')}
         caption_fmt = "Contour plot of {0} at $z/c$={2}, $V_{{free}}$={3}, station {1}."
         caption = caption_fmt.format(stt(component), station_id, z_location, av.velocity_fs)
-        figdoc.add_contour_plot(component, caption, contour_width, create_kwargs=contour_kwargs)
+        name = "{0}_contour_{1}".format(run_id, component)
+        tfp.add_contour_plot(component, caption, contour_width, create_kwargs=contour_kwargs, write_unique=True)
 
 
     # radius scatter plots with kwargs
@@ -49,16 +50,18 @@ def built_discussion_figs_by_run(run_id, force_recalc=False):
 
     t_kwargs = merge_dicts(scatter_kwargs, {"title": "Azimuthal Velocity vs Radius"})
     caption = "Scatter plot of azimuthal velocity vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
-        z_location, av.velocity_fs, station_id)
-    figdoc.add_scatter_plot('r_mesh', 'T', caption, scatter_width, create_kwargs=t_kwargs)
+            z_location, av.velocity_fs, station_id)
+    name = "{0}_scatter_T".format(run_id)
+    tfp.add_scatter_plot('r_mesh', 'T', caption, scatter_width, create_kwargs=t_kwargs, write_unique=True)
 
     k_kwargs = merge_dicts(scatter_kwargs, {"title": "Turbulent Kinetic Energy"})
     caption = "Scatter plot of turbulent kinetic energy vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
-        z_location, av.velocity_fs, station_id)
-    figdoc.add_scatter_plot('r_mesh', 'ctke', caption, scatter_width, create_kwargs=k_kwargs)
+            z_location, av.velocity_fs, station_id)
+    name = "{0}_scatter_K".format(run_id)
+    tfp.add_scatter_plot('r_mesh', 'ctke', caption, scatter_width, create_kwargs=k_kwargs, write_unique=True)
 
 
-    # logarithmic plots wtih kwqargs
+    # logarithmic plots with kwqargs
     log_kwargs = merge_dicts(scatter_kwargs, {"log_y": True,
                                               "y_range": (1e3, 1e9),
                                               "y_label": " ",
@@ -67,20 +70,22 @@ def built_discussion_figs_by_run(run_id, force_recalc=False):
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{1}{r^2}\frac{d}{dr}[r^2 \overline{t^\prime r^\prime}]$"})
     caption = "Scatter plot of reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
-        z_location, av.velocity_fs, station_id)
-    figdoc.add_scatter_plot('r_mesh', 'turb_visc_ettap_top', caption, scatter_width, create_kwargs=kwargs)
+            z_location, av.velocity_fs, station_id)
+    name = "{0}_ettap_reynolds_top".format(run_id)
+    tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_top', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}(\frac{\bar{t}}{r}$"})
     caption = "Scatter plot of velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
-        z_location, av.velocity_fs, station_id)
-    figdoc.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs)
+            z_location, av.velocity_fs, station_id)
+    name = "{0}_ettap_velgrad_bot".format(run_id)
+    tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
+    # and write the appendix index file with all of the plots.
+    tfp.write()
 
-
-    figdoc.write()
 
 
 if __name__ == "__main__":
     run_ids = range(1, 71)
     for run_id in run_ids:
-        built_discussion_figs_by_run(run_id, force_recalc=True)
+        build_tex_figs_by_run(run_id, force_recalc=False)
