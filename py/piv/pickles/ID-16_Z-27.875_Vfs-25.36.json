@@ -4,7 +4,7 @@
         -4.0302130369927918
     ], 
     "velocity_free_stream": 25.36, 
-    "r_mesh_core": 19.295949220284633, 
+    "r_mesh_core": 19.501945148123141, 
     "z_location_mm": 708, 
     "v_nominal": 25.0, 
     "W_mean": 25.710002287983347, 
@@ -19,7 +19,7 @@
     "experiment_id": 16, 
     "n_samples": 200, 
     "temp_tunnel": 297.45, 
-    "T_max": 5.1688243851462596, 
+    "T_max": 5.1422045657768791, 
     "W_core": 20.7803875, 
     "v_fs_sigma": 0.04
 }

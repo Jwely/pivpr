@@ -7,19 +7,11 @@ from py.utils import merge_dicts
 
 
 
-def build_tex_figs_by_run(run_id, force_recalc=False):
+def built_discussion_figs_by_run(run_id, force_recalc=False):
     """
-    Processes all vortex PIV data. At this point, everything has become a little convoluted, but running this
-    function will complete all processing for input run_id and produce all the relevant figures which embody the
-    dataset and and place them in an appendix `.tex` file ready for inclusion in the master thesis document main.
-
-    The hierarchy at this point is:
-        TeXRunFigurePage extends
-        TexWriter invokes
-        TexFigureGenerator wraps
-        construct_experiments returns
-        Experiment with attribute
-        AxialVortex which has plotting methods to produce figures of interest.
+    Very similar to build_appendix_figs_by_run, but this function creates a separate
+    tex document for every figure to include in the discussion section where lots of text will
+    be manually placed between images.
     """
 
     contour_width = '5in'
@@ -28,7 +20,7 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
     stream_width = '5in'
 
     figdoc = TeXRunFigurePage(TEX_MAIN_PATH,
-                              "appendix_run_id_{0}".format(run_id),
+                              "run_id_{0}".format(run_id),
                               run_id,
                               force_recalc=force_recalc)
     av = figdoc.axial_vortex
@@ -42,6 +34,7 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
     # add stream plot
     caption = "Stream plot at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     figdoc.add_stream_plot(caption, stream_width)
+    figdoc.write
 
     # full contour plots with no radial or angular subseting
     for component in ['R', 'T', 'W', 'rt', 'rw', 'tw', 'rr', 'tt', 'ww', 'ctke', 'num']:
@@ -90,4 +83,4 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 if __name__ == "__main__":
     run_ids = range(1, 71)
     for run_id in run_ids:
-        build_tex_figs_by_run(run_id, force_recalc=True)
+        built_discussion_figs_by_run(run_id, force_recalc=True)
