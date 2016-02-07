@@ -7,7 +7,12 @@ py/test_plots
 *.pyc
 *.pkl
 data_full/*/*.v3d
-py/final_figures
+
+# ignore the figures that can be quickly regenerated
+texdocs/figs/run*
+#texdocs/figs/appendix*
+texdocs/figs/Ely*
+texdocs/figs/tex/run*
 
 # general extensions
 *.aux
@@ -22,11 +27,6 @@ py/final_figures
 
 # ignore the constantly updating main pdf
 texdocs/main.pdf
-
-# html versions
-texdocs/psheader.txt
-texdocs/main_html
-texdocs/figs/appendix*
 
 # lets ignore all files in the references for now
 texdocs/references
