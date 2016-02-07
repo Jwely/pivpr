@@ -5,7 +5,7 @@ from py.piv import AxialVortex
 
 
 def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
-                           velocity_fs=None, force_recalc=False, min_points=20):
+                           velocity_fs=None, z_location=None, min_points=20, force_recalc=False):
     """
     Returns an AxialVortex instance. Manages pickling of classes to allow one-time-computation
     as often as possible, unless the user overrides it with force_recalc=True.
@@ -17,6 +17,7 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
                             averages and standard deviations then throwing out the individual datasets.
                             Substantially increases system requirements to keep True.
     :param velocity_fs:     The value of the free stream velocity in meters/second
+    :param z_location:      the location downstream from the vortex generator in mm
     :param force_recalc:    set True to force re-computation of all parameters from raw datasets.
 
     :return AxialVortex:
@@ -38,7 +39,7 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
     # build list of all v3d files in directory from which to create the AxialVortex
     v3d_paths = [os.path.join(v3d_dir, fname) for fname in os.listdir(v3d_dir) if fname.endswith(".v3d")]
     av_instance = AxialVortex(name_tag=name_tag, v3d_paths=v3d_paths,
-                              velocity_fs=velocity_fs, min_points=min_points)
+                              velocity_fs=velocity_fs, z_location=z_location, min_points=min_points)
 
     # find the core and build cylindrical coordinate data around it
     av_instance.find_core()
