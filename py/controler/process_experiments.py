@@ -33,12 +33,12 @@ def process_experiments(outname, table_caption, ids=None, min_points=DEFAULT_MIN
     df = pd.DataFrame(table.values())
 
     kw_names = ["experiment_id", "z_location_mm", "v_nominal", "dt", "velocity_free_stream", "q", "pres_atm",
-                "temp_tunnel", "rel_humid", "r_mesh_core", "T_max", "W_core"]
+                "temp_tunnel", "rel_humid", "r_mesh_core", "T_max", "W_mean"]
 
     units = ["", "$mm$", "$m/s$", "$\\mu s$", "$m/s$", "$Pa$", "$Pa$", "K", "$\\%$", "$mm$", "$m/s$", "$m/s$"]
 
     tex_names = ["Run", "$I_Z$", "$V_{nom}$", "$dt$", "$V_{fs}$", "$Q$", "$P_{atm}$",
-                 "$T_{tunnel}$", "$\phi$", "$R_{core}$", "$\\overline{t}_{max}$", "$\\overline{w}_{core}$"]
+                 "$T_{tunnel}$", "$\phi$", "$R_{core}$", "$\\overline{t}_{max}$", "$\\overline{w}_{mean}$"]
 
     df = df[kw_names]
     df.columns = pd.MultiIndex.from_tuples(zip(tex_names, units))
