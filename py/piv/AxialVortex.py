@@ -183,7 +183,7 @@ class AxialVortex(MeanVecFieldCartesian):
             symmetric = False
 
         if r_range is None:
-            r_range = (0, 60)
+            r_range = (0, 70)
         else:
             r_range = self._rrange_parser(r_range)
 
@@ -793,6 +793,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylim(ymin=0)
         plt.xlabel(shorthand_to_tex('r_mesh'))
         plt.ylabel(shorthand_to_tex('T'))
+        plt.title("Theoretical Profile Fits", fontsize=DEFAULT_TITLE_SIZE)
 
         if outpath is not False:
             self._save_or_show(outpath)
@@ -853,7 +854,7 @@ class AxialVortex(MeanVecFieldCartesian):
         circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor='k',
                           linestyle=':', facecolor='none', label="Core Boundary")
         ax1.add_patch(circ)
-        plt.title("Sample Area Average")
+        plt.title("Sample Area Average", fontsize=DEFAULT_TITLE_SIZE)
         plt.legend(loc=4)
         plt.xlabel('X position (mm)')
         plt.ylabel('Y position (mm)')
@@ -879,7 +880,7 @@ class AxialVortex(MeanVecFieldCartesian):
     def scatter_plot(self, component_x, component_y, component_c=None,
                      title=None, x_label=None, y_label=None, c_label=None, cmap=None,
                      x_range=None, y_range=None, r_range=None, t_range=None, symmetric=None,
-                     tight=False, figsize=None, outpath=None, log_y=None, show_grid=False):
+                     tight=True, figsize=None, outpath=None, log_y=None, show_grid=False):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -952,7 +953,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         plt.xlabel(x_label)
         plt.ylabel(y_label)
-        plt.title(title, fontsize=20)
+        plt.title(title, fontsize=DEFAULT_TITLE_SIZE, y=1.04)
 
 
         self._save_or_show(outpath)
@@ -988,7 +989,7 @@ class AxialVortex(MeanVecFieldCartesian):
                    headlength=1,
                    minshaft=1)
 
-        plt.title(title)
+        plt.title(title, fontsize=DEFAULT_TITLE_SIZE)
         plt.tight_layout()
         xlims, ylims = self._get_plot_lims(50, 50)
         plt.xlim(xlims)
@@ -1014,7 +1015,7 @@ class AxialVortex(MeanVecFieldCartesian):
                        density=[len(self.x_set) / 20, len(self.y_set) / 20])
 
         plt.colorbar()
-        plt.title(title)
+        plt.title(title, fontsize=DEFAULT_TITLE_SIZE)
 
         # plot the core location for reference
         if self.core_location[0] is not None:
@@ -1050,7 +1051,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
         yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
-        fig, ax = plt.subplots(figsize=(14, 10), dpi=DEFAULT_DPI)
+        fig, ax = plt.subplots(figsize=(12, 8), dpi=DEFAULT_DPI)
         vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
         if log_colorbar:
             cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,
@@ -1061,9 +1062,13 @@ class AxialVortex(MeanVecFieldCartesian):
 
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
-        plt.title(title, fontsize=20)
+        plt.title(title, fontsize=DEFAULT_TITLE_SIZE, y=1.04)
         plt.xlabel("$X/r_{core}$")
         plt.ylabel("$Y/r_{core}$")
+        if r_range is not None:
+            plt.ylim(-r_range[1], r_range[1])
+        else:
+            plt.ylim(-5, 5)
 
         self._draw_core(fig, ax, normalized=True)
         plt.tight_layout()
@@ -1098,8 +1103,8 @@ if __name__ == "__main__":
     else:
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
-    mvf.scatter_plot('r_mesh','T', t_range=(10, 80), r_range=(0, 100), symmetric=True,
-                     x_range=(0, 6), title="Azimuthal Velocity vs Radius")
+    mvf.contour_plot('T', title="$\\frac{1}{r^2}\\frac{d}{dr}[r^2 \\overline{t^\\prime r^\\prime}]$")
+    mvf.scatter_plot('r_mesh', 'T', t_range=(10, 80), r_range=(0, 100), symmetric=True, x_range=(0, 6))
     #mvf.comparison_plot()
     #mvf.get_pressure_relax_turb_visc()
     #mvf.scatter_plot('r_mesh', 'turb_visc_ettap_top', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
