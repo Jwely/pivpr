@@ -829,11 +829,11 @@ class AxialVortex(MeanVecFieldCartesian):
 
         print("generating dynamic plot...")
         if title is None:
-            title = "{0} over time".format(shorthand_to_tex(component_y))
+            title = "{0} vs time".format(shorthand_to_tex(component_y))
         if y_label is None:
-            y_label = component_y
+            y_label = shorthand_to_tex(component_y)
         if figsize is None:
-            figsize = (14, 5)
+            figsize = (10, 5)
         if cmap is None:
             cmap = SCATTER_DEFAULT_CMAP
         x_label = "Time (seconds)"
@@ -847,9 +847,6 @@ class AxialVortex(MeanVecFieldCartesian):
         # first plot
         gs = plt.GridSpec(100, 100, bottom=0.15, left=0.02, right=0.98)
         ax1 = fig.add_subplot(gs[:, 5:24])
-        xlims, ylims = self._get_plot_lims(40, 66)
-        plt.ylim(ylims)
-        plt.xlim(xlims)
 
         xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
         yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
@@ -858,19 +855,23 @@ class AxialVortex(MeanVecFieldCartesian):
                                 CONTOUR_DEFAULT_LEVELS,
                                 cmap=CONTOUR_DEFAULT_CMAP)
 
-        circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor='k',
+        plt.gca().set_aspect('equal', adjustable='box')         # set equal aspect ratio
+        circ = plt.Circle((0, 0), radius=1, edgecolor='k',
                           linestyle=':', facecolor='none', label="Core Boundary")
         ax1.add_patch(circ)
-        plt.title("Sample Area Average", fontsize=DEFAULT_TITLE_SIZE)
-        plt.legend(loc=4)
+        plt.title("Sample Area", fontsize=DEFAULT_TITLE_SIZE - 2)
+        #plt.legend(loc=4)
         plt.xlabel("$X/r_{core}$")
         plt.ylabel("$Y/r_{core}$")
+        plt.xlim(-r_range[1], r_range[1])
+        plt.ylim(-r_range[1], r_range[1])
 
         # second dynamic plot
         ax2 = fig.add_subplot(gs[:, 30:77])
         ax2.plot(t_set, y_sets['mean'], 'k-', label='Mean')
         ax2.plot(t_set, y_sets['p05'], 'k:', label='90% of Values')
         ax2.plot(t_set, y_sets['p95'], 'k:')
+        plt.title(title, fontsize=DEFAULT_TITLE_SIZE - 2)
         plt.grid()
         plt.legend(loc=1)
         plt.xlabel(x_label)
@@ -879,7 +880,7 @@ class AxialVortex(MeanVecFieldCartesian):
         # third plot psd
         ax3 = fig.add_subplot(gs[:, 84:100])
         ax3.psd(y_sets['mean'], NFFT=64, Fs=SAMPLING_RATE)
-        plt.title("log PSD")
+        plt.title("log PSD", fontsize=DEFAULT_TITLE_SIZE - 2)
 
         self._save_or_show(outpath)
         return {"t_set": t_set, "y_sets": y_sets}
@@ -1097,7 +1098,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
 if __name__ == "__main__":
 
-    exp_num = 55
+    exp_num = 35
     force = False
     if not os.path.exists("temp{0}.pkl".format(exp_num)) or force:
         directory = os.path.join(DATA_FULL_DIR, str(exp_num))
@@ -1111,8 +1112,9 @@ if __name__ == "__main__":
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
 
-    mvf.dynamic_plot('w', r_range=('0r', '1r'))
-    mvf.dynamic_plot('w', r_range=('1r', '2r'))
+    mvf.dynamic_plot('ctke', r_range=('1r', '2r'), t_range=(45, 90), symmetric=True)
+    mvf.dynamic_plot('ctke', r_range=('0r', '1r'))
+
 
     '''
     mvf.contour_plot('T', title="$\\frac{1}{r^2}\\frac{d}{dr}[r^2 \\overline{t^\\prime r^\\prime}]$")
