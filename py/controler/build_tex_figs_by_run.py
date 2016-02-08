@@ -93,12 +93,12 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     if include_dynamic:
         dynamic_kwargs = {"r_range": ('0r', '1r')}
         caption = "Plot showing dynamic variations in turbulent kinetic energy within the core. " \
-                  "$z/c$={0}, $V_{{free}}$={1}, station{2}.".format(z_location, av.velocity_fs, station_id)
+                  "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
         tfp.add_dynamic_plot('ctke', caption, scatter_width, special_tag="01r", create_kwargs=dynamic_kwargs, write_unique=True)
 
         dynamic_kwargs = {"r_range": ('1r', '2r')}
         caption = "Plot showing dynamic variations in turbulent kinetic energy between 1 and 2 core radii. " \
-                  "$z/c$={0}, $V_{{free}}$={1}, station{2}.".format(z_location, av.velocity_fs, station_id)
+                  "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
         tfp.add_dynamic_plot('ctke', caption, scatter_width, special_tag="12r", create_kwargs=dynamic_kwargs, write_unique=True)
 
     # and write the appendix index file with all of the plots.
@@ -108,7 +108,6 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 def main():
     # build tex figs for all trials
     run_ids = range(1, 71)
-    run_ids = [35, 45, 55]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=False)
 
