@@ -50,7 +50,6 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
         name = "{0}_contour_{1}".format(run_id, component)
         tfp.add_contour_plot(component, caption, contour_width, create_kwargs=contour_kwargs, write_unique=True)
 
-
     # radius scatter plots with kwargs
     scatter_kwargs = {"x_range": (0, 4)}
 
@@ -93,6 +92,6 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
 if __name__ == "__main__":
     run_ids = range(1, 71)
-    run_ids = [1]
+    #run_ids = [1]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, force_recalc=False)

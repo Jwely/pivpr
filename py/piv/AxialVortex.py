@@ -956,7 +956,6 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylabel(y_label)
         plt.title(title, fontsize=DEFAULT_TITLE_SIZE, y=1.04)
 
-
         self._save_or_show(outpath)
 
         # return the plotted data

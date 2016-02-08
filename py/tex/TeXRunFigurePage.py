@@ -42,7 +42,7 @@ class TeXRunFigurePage(TeXWriter):
 
         if write_unique:
             head, tail = os.path.split(figure_path)
-            texfile_path = os.path.join(head, tail.replace("eps","tex"))
+            texfile_path = os.path.join(head, ".".join(tail.split(".")[:-1] + ["tex"]))
             tw = TeXWriter(self.main_path, texfile_path)
             tw.add_figure(figure_path, caption, width, create_from_function, create_kwargs)
             tw.write()
