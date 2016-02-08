@@ -61,7 +61,9 @@ class AxialVortex(MeanVecFieldCartesian):
                               "t_mesh": None,  # tangential meshgrid (-pi to pi about right horizontal)
                               "hv_mesh": None,  # tangential meshgrid (0 near horizontal, pi/2 for vertical)
                               "t_meshd": None,  # t_mesh converted to degrees (-180 to 180)
-                              "hv_meshd": None})  # hv_mesh converted to degrees (0 to 90)
+                              "hv_meshd": None,  # hv_mesh converted to degrees (0 to 90)
+                              })
+
 
         # add to the velocity matrix and flattened version
         self.mean_set.update({'R': None,  # mean radial velocity around vortex core
@@ -1023,6 +1025,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
         plt.tight_layout()
         xlims, ylims = self._get_plot_lims()
+        plt.xlabel("$X/r_{core}$")
+        plt.ylabel("$Y/r_{core}$")
         plt.xlim(xlims)
         plt.ylim(ylims)
         plt.axis('equal')
@@ -1101,27 +1105,30 @@ if __name__ == "__main__":
     else:
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
-    mvf.contour_plot('T', title="$\\frac{1}{r^2}\\frac{d}{dr}[r^2 \\overline{t^\\prime r^\\prime}]$")
-    mvf.scatter_plot('r_mesh', 'T', t_range=(10, 80), r_range=(0, 100), symmetric=True, x_range=(0, 6))
-    #mvf.comparison_plot()
-    #mvf.get_pressure_relax_turb_visc()
-    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap_top', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
-    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap_bot', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
-    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', t_range=(10, 80), symmetric=True, show_grid=True)
 
-    #mvf.get_cylindrical_strain_rates()
-    #mvf.scatter_plot('r_mesh', 'sr_cx1', component_c='t_mesh', t_range=(40, 50), symmetric=True, log_y=True)
-    #mvf.contour_plot('sr_cx1', t_range=(40, 50), symmetric=True)
-    #mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 2), symmetric=True)
-    #mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 2), symmetric=True)
-    #mvf.scatter_plot('r_mesh', 'turb_visc', t_range=(0, 2), symmetric=True)
-    #mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 1), symmetric=True)
-    #mvf.scatter_plot('r_mesh', 'sr_cx4', t_range=(0, 1), symmetric=True)
-    #mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 1), symmetric=True)
-    #mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")
-
+    mvf.dynamic_plot('W',r_range=('0r', '1r'))
+    mvf.dynamic_plot('W',r_range=('1r', '2r'))
 
     '''
+    mvf.contour_plot('T', title="$\\frac{1}{r^2}\\frac{d}{dr}[r^2 \\overline{t^\\prime r^\\prime}]$")
+    mvf.scatter_plot('r_mesh', 'T', t_range=(10, 80), r_range=(0, 100), symmetric=True, x_range=(0, 6))
+    mvf.comparison_plot()
+    mvf.get_pressure_relax_turb_visc()
+    mvf.scatter_plot('r_mesh', 'turb_visc_ettap_top', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
+    mvf.scatter_plot('r_mesh', 'turb_visc_ettap_bot', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
+    mvf.scatter_plot('r_mesh', 'turb_visc_ettap', t_range=(10, 80), symmetric=True, show_grid=True)
+
+    mvf.get_cylindrical_strain_rates()
+    mvf.scatter_plot('r_mesh', 'sr_cx1', component_c='t_mesh', t_range=(40, 50), symmetric=True, log_y=True)
+    mvf.contour_plot('sr_cx1', t_range=(40, 50), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 2), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 2), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'turb_visc', t_range=(0, 2), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 1), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'sr_cx4', t_range=(0, 1), symmetric=True)
+    mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 1), symmetric=True)
+    mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")
+
     mvf.hist_plot('dudx')
     mvf.hist_plot('dudy')
     mvf.hist_plot('dvdx')
