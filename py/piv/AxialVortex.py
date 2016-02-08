@@ -791,9 +791,9 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.legend()
         plt.xlim(xmin=0)
         plt.ylim(ymin=0)
-        plt.xlabel(shorthand_to_tex('r_mesh'))
+        plt.xlabel("$R/r_{core}$")
         plt.ylabel(shorthand_to_tex('T'))
-        plt.title("Theoretical Profile Fits", fontsize=DEFAULT_TITLE_SIZE)
+        plt.title("Theoretical azimuthal velocity profile fits", fontsize=DEFAULT_TITLE_SIZE)
 
         if outpath is not False:
             self._save_or_show(outpath)
