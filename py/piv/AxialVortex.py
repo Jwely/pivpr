@@ -207,10 +207,10 @@ class AxialVortex(MeanVecFieldCartesian):
         # take the subsets, allow a string component or a custom input np array. (for dynamic data)
         if isinstance(component, str):
             rt_subset_component = np.ma.masked_array(self[component], mask=combined_mask)
-        elif 'np' in str(type(component)):
+        elif 'numpy' in str(type(component)):
             rt_subset_component = np.ma.masked_array(component, mask=combined_mask)
         else:
-            raise Exception("Cannot understand input 'compnonet' of type {0}".format(type(component)))
+            raise Exception("Cannot understand input component of type {0}".format(type(component)))
 
         return rt_subset_component
 
@@ -824,6 +824,9 @@ class AxialVortex(MeanVecFieldCartesian):
 
         r_range = self._rrange_parser(r_range)
 
+        if component_y not in DYNAMIC_INCLUDES:
+            raise Exception("That component is not saved in the dynamic dataset! check DYNAMIC_INCLUDES")
+
         print("generating dynamic plot...")
         if title is None:
             title = "{0} over time".format(shorthand_to_tex(component_y))
@@ -848,7 +851,9 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.ylim(ylims)
         plt.xlim(xlims)
 
-        areaplot = ax1.contourf(self['x_mesh'], self['y_mesh'],
+        xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
+        yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
+        areaplot = ax1.contourf(xplot_mesh, yplot_mesh,
                                 self._getitem_by_rt(component_y, **subset_kwargs),
                                 CONTOUR_DEFAULT_LEVELS,
                                 cmap=CONTOUR_DEFAULT_CMAP)
@@ -858,8 +863,8 @@ class AxialVortex(MeanVecFieldCartesian):
         ax1.add_patch(circ)
         plt.title("Sample Area Average", fontsize=DEFAULT_TITLE_SIZE)
         plt.legend(loc=4)
-        plt.xlabel('X position (mm)')
-        plt.ylabel('Y position (mm)')
+        plt.xlabel("$X/r_{core}$")
+        plt.ylabel("$Y/r_{core}$")
 
         # second dynamic plot
         ax2 = fig.add_subplot(gs[:, 30:77])
@@ -1092,7 +1097,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
 if __name__ == "__main__":
 
-    exp_num = 45
+    exp_num = 55
     force = False
     if not os.path.exists("temp{0}.pkl".format(exp_num)) or force:
         directory = os.path.join(DATA_FULL_DIR, str(exp_num))
@@ -1101,13 +1106,13 @@ if __name__ == "__main__":
         mvf.find_core()
         mvf.get_cart_turbulent_viscosity()
         mvf.get_pressure_relax_turb_visc()
-        mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=False)
+        mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=True)
     else:
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
 
-    mvf.dynamic_plot('W',r_range=('0r', '1r'))
-    mvf.dynamic_plot('W',r_range=('1r', '2r'))
+    mvf.dynamic_plot('w', r_range=('0r', '1r'))
+    mvf.dynamic_plot('w', r_range=('1r', '2r'))
 
     '''
     mvf.contour_plot('T', title="$\\frac{1}{r^2}\\frac{d}{dr}[r^2 \\overline{t^\\prime r^\\prime}]$")
