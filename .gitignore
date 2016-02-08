@@ -24,6 +24,7 @@ texdocs/figs/tex/run*
 *.synctex.gz
 *.toc
 *.out
+*pdf.gz
 
 # ignore the constantly updating main pdf
 texdocs/main.pdf
