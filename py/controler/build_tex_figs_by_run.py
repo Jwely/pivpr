@@ -31,6 +31,12 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
     station_id = (int((run_id - 1) / 10) + 1)
     z_location = "{0:2.2f}".format(av.z_location / 101.6)
 
+    # add a comparison plot to theoretical profile
+    caption = "Theoretical vortex profile fits to experimental data at $z/c$={0}, $V_{{free}}$={1}, station {2}."\
+        .format(z_location, av.velocity_fs, station_id)
+    tfp.add_comparison_plot(caption, scatter_width, write_unique=True)
+
+
     # add stream plot
     caption = "Stream plot at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     name = "{0}_stream_plot".format(run_id)
