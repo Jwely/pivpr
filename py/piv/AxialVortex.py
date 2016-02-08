@@ -924,6 +924,7 @@ class AxialVortex(MeanVecFieldCartesian):
         # if the x axis is the core radius, normalize by the radius of the core.
         if component_x == "r_mesh":
             x /= self.core_radius
+            x_label = "$R/r_{core}$"
 
         fig = plt.figure(figsize=figsize, dpi=DEFAULT_DPI, facecolor='w', edgecolor='k')
         if component_c is not None:
