@@ -29,7 +29,7 @@ DYNAMIC_INCLUDES = ['U', 'V', 'ctke', 'r', 't', 'w', 'rt', 'rw', 'tw']
 
 
 # statistics variables
-DEFAULT_MIN_POINTS = 20             # minimum number of points required to consider a data point as good
+DEFAULT_MIN_POINTS = 15             # minimum number of points required to consider a data point as good
 
 
 # global plotting variables
