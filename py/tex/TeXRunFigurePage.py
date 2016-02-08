@@ -109,9 +109,9 @@ class TeXRunFigurePage(TeXWriter):
         create_kwargs['component_y'] = component_y
 
         create_from_function = self.axial_vortex.scatter_plot
+        name_keys = [x for x in [self.tex_title, component_y, "vs", component_x, special_tag] if x != ""]
 
-        figure_filename = "{0}scatter.jpg".format(
-            "_".join(map(str, [self.tex_title, component_y, "vs", component_x, special_tag])))
+        figure_filename = "{0}scatter.jpg".format("_".join(map(str, name_keys)))
         figure_path = os.path.join(self.figure_dir, figure_filename)
         self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
