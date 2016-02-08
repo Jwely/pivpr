@@ -930,11 +930,11 @@ class AxialVortex(MeanVecFieldCartesian):
         if component_c is not None:
             c = self._getitem_by_rt(component_c, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
             vmin, vmax = self._get_vrange(component_c, r_range=r_range, t_range=t_range)
-            plt.scatter(x, y, marker='x', c=c, cmap=cmap, vmax=vmax, vmin=vmin)
+            plt.scatter(x, y, marker=SCATTER_DEFAULT_MARKER, c=c, cmap=cmap, vmax=vmax, vmin=vmin)
             cb = plt.colorbar(orientation='vertical')
             cb.set_label(c_label)
         else:
-            plt.scatter(x, y, marker='x', color='black')
+            plt.scatter(x, y, marker=SCATTER_DEFAULT_MARKER, color=SCATTER_DEFAULT_COLOR)
             c = None
 
         # apply manual specifications of x and y range, otherwise guess.
@@ -983,7 +983,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.figure()
         plt.quiver(self['x_mesh'], self['y_mesh'],
                    self['U'], self['V'],
-                   color='blue',
+                   color=SCATTER_DEFAULT_COLOR,
                    scale=400,
                    width=0.001,
                    headwidth=2,
