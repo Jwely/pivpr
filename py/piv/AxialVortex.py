@@ -5,6 +5,7 @@ import cPickle
 import os
 import math
 import numpy as np
+from matplotlib import ticker
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 
@@ -640,22 +641,27 @@ class AxialVortex(MeanVecFieldCartesian):
         else:
             plt.show()
 
-    def _draw_core(self, fig, ax, normalized=False):
+    def _draw_core(self, fig, ax, normalized=False, color=None):
         """ draws a vortex core for reference on any contour plot """
+
+        # default color of white
+        if color is None:
+            color = 'white'
+
         # plot the core location for reference
         if normalized:
             if self.core_location[0] is not None:
-                ax.scatter(0, 0, marker='+', s=100, c='white')
+                ax.scatter(0, 0, marker='+', s=100, c=color)
 
             if self.core_radius is not None:
-                circ = plt.Circle((0, 0), radius=1, edgecolor='w',
+                circ = plt.Circle((0, 0), radius=1, edgecolor=color,
                                   linestyle=':', facecolor='none', label="Core Boundary")
         else:
             if self.core_location[0] is not None:
-                ax.scatter(*self.core_location, marker='+', s=100, c='white')
+                ax.scatter(*self.core_location, marker='+', s=100, c=color)
 
             if self.core_radius is not None:
-                circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor='w',
+                circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor=color,
                                   linestyle=':', facecolor='none', label="Core Boundary")
         ax.add_patch(circ)
 
@@ -855,18 +861,22 @@ class AxialVortex(MeanVecFieldCartesian):
                                 CONTOUR_DEFAULT_LEVELS,
                                 cmap=CONTOUR_DEFAULT_CMAP)
 
-        plt.gca().set_aspect('equal', adjustable='box')         # set equal aspect ratio
-        circ = plt.Circle((0, 0), radius=1, edgecolor='k',
-                          linestyle=':', facecolor='none', label="Core Boundary")
-        ax1.add_patch(circ)
+        # create the colorbar with just a few axis ticks. nticks should just be a kwarg for colorbar, idk why it isn't.
+        ticks = list(self._get_vrange(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric,
+                                      low_percentile=0, high_percentile=100))
+        cb = plt.colorbar(areaplot, orientation="horizontal", ticks=ticks, pad=0.2)
+
+        plt.gca().set_aspect('equal', adjustable='box')         # set equal aspect ratio, x/y
+        self._draw_core(None, ax1, normalized=True, color='k')  # add the circular core marker.
+
         plt.title("Sample Area", fontsize=DEFAULT_TITLE_SIZE - 2)
-        #plt.legend(loc=4)
         plt.xlabel("$X/r_{core}$")
         plt.ylabel("$Y/r_{core}$")
-        plt.xlim(-r_range[1], r_range[1])
-        plt.ylim(-r_range[1], r_range[1])
+        plt.xlim(-r_range[1] / self.core_radius, r_range[1] / self.core_radius)
+        plt.ylim(-r_range[1] / self.core_radius, r_range[1] / self.core_radius)
+        plt.locator_params(nbins=3)     # controls number of x and y axis ticks to avoid crowding
 
-        # second dynamic plot
+        # second dynamic plot with percentile bounds as well.
         ax2 = fig.add_subplot(gs[:, 30:77])
         ax2.plot(t_set, y_sets['mean'], 'k-', label='Mean')
         ax2.plot(t_set, y_sets['p05'], 'k:', label='90% of Values')
