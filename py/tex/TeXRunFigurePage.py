@@ -172,7 +172,7 @@ class TeXRunFigurePage(TeXWriter):
 
         create_from_function = self.axial_vortex.dynamic_plot
 
-        figure_filename = "{0}dynamic.jpg".format("_".join(map(str, self.tex_title, component_y, special_tag)))
+        figure_filename = "{0}dynamic.jpg".format("_".join(map(str, [self.tex_title, component_y, special_tag])))
         figure_path = os.path.join(self.figure_dir, figure_filename)
         self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
