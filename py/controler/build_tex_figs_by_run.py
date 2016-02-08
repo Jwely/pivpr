@@ -7,7 +7,7 @@ from py.config import *
 from py.utils import merge_dicts
 
 
-def build_tex_figs_by_run(run_id, force_recalc=False):
+def build_tex_figs_by_run(run_id, include_cartesian=False, force_recalc=False):
     """
     Very similar to build_appendix_figs_by_run, but this function creates a separate
     tex document for every figure to include in the discussion section where lots of text will
@@ -39,31 +39,37 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
     # add stream plot
     caption = "Stream plot at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
-    name = "{0}_stream_plot".format(run_id)
     tfp.add_stream_plot(caption, stream_width)
 
     # full contour plots with no radial or angular subseting
-    for component in ['R', 'T', 'W', 'rt', 'rw', 'tw', 'rr', 'tt', 'ww', 'ctke', 'num']:
+    components = ['R', 'T', 'W', 'rt', 'rw', 'tw', 'rr', 'tt', 'ww', 'ctke', 'num']
+    if include_cartesian:
+        components += ['U', 'V', 'W']
+
+    for component in components:
         contour_kwargs = {"r_range": ('0r', '6r')}
         caption_fmt = "Contour plot of {0} at $z/c$={2}, $V_{{free}}$={3}, station {1}."
         caption = caption_fmt.format(stt(component), station_id, z_location, av.velocity_fs)
-        name = "{0}_contour_{1}".format(run_id, component)
         tfp.add_contour_plot(component, caption, contour_width, create_kwargs=contour_kwargs, write_unique=True)
 
     # radius scatter plots with kwargs
     scatter_kwargs = {"x_range": (0, 4)}
 
     t_kwargs = merge_dicts(scatter_kwargs, {"title": "Azimuthal Velocity vs Radius"})
-    caption = "Scatter plot of azimuthal velocity vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
-            z_location, av.velocity_fs, station_id)
-    name = "{0}_scatter_T".format(run_id)
+    caption = "Scatter plot of azimuthal velocity vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}.".format(
+        z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'T', caption, scatter_width, create_kwargs=t_kwargs, write_unique=True)
 
+    t_kwargs = merge_dicts(scatter_kwargs, {"title": "Azimuthal Velocity vs Radius", "component_c": "ctke"})
+    caption = "Scatter plot of azimuthal velocity vs radius, turbulent kinetic energy, " \
+              "at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
+    tfp.add_scatter_plot('r_mesh', 'T', caption, scatter_width, special_tag='ctke', create_kwargs=t_kwargs, write_unique=True)
+
     k_kwargs = merge_dicts(scatter_kwargs, {"title": "Turbulent Kinetic Energy"})
-    caption = "Scatter plot of turbulent kinetic energy vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
-            z_location, av.velocity_fs, station_id)
-    name = "{0}_scatter_K".format(run_id)
+    caption = "Scatter plot of turbulent kinetic energy vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+        z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'ctke', caption, scatter_width, create_kwargs=k_kwargs, write_unique=True)
+
 
 
     # logarithmic plots with kwqargs
@@ -74,24 +80,30 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
                                               "symmetric": True})
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{1}{r^2}\frac{d}{dr}[r^2 \overline{t^\prime r^\prime}]$"})
-    caption = "Scatter plot of reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
-            z_location, av.velocity_fs, station_id)
-    name = "{0}_ettap_reynolds_top".format(run_id)
+    caption = "Scatter plot of reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+        z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_top', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}(\frac{\bar{t}}{r}$"})
-    caption = "Scatter plot of velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}".format(
-            z_location, av.velocity_fs, station_id)
-    name = "{0}_ettap_velgrad_bot".format(run_id)
+    caption = "Scatter plot of velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+        z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # and write the appendix index file with all of the plots.
     tfp.write()
 
 
-
-if __name__ == "__main__":
+def main():
+    # build tex figs for all trials
     run_ids = range(1, 71)
-    #run_ids = [1]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, force_recalc=False)
+
+    # include cartesian coordinate tex figs for example run number 55
+    build_tex_figs_by_run(55, include_cartesian=True)
+
+
+
+
+if __name__ == "__main__":
+    main()
