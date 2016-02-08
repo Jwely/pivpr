@@ -92,11 +92,13 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     # include dynamic plots
     if include_dynamic:
         dynamic_kwargs = {"r_range": ('0r', '1r')}
-        caption = "Plot showing dynamic variations in turbulent kinetic energy within the core."
+        caption = "Plot showing dynamic variations in turbulent kinetic energy within the core. " \
+                  "$z/c$={0}, $V_{{free}}$={1}, station{2}.".format(z_location, av.velocity_fs, station_id)
         tfp.add_dynamic_plot('ctke', caption, scatter_width, special_tag="01r", create_kwargs=dynamic_kwargs, write_unique=True)
 
         dynamic_kwargs = {"r_range": ('1r', '2r')}
-        caption = "Plot showing dynamic variations in turbulent kinetic energy between 1 and 2 core radii"
+        caption = "Plot showing dynamic variations in turbulent kinetic energy between 1 and 2 core radii. " \
+                  "$z/c$={0}, $V_{{free}}$={1}, station{2}.".format(z_location, av.velocity_fs, station_id)
         tfp.add_dynamic_plot('ctke', caption, scatter_width, special_tag="12r", create_kwargs=dynamic_kwargs, write_unique=True)
 
     # and write the appendix index file with all of the plots.
