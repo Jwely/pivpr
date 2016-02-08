@@ -775,18 +775,18 @@ class AxialVortex(MeanVecFieldCartesian):
         # set up plots with sizing and labels
         fig, ax1 = plt.subplots(figsize=(10, 5), dpi=DEFAULT_DPI, facecolor='w')
 
-        r_plot = r_array / core_radius
+        r_plot = r_array / 1000 / core_radius
         r_scat = r_scatter / 1000 / core_radius
-        plt.scatter(r_scat, t_scatter, marker='.', color='lightgray', s=0.4, label="Experimental Data")
-        plt.plot(r_plot, t_exp, linestyle='-', color='black', label="Experimental Fit")
-        plt.plot(r_plot, t_rankine, linestyle='--', color='firebrick', label="Rankine: $r_{core}$")
-        plt.plot(r_plot, t_lamboseen, linestyle=':', color='navy', label="Lamb-Oseen: $V_{\\theta, max}$")
-        plt.plot(r_plot, t_ash, linestyle='-.', color='purple', label="Ash: $V_{\\theta, max}$")
+        plt.scatter(r_scat, t_scatter, marker='.', color='gray', s=0.4, label="Experimental Data")
+        plt.plot(r_plot, t_exp, linewidth=2, linestyle='-', color='black', label="Experimental Fit")
+        plt.plot(r_plot, t_rankine, linewidth=2, linestyle='--', color='firebrick', label="Rankine: $r_{core}$")
+        plt.plot(r_plot, t_lamboseen, linewidth=2, linestyle=':', color='navy', label="Lamb-Oseen: $V_{\\theta, max}$")
+        plt.plot(r_plot, t_ash, linewidth=2, linestyle='-.', color='purple', label="Ash: $V_{\\theta, max}$")
 
         if pressure_relaxation is not None:     # ash vortex based on pressure relaxation
             ettap  = pressure_relaxation / 1e6
             t_ash2 = AshVortex(core_radius, circulation_strength, kinematic_viscosity, ettap).get_vtheta(r_array)
-            plt.plot(r_plot, t_ash2, linestyle='-.', color='darkgreen', label="Ash: $\etta_p$")
+            plt.plot(r_plot, t_ash2, linewidth=2, linestyle='-.', color='darkgreen', label="Ash: $\etta_p$")
 
         plt.legend()
         plt.xlim(xmin=0)
