@@ -69,7 +69,7 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
     # logarithmic plots with kwqargs
     log_kwargs = merge_dicts(scatter_kwargs, {"log_y": True,
-                                              "y_range": (1e3, 1e9),
+                                              "y_range": (1e2, 1e9),
                                               "y_label": " ",
                                               "t_range": (10, 80),
                                               "symmetric": True})
@@ -93,5 +93,6 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
 
 if __name__ == "__main__":
     run_ids = range(1, 71)
+    run_ids = [1]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, force_recalc=False)

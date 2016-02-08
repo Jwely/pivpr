@@ -632,7 +632,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :param outpath: output filepath to save figure, if left None, figure will be displayed to screen
         """
         if outpath is not None:
-            plt.savefig(outpath)
+            plt.savefig(outpath, format='jpg', dpi=DEFAULT_DPI)
             print("saved figure to {0}".format(outpath))
             plt.close()
         else:
@@ -773,11 +773,11 @@ class AxialVortex(MeanVecFieldCartesian):
         #t_burnhamhallock = BurnhamHallockVortex(core_radius, circulation_strength).get_vtheta(r_array)
 
         # set up plots with sizing and labels
-        fig, ax1 = plt.subplots(figsize=(10, 5), dpi=DEFAULT_DPI, facecolor='w')
+        fig, ax1 = plt.subplots(figsize=(8, 4), dpi=DEFAULT_DPI, facecolor='w')
 
-        r_plot = r_array / 1000 / core_radius
-        r_scat = r_scatter / 1000 / core_radius
-        plt.scatter(r_scat, t_scatter, marker='.', color='gray', s=0.4, label="Experimental Data")
+        r_plot = r_array / core_radius
+        r_scat = r_scatter / core_radius
+        plt.scatter(r_scat, t_scatter, marker='.', color='lightgray', s=0.3, label="Experimental Data")
         plt.plot(r_plot, t_exp, linewidth=2, linestyle='-', color='black', label="Experimental Fit")
         plt.plot(r_plot, t_rankine, linewidth=2, linestyle='--', color='firebrick', label="Rankine: $r_{core}$")
         plt.plot(r_plot, t_lamboseen, linewidth=2, linestyle=':', color='navy', label="Lamb-Oseen: $V_{\\theta, max}$")
@@ -816,7 +816,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :param symmetric:       set "True" if radial and tangential components should be symetric about xy
         :param tight:           set to True for a tightly ploted area
         :param figsize:         figure size in inches at 200 dpi
-        :param outpath:         output path to save the plot as a png.
+        :param outpath:         output path to save the plot as a eps.
         :return:
         """
 
@@ -909,7 +909,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if c_label is None and component_c is not None:
             c_label = shorthand_to_tex(component_c)
         if figsize is None:
-            figsize = (10, 5)
+            figsize = (8, 4)
         if cmap is None:
             cmap = SCATTER_DEFAULT_CMAP
 
@@ -1038,7 +1038,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         :param component:   component to plot, any member of the meshgrid or the mean_set
         :param title:       custom title to place on the contour plot
-        :param outpath:     an output path to save a png file of this plot
+        :param outpath:     an output path to save a eps file of this plot
         :return:
         """
 

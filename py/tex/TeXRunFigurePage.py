@@ -42,7 +42,7 @@ class TeXRunFigurePage(TeXWriter):
 
         if write_unique:
             head, tail = os.path.split(figure_path)
-            texfile_path = os.path.join(head, tail.replace("png","tex"))
+            texfile_path = os.path.join(head, tail.replace("eps","tex"))
             tw = TeXWriter(self.main_path, texfile_path)
             tw.add_figure(figure_path, caption, width, create_from_function, create_kwargs)
             tw.write()
@@ -75,7 +75,7 @@ class TeXRunFigurePage(TeXWriter):
 
         create_from_function = self.axial_vortex.contour_plot
 
-        figure_filename = "{0}contour.png".format("_".join(map(str, [self.tex_title, component, special_tag])))
+        figure_filename = "{0}contour.jpg".format("_".join(map(str, [self.tex_title, component, special_tag])))
         figure_path = os.path.join(self.figure_dir, figure_filename)
         self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
@@ -110,7 +110,7 @@ class TeXRunFigurePage(TeXWriter):
 
         create_from_function = self.axial_vortex.scatter_plot
 
-        figure_filename = "{0}scatter.png".format(
+        figure_filename = "{0}scatter.jpg".format(
             "_".join(map(str, [self.tex_title, component_y, "vs", component_x, special_tag])))
         figure_path = os.path.join(self.figure_dir, figure_filename)
         self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
@@ -127,7 +127,7 @@ class TeXRunFigurePage(TeXWriter):
         create_kwargs = {}  # no interesting kwargs at the moment
         create_from_function = self.axial_vortex.stream_plot
 
-        figure_filename = "{0}_stream.png".format(self.tex_title)
+        figure_filename = "{0}_stream.jpg".format(self.tex_title)
         figure_path = os.path.join(self.figure_dir, figure_filename)
         self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
@@ -143,7 +143,7 @@ class TeXRunFigurePage(TeXWriter):
         create_kwargs = {}  # no interesting kwargs at the moment
         create_from_function = self.axial_vortex.quiver_plot
 
-        figure_filename = "{0}_quiver.png".format(self.tex_title)
+        figure_filename = "{0}_quiver.jpg".format(self.tex_title)
         figure_path = os.path.join(self.figure_dir, figure_filename)
         TeXWriter.add_figure(self, figure_path, caption, width, create_from_function, create_kwargs)
 
@@ -172,7 +172,7 @@ class TeXRunFigurePage(TeXWriter):
 
         create_from_function = self.axial_vortex.dynamic_plot
 
-        figure_filename = "{0}dynamic.png".format("_".join(map(str, self.tex_title, component_y, special_tag)))
+        figure_filename = "{0}dynamic.jpg".format("_".join(map(str, self.tex_title, component_y, special_tag)))
         figure_path = os.path.join(self.figure_dir, figure_filename)
         self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
 
@@ -190,6 +190,6 @@ class TeXRunFigurePage(TeXWriter):
 
         create_from_function = self.axial_vortex.comparison_plot
 
-        figure_filename = "{0}_comparison.png".format(self.tex_title)
+        figure_filename = "{0}_comparison.jpg".format(self.tex_title)
         figure_path = os.path.join(self.figure_dir, figure_filename)
         self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)

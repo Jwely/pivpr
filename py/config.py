@@ -37,11 +37,11 @@ CONTOUR_DEFAULT_LEVELS = 256        # number of discreet colors to use on contou
 CONTOUR_DEFAULT_CMAP = cm.jet       # default color ramp to use on contour plots
 CONTOUR_DEFAULT_RRANGE = (0, 50)    # default radius range to subset contour plots by
 SCATTER_DEFAULT_CMAP = cm.jet       # default colormap to use on scatter plots with third variable
-SCATTER_DEFAULT_COLOR = 'blue'      # default color used on scatter plots with just one variable
+SCATTER_DEFAULT_COLOR = 'navy'      # default color used on scatter plots with just one variable
 SCATTER_DEFAULT_MARKER = 'x'        # marker to use on scatter plots
 SCATTER_DEFAULT_RLIM = 100          # default plot
 VRANGE_DEFAULT = (1, 99)            # default percentile values for defining color ramp boundaries
-DEFAULT_DPI = 160                   # default dots per inch
+DEFAULT_DPI = 300                   # default dots per inch
 DEFAULT_TITLE_SIZE = 18             # font size for titles
 
 # attributes of the dataset

@@ -41,7 +41,7 @@ def calculate_uncertainty(name, n_measurements=200):
 
     # for each component
     for component in ['U', 'V', 'W']:
-        fig_name = "uncertainty_{0}_{1}.png".format(name, component)
+        fig_name = "uncertainty_{0}_{1}.jpg".format(name, component)
         fig_path = os.path.join(fig_dir, fig_name)
 
         results = avf.plot_histogram(component, n_measurements, title="", outpath=fig_path)
