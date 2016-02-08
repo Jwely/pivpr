@@ -14,9 +14,9 @@ def build_tex_figs_by_run(run_id, force_recalc=False):
     be manually placed between images.
     """
 
-    contour_width = '4.5in'
+    contour_width = '4.2in'
     scatter_width = '6in'
-    stream_width = '4.5in'
+    stream_width = '4.2in'
 
     # create the experiment.
     exp = construct_experiments(experiment_table_path=EXPERIMENT_TABLE_PATH,
