@@ -269,3 +269,28 @@ data was examined for possible misrepresentation of measurement uncertainty in
 the $X$ and $Y$ direction, but no statistically meaningful discrepancies were 
 found.
 
+\subsection{Bias from Uneven sampling}
+
+Every grid location with at least 20 successfully resolved vectors was 
+subject to a Reynolds decomposition into average and fluctuating components. 
+With 200 total samples taken for each test, the results are actually made up of 
+many grid points with between 20 and 200 samples. Uncertainty is related to the 
+number of samples making up a measurement, but visualizing the potential 
+impacts of uncertainty as it varies in two and three dimensional space is 
+challenging. Furthermore, the likelihood of successfully resolving a vector is 
+dependent upon aspects of the interaction between tracer particles and the 
+fluid flow. A very clear interdependence between areas of high turbulence, and 
+the number of successful vector calculations was observed as shown in Figures 
+\ref{fig:run_55_num_contour} and \ref{fig:run_55_ctke_contour}. 
+
+\input{figs/run_55/run_55_num_contour}
+\input{figs/run_55/run_55_ctke_contour}
+
+It was assumed that, as long as the number of samples making up any given 
+measurement remains above the threshold of 20, every vector in the field is 
+accurately represented. A sampling technique could be employed by 
+which a random selection of 20 different values is used at every location, to 
+result in a more statistically homogeneous vector field. However, 
+the uncertainty in a PIV measurement also depends significantly on the 
+magnitude of the velocity measured, so the benefit of such a sampling scheme is 
+contestable.
