@@ -7,6 +7,8 @@
 \usepackage[english]{babel}
 \usepackage{graphicx}
 
+\usepackage{enumitem}		% list formating
+\usepackage{tabto}			% allows the use of tabing by distance
 \usepackage{url}			% allows embedded URLs to link
 \usepackage{ODUthesis} 		% custom template specific to ODU thesis.
 \usepackage{indentfirst} 	% indents first line of a section (style guide)
@@ -79,7 +81,9 @@ Effects in Axial Wake Vortices Via Particle Image Velocimetry}
 
 \beforepreface
 
-%\prefacesection{Acknowledgements}
+\prefacesection{Acknowledgments}
+For my lovely bride-to-be, who planned our wedding by herself while I remained 
+occupied with this thing. For my 
 
 \prefacesection{Notes}
 Good practice for preserving the code used to perform this research was 
@@ -88,6 +92,8 @@ used to perform data analysis and visualization, along with the raw three
 dimensional vector dataset can be downloaded from 
 \url{https://github.com/Jwely/pivpr}.
 	
+%\prefacesection{Nomenclature}
+%\input{docs/nomenclature}
 
 \afterpreface
 
@@ -156,10 +162,12 @@ processing, and data quality control.
 
 % experiment results and sub documents
 \chapter{Experiment Results}
-
 \input{docs/experiment_results/discussion}
-\input{docs/experiment_results/conclusions}
 \input{docs/experiment_results/piv_uncertainty}
+
+% conclusions chapter
+\chapter{Conclusions}
+\input{docs/conclusions}
 
 %=========================================================================
 % constructs the bibliography
