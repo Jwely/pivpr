@@ -19,6 +19,7 @@ And, with easy installation using pip:
  * [`pandas`](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pandas)
  * [`matplotlib`](http://www.lfd.uci.edu/~gohlke/pythonlibs/#matplotlib)
  * [`libtiff`](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pylibtiff)
+ * [`scipy`](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
 
 ## Directory Structure
 #### py
