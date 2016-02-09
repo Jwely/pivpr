@@ -146,12 +146,11 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 def main():
     # build tex figs for all trials
     run_ids = range(1, 71)
-    run_ids = [55, 56]
     for run_id in run_ids:
-        build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=False)
+        build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=True)
 
     # include cartesian coordinate tex figs for example run number 55
-    #build_tex_figs_by_run(55, include_cartesian=True)
+    build_tex_figs_by_run(55, include_cartesian=True)
 
 
 
