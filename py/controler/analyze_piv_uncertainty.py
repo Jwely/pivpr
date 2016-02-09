@@ -48,7 +48,7 @@ def calculate_uncertainty(name, n_measurements=200):
                       # r"$\beta_{c}=\pm {mb:1.4f}$, $P_1{c}=\pm {p1:1.4f}$"\
         caption_fmt = r"Histogram of ${c}$ measurements at station {s}. " \
                       r"Simulated conditions $(u,v,w)=({u}, {v}, {w})$, $dt={dt} \mu s$, " \
-                      r"$U_1_{c}=\pm {u1:1.3f}$, $U_200_{c}=\pm {u200:1.3f}$"
+                      r"$U_{{1_{{{c}}}}}=\pm {u1:1.3f}$, $U_{{200_{{{c}}}}}=\pm {u200:1.3f}$"
         caption = caption_fmt.format(c=component.upper(), s=name[12],
                                      u=avf.piv_params['u'],
                                      v=avf.piv_params['v'],
@@ -165,14 +165,14 @@ def make_csv_uncertainty_tables(stations, conditions, csv_name, verbose=False):
     return tuple(returnlist)
 
 
-def perform_uncertainty_analysis():
+def main():
     """
     Final setp in producing uncertainty tables and figures.
 
     :return:
     """
 
-    # create comprehensive uncertainty table
+    # create comprehensive uncertainty tables
     u_path, v_path, w_path = make_csv_uncertainty_tables([1, 2, 3, 4, 5, 6, 7], [1, 2], "uncertainties")
     csv_to_tex(u_path,
                caption="Uncertainty in $X$ direction velocity measurements. Unlabelled units are $m/s$.",
@@ -186,4 +186,4 @@ def perform_uncertainty_analysis():
 
 # test area
 if __name__ == "__main__":
-    perform_uncertainty_analysis()
+    main()
