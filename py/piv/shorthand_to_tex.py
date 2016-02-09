@@ -38,7 +38,7 @@ def shorthand_to_tex(component):
             return "$\overline{{{comp0}^\prime {comp1}^\prime}}$".format(comp0=component[0], comp1=component[1])
 
         # handles partial derivatives of format 'dxdy'
-        elif len(component) == 4:
+        elif len(component) == 4 and "d" in component:
             return "$\\frac{{\\partial {0}}}{{\\partial {1}}}$".format(component[1], component[3])
 
         # meshgrid attributes
