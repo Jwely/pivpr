@@ -25,13 +25,13 @@ And, with easy installation using pip:
 
 ## Directory Structure
 #### py
-Living version of the codebase. performs analysis and dumps files to texdocs. Many sub packages.
+Living version of the codebase. Performs analysis and dumps files to texdocs. Built to make the analysis as repeatable as posisble, with full exposure to the methods used as part of this study.
 #### matlab
-Outdated codebase, kept for good record keeping.
+Obsolete code base started in matlab, kept for good record keeping only.
 #### texdocs
-Tex and tex resources used to produce PDF and HTML formatted research document.
+TeX and resources used to produce PDF formatted publication document. Several subdirectories are automatically filled by `py/controler` scripts with TeX files, figure jpgs, and tables converted from .csv format.
 #### data_full
-Folder to place full set of processed 3d vector files. Controllers in the `py` package will work with data placed in this folder.
+Folder to place full set of processed 3d vector files. Controllers in the `py\controler` package will work if data is correctly placed in this folder.
 #### data_test
 Small limited subset of vector files initially used for testing and development.
 
