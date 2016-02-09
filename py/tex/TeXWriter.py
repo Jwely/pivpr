@@ -50,14 +50,15 @@ class TeXWriter:
         self.content += ["\\chapter{{{0}}}".format(name)]
 
 
-    def write(self, verbose=False, reset_content=False):
+    def write(self, verbose=False, reset_content=False, include_labels=True):
         """ Writes a `.tex` file with the current text and figures """
 
         with open(self.texfile_path, 'w+') as f:
             for line in self.content:
-                if verbose:
-                    print(line)
-                f.write(line + "\n")
+                if include_labels and r"\label" not in line:
+                    if verbose:
+                        print(line)
+                    f.write(line + "\n")
         print("Wrote tex file at {0}".format(self.texfile_path))
 
         # resets the content to ensure figure is only writen once, not subsequently
