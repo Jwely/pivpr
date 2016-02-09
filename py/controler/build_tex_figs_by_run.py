@@ -89,6 +89,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\eta_P \bar{t}[\overline{r^\prime r^\prime} - \overline{t^\prime t^\prime} + \frac{d(\overline{r^\prime r^\prime})}{dr}]$"})
+    kwargs['y_range'] = (1e-5, 1e3) # much much much smaller.
     caption = "Scatter plot of $\nu_T$ pressure relaxation term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
@@ -108,7 +109,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
         dynamic_kwargs = {"r_range": ('0r', '0.5r')}
         caption = "Plot showing dynamic variations in turbulent kinetic energy between 0 and 0.5 core radii. " \
                   "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
-        tfp.add_dynamic_plot('ctke', caption, scatter_width, special_tag="0.5r", create_kwargs=dynamic_kwargs, write_unique=True)
+        tfp.add_dynamic_plot('ctke', caption, scatter_width, special_tag="005r", create_kwargs=dynamic_kwargs, write_unique=True)
 
     # and write the appendix index file with all of the plots.
     tfp.write()
