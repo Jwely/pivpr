@@ -79,15 +79,19 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
                                               "symmetric": True})
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{1}{r^2}\frac{d}{dr}[r^2 \overline{t^\prime r^\prime}]$"})
-    caption = "Scatter plot of reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+    caption = "Scatter plot of $\nu_T$ reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_top', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}(\frac{\bar{t}}{r}$"})
-    caption = "Scatter plot of velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+    caption = "Scatter plot of $\nu_T$ velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
+    kwargs = merge_dicts(log_kwargs, {"title": r"$\eta_P \bar{t}[\overline{r^\prime r^\prime} - \overline{t^\prime t^\prime} + \frac{d(\overline{r^\prime r^\prime})}{dr}]$"})
+    caption = "Scatter plot of $\nu_T$ pressure relaxation term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+        z_location, av.velocity_fs, station_id)
+    tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # include dynamic plots
     if include_dynamic:
@@ -98,6 +102,11 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 
         dynamic_kwargs = {"r_range": ('1r', '2r')}
         caption = "Plot showing dynamic variations in turbulent kinetic energy between 1 and 2 core radii. " \
+                  "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
+        tfp.add_dynamic_plot('ctke', caption, scatter_width, special_tag="12r", create_kwargs=dynamic_kwargs, write_unique=True)
+
+        dynamic_kwargs = {"r_range": ('0r', '0.5r')}
+        caption = "Plot showing dynamic variations in turbulent kinetic energy between 0 and 0.5 core radii. " \
                   "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
         tfp.add_dynamic_plot('ctke', caption, scatter_width, special_tag="12r", create_kwargs=dynamic_kwargs, write_unique=True)
 
@@ -112,7 +121,7 @@ def main():
         build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=False)
 
     # include cartesian coordinate tex figs for example run number 55
-    #build_tex_figs_by_run(55, include_cartesian=True)
+    build_tex_figs_by_run(55, include_cartesian=True)
 
 
 
