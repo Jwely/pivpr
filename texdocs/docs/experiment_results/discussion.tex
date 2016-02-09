@@ -283,7 +283,7 @@ be expressed as
 	t^\prime} + \cfrac{d(\overline{r^\prime r^\prime})}{dr}\Bigg]}
 	{r^2\Bigg[\cfrac{d^2 \bar{t}}{dr^2} + \cfrac{d}{dr}
 	\Bigg(\cfrac{\bar{t}}{r}\Bigg)\Bigg]}
-\label{fig:etap_nut}
+\label{eq:etap_nut}
 \end{equation}
 
 \noindent
@@ -304,9 +304,25 @@ shown in Figure \ref{fig:run_55_turb_visc_ettap_vs_r_meshscatter}.
 \input{figs/run_55/run_55_turb_visc_reynolds_vs_r_meshscatter}
 \input{figs/run_55/run_55_turb_visc_ettap_vs_r_meshscatter}
 
-By calculating the turbulent viscosity implicit in the non-equilibrium pressure 
-solution for an axial wake vortex, it was demonstrated that the theory predicts 
-a very significant increase in the rate of turbulent kinetic energy dissipation 
-in the core region of an axial vortex. The predicted dissipation rate within 
-the core was found to be up to two orders of magnitude larger than is estimated 
-by the standard turbulent viscosity hypothesis.
+The term in the denominator related to the gradient in the stable component of 
+azimuthal velocity, a profile similar to the Reynolds stress term was observed, 
+though the slope was found to be slightly shallower as shown in Figure 
+\ref{fig:run_55_turb_visc_vel_grad_vs_r_meshscatter}.
+
+\input{figs/run_55/run_55_turb_visc_vel_grad_vs_r_meshscatter}
+
+The final result of turbulent viscosity by combining all the terms as in 
+Equation \ref{eq:etap_nut} was found to reflect a very significant radial 
+dependence in turbulent energy dissipation as indicated by the turbulent 
+viscosity as shown in Figure \ref{fig:run_55_turb_visc_total_vs_r_meshscatter}.
+
+\input{figs/run_55/run_55_turb_visc_total_vs_r_meshscatter}
+
+These trends in turbulent viscosity shown above remain generally consistent 
+over all velocities and stations. By calculating the turbulent viscosity 
+implicit in the non-equilibrium pressure solution for an axial wake vortex, it 
+was demonstrated that the theory predicts a very significant increase in the 
+rate of turbulent kinetic energy dissipation in the core region of an axial 
+vortex. The predicted dissipation rate within the core was found to be up to 
+two orders of magnitude larger than is estimated by the standard turbulent 
+viscosity hypothesis.
