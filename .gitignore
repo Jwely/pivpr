@@ -9,10 +9,10 @@ py/test_plots
 data_full/*/*.v3d
 
 # ignore the figures that can be quickly regenerated
-texdocs/figs/run*
+texdocs/figs/run*/*jpg
 #texdocs/figs/appendix*
-texdocs/figs/Ely*
-texdocs/figs/tex/run*
+#texdocs/figs/Ely*
+#texdocs/figs/tex/run*
 
 # general extensions
 *.aux
