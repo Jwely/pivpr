@@ -208,7 +208,10 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # take the subsets, allow a string component or a custom input np array. (for dynamic data)
         if isinstance(component, str):
-            rt_subset_component = np.ma.masked_array(self[component], mask=combined_mask)
+            if self[component] is None:
+                raise Exception("Component {0} is None!".format(component))
+            else:
+                rt_subset_component = np.ma.masked_array(self[component], mask=combined_mask)
         elif 'numpy' in str(type(component)):
             rt_subset_component = np.ma.masked_array(component, mask=combined_mask)
         else:
