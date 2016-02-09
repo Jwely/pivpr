@@ -99,16 +99,23 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_top', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}(\frac{\bar{t}}{r})$"})
-    caption = "Scatter plot of $\nu_T$ velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+    caption = "Scatter plot of $\\nu_T$ velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\eta_P \bar{t}[\overline{r^\prime r^\prime} - \overline{t^\prime t^\prime}"
                                                r" + \frac{d(\overline{r^\prime r^\prime})}{dr}]$"})
     kwargs['y_range'] = (1e-5, 1e3) # much much much smaller.
-    caption = "Scatter plot of $\nu_T$ pressure relaxation term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+    caption = "Scatter plot of $\\nu_T$ pressure relaxation term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
+
+    # plots of turbulent viscosity as calculated by turbulent viscosity hypothesis
+    kwargs = {"y_range": (0, 0.6), "x_range": (0, 5), "title": "Radial profile of $\\nu_T$"}
+    caption = "Scatter plot of $\\nu_T$ as calculated from the turbulent viscosity hypothesis. " \
+              "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
+    tfp.add_scatter_plot('r_mesh', 'turb_visc', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
+
 
     # include dynamic plots
     if include_dynamic:
