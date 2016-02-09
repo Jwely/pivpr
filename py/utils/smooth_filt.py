@@ -1,6 +1,5 @@
 __author__ = "Jwely"
 
-import scipy
 from scipy import interpolate, signal
 import numpy as np
 
