@@ -9,9 +9,24 @@ from py.utils import merge_dicts
 
 def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False, force_recalc=False):
     """
-    Very similar to build_appendix_figs_by_run, but this function creates a separate
-    tex document for every figure to include in the discussion section where lots of text will
-    be manually placed between images.
+    Creates a separate tex document for every figure to include in the discussion section where lots 
+    of text will be manually placed between images.
+    
+    At this point, everything has become a little convoluted, but running this
+    function will complete all processing for input run_id and produce all the relevant figures and
+    create individual tex files that can be called and referenced with a one liner wherever they are 
+    needed in the main tex document with:
+    
+        # \include{figs\...}
+        # \ref{figs:...}
+    
+    The hierarchy at this point is:
+        TeXRunFigurePage extends
+        TexWriter invokes
+        TexFigureGenerator wraps
+        construct_experiments returns
+        Experiment with attribute
+        AxialVortex which has plotting methods to produce figures of interest.
     """
 
     contour_width = '4.25in'
