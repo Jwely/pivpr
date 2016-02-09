@@ -1195,17 +1195,17 @@ if __name__ == "__main__":
 
     #mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
 
-    kwargs = {"t_range": (15, 75),
+    kwargs = {"t_range": (10, 80),
               "r_range": (0, '5r'),
               "symmetric": True,
               "show_grid": True,
               #"y_range": (1e1, 1e9),
               }
 
-    #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
-    #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
-    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
-    #mvf.scatter_plot('r_mesh', 'turb_visc_total', **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_ratio')
+    mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
+    mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
+    mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
+    mvf.scatter_plot('r_mesh', 'turb_visc_total', **kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_ratio')
 
 
