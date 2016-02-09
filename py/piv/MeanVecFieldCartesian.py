@@ -87,7 +87,7 @@ class MeanVecFieldCartesian:
                                'dwdy': None,
                                'dwdz': None}    # special case
 
-        self.equation_terms = {'turb_visc': None}
+        self.equation_terms = {'turb_visc': None}  # based on simple turbulent viscosity assumption from 1877
 
 
         # Build up the data set
