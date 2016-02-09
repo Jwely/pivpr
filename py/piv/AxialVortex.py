@@ -110,9 +110,10 @@ class AxialVortex(MeanVecFieldCartesian):
                                     'sr_cx_tot': None,  # the sum of all cylindrical strain rate terms approx on X axis
                                     })
 
-        self.equation_terms.update({'turb_visc_ettap_top': None,  # for turbulent viscosity by pressure relaxation calc
-                                    'turb_visc_ettap_bot': None,   # for turbulent viscosity by pressure relaxation calc
-                                    'turb_visc_ettap': None   # for turbulent viscosity by pressure relaxation calc
+        self.equation_terms.update({'turb_visc_reynolds': None,  # for turbulent viscosity by pressure relaxation calc
+                                    'turb_visc_vel_grad': None,  # for turbulent viscosity by pressure relaxation calc
+                                    'turb_visc_ettap': None,     # the pressure relaxation term
+                                    'turb_visc_total': None      # for turbulent viscosity by pressure relaxation calc
                                     })
 
 
@@ -216,17 +217,14 @@ class AxialVortex(MeanVecFieldCartesian):
         return rt_subset_component
 
     def _get_rcore_tmax(self):
-        r = self._getitem_by_rt('r_mesh').flatten()
-        t = self._getitem_by_rt('T').flatten()
-
-        # smooth the curve
-        ravg, tavg = smooth_filt(r, t, 1e4, 100, 50, order=50)
+        # get the smoothed curvesmooth the curve
+        r_avg, t_avg = self.get_smoothed_line('r_mesh', 'T', 1e4, 100, 50, 50)
 
         # chop of back 5% to remove the smoothing distortion
-        ravg = ravg[0:-int(len(ravg) / 20)]
-        tavg = tavg[0:-int(len(tavg) / 20)]
-        t_max = tavg.max()
-        r_core = ravg[np.unravel_index(np.ma.argmax(tavg), tavg.shape)]
+        r_avg = r_avg[0:-int(len(r_avg) / 20)]
+        t_avg = t_avg[0:-int(len(t_avg) / 20)]
+        t_max = t_avg.max()
+        r_core = r_avg[np.unravel_index(np.ma.argmax(t_avg), t_avg.shape)]
         return r_core, t_max
 
     def _guess_core(self, crange=20):
@@ -482,14 +480,19 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return self.derivative_set
 
-    def get_pressure_relax_turb_visc(self):
+    def get_pressure_relax_turb_visc(self, pressure_relaxation=None):
         """
         Calculates the relatinshib between reynolds stress and turbulent viscosity as derived by the
         pressure relaxation equations.
 
         #Function uses the approximation for the x axis where x ~ r and y ~ theta.
+
+        :param pressure_relaxation: the pressure relaxation coefficientin microseconds
         :return:
         """
+
+        if pressure_relaxation is None:
+            pressure_relaxation = 1
 
         # top = 1/r*2 * d/dr(r^2 * vtheta_vr reynolds stress)
         # bottom = second derivative of vtheta with respect to r +  d/dr(vtheta / r)
@@ -502,23 +505,26 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # this section of code with proper converted cylindrical derivatives has lots of opportunities
         # to divide by zero, so the results are ridiculously exploded in every case.
-        def raidus_chain_rule(quantity, x, y, r, t):
+        def radius_chain_rule(quantity, x, y, r, t):
             """ takes radial derivatives by using coordinate transform chain rule """
             dqdx, dqdy = get_spatial_derivative(quantity, x, y)
             dqdr = (dbz(dqdx, np.cos(t)) + dbz(dqdy, np.sin(t))) / 2
             return dqdr
 
-        top_dadr = raidus_chain_rule(self['rt'], x, y, r, t)
+        top_dadr = radius_chain_rule(self['rt'], x, y, r, t)
         top = top_dadr / (r ** 2)
 
-        bot_dTdr = raidus_chain_rule(self['T'], x, y, r, t)
-        bot_dTdr2 = raidus_chain_rule(bot_dTdr, x, y, r, t)
-        bot_dTrdr = raidus_chain_rule(self['T'] / r, x, y, r, t)
+        bot_dTdr = radius_chain_rule(self['T'], x, y, r, t)
+        bot_dTdr2 = radius_chain_rule(bot_dTdr, x, y, r, t)
+        bot_dTrdr = radius_chain_rule(self['T'] / r, x, y, r, t)
         bot = bot_dTdr2 + bot_dTrdr
 
-        self.equation_terms['turb_visc_ettap_top'] = top
-        self.equation_terms['turb_visc_ettap_bot'] = bot
-        self.equation_terms['turb_visc_ettap'] = dbz(top, bot)
+        drrdr = radius_chain_rule(self['rr'], x, y, r, t)
+        ettap = self['T'] * (self['rr'] - self['tt'] + drrdr)
+        self.equation_terms['turb_visc_reynolds'] = top
+        self.equation_terms['turb_visc_vel_grad'] = bot
+        self.equation_terms['turb_visc_ettap'] = pressure_relaxation / 1e6 * ettap
+        self.equation_terms['turb_visc_total'] = dbz(ettap + top, bot)
 
         '''
         # this section of code uses an approximate where x ~ r and  r * y ~ theta
@@ -530,14 +536,47 @@ class AxialVortex(MeanVecFieldCartesian):
         dTrdr, _ = get_spatial_derivative(self['T'] / r, r, r * t)
         bot = dTdr2 + dTrdr
 
-        self.equation_terms['turb_visc_ettap_top'] = top
-        self.equation_terms['turb_visc_ettap_bot'] = bot
+        self.equation_terms['turb_visc_reynolds'] = top
+        self.equation_terms['turb_visc_vel_grad'] = bot
         self.equation_terms['turb_visc_ettap'] = dbz(top, bot)
         '''
         return
 
 
 # ============== plotting functions=======================
+    def get_smoothed_line(self, x, y, numpoints=None, M=None, std=None, order=None,
+                          r_range=None, t_range=None, symmetric=None):
+        """
+        :param x:               either a component name string or a flattened array
+        :param y:               either a component name string or a flattened array
+        :param numpoints:       length of vectors, proportional to resolution
+        :param M:               number of points in gaussian resample
+        :param std:             standard deviation of points in gaussian resample
+        :param order:           the number of times to repeat the smoothing process.
+        """
+
+        if numpoints is None:
+            numpoints = 1e4
+        if M is None:
+            M = 20
+        if std is None:
+            std = 50
+        if order is None:
+            order = 100
+
+        if isinstance(x, str):
+            x = self._getitem_by_rt(x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        if isinstance(y, str):
+            y = self._getitem_by_rt(y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+
+        # smooth the curve
+        x_avg, y_avg = smooth_filt(x, y, numpoints, M, std, convolve_mode='same', order=order)
+
+        # chop off the end where strange things tend to happen.
+        x_avg = x_avg[0:-int(len(x_avg) / 20)]
+        y_avg = y_avg[0:-int(len(y_avg) / 20)]
+        return x_avg, y_avg
+
     def _get_cbar_levels(self, component):
         comp = self._getitem_by_rt(component).astype('float')
         return np.nanpercentile(comp.filled(np.nan), range(1, 100))
@@ -613,7 +652,7 @@ class AxialVortex(MeanVecFieldCartesian):
         The more noise in the data the further form 0 and 100 respectively these percentiles
         must be.
 
-        :param component:           component to get range for
+        :param component:           component string to get range for, or a numpy array.
         :param low_percentile:      low percentile value marking coolest color
         :param high_percentile:     high percentile value marking warmest color
         :return:
@@ -624,7 +663,10 @@ class AxialVortex(MeanVecFieldCartesian):
         if high_percentile is None:
             high_percentile = VRANGE_DEFAULT[1]
 
-        comp = self._getitem_by_rt(component, r_range=r_range, t_range=t_range, symmetric=symmetric).astype('float')
+        if isinstance(component, str):
+            comp = self._getitem_by_rt(component, r_range=r_range, t_range=t_range, symmetric=symmetric).astype('float')
+        else:
+            comp = component
         vmin = np.nanpercentile(comp.filled(np.nan), low_percentile)
         vmax = np.nanpercentile(comp.filled(np.nan), high_percentile)
         return vmin, vmax
@@ -664,7 +706,6 @@ class AxialVortex(MeanVecFieldCartesian):
                 circ = plt.Circle(self.core_location, radius=self.core_radius, edgecolor=color,
                                   linestyle=':', facecolor='none', label="Core Boundary")
         ax.add_patch(circ)
-
 
     def get_dvt_dr(self, t_range=None, r_range=None, symmetric=None, outpath=None):
         """
@@ -915,15 +956,23 @@ class AxialVortex(MeanVecFieldCartesian):
         :param y_range:          custom y range tuple for y axis
         :param tight:           set true to squeeze the figures margins and decrease whitespace
         :param figsize:         figure size in inches at 120 dpi.
+        :param outpath:         filepath to save the figure
+        :param log_y:           set True to make the y axis logarithmic
+        :param show_grid:       set True to show dotted grid on the plot
+        :param smooth:          set True to smooth the data, may also math smooth_kwargs
+        :param smooth_kwargs:   keyword arguments to pass to the smoothing function, if any. see get_average_profile
         :return:
         """
 
+        # gather argument values which are left as defaults.
         if title is None:
             title = "{0} vs {1}".format(shorthand_to_tex(component_y), shorthand_to_tex(component_x))
         if x_label is None:
             x_label = shorthand_to_tex(component_x)
         if y_label is None:
             y_label = shorthand_to_tex(component_y)
+            if log_y:
+                y_label = "Log of {0}".format(y_label)
         if c_label is None and component_c is not None:
             c_label = shorthand_to_tex(component_c)
         if figsize is None:
@@ -931,9 +980,11 @@ class AxialVortex(MeanVecFieldCartesian):
         if cmap is None:
             cmap = SCATTER_DEFAULT_CMAP
 
+        # get the scatter datasets.
         x = self._getitem_by_rt(component_x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
         y = self._getitem_by_rt(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
+        # convert the data to logarithmic
         if log_y is None:
             log_y = False
         elif log_y is True:
@@ -955,9 +1006,12 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.scatter(x, y, marker=SCATTER_DEFAULT_MARKER, color=SCATTER_DEFAULT_COLOR)
             c = None
 
+        # if smoothing is desired, get smoothed versions of the datasets
+        # not added
+
         # apply manual specifications of x and y range, otherwise guess.
         if y_range is None:
-            vmin, vmax = self._get_vrange(component_y, 0, 100)
+            vmin, vmax = self._get_vrange(y, 0, 100)
             plt.ylim(vmin - 0.1, vmax * 1.1)
         else:
             plt.ylim(y_range[0], y_range[1])
@@ -965,10 +1019,10 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.xlim(x_range[0], x_range[1])
         if tight:
             plt.tight_layout()
-        if log_y:
-            plt.yscale('log')
         if show_grid:
             plt.grid()
+        if log_y:
+            plt.yscale('log')
 
         plt.xlabel(x_label)
         plt.ylabel(y_label)
@@ -1108,7 +1162,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
 if __name__ == "__main__":
 
-    exp_num = 35
+    exp_num = 55
     force = False
     if not os.path.exists("temp{0}.pkl".format(exp_num)) or force:
         directory = os.path.join(DATA_FULL_DIR, str(exp_num))
@@ -1117,54 +1171,19 @@ if __name__ == "__main__":
         mvf.find_core()
         mvf.get_cart_turbulent_viscosity()
         mvf.get_pressure_relax_turb_visc()
-        mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=True)
+        mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=False)
     else:
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
 
-    mvf.dynamic_plot('ctke', r_range=('1r', '2r'), t_range=(45, 90), symmetric=True)
-    mvf.dynamic_plot('ctke', r_range=('0r', '1r'))
+    kwargs = {"t_range": (15, 75),
+              "r_range": (0, '5r'),
+              "symmetric": True,
+              "show_grid": True,
+              #"y_range": (1e1, 1e9),
+              }
 
-
-    '''
-    mvf.contour_plot('T', title="$\\frac{1}{r^2}\\frac{d}{dr}[r^2 \\overline{t^\\prime r^\\prime}]$")
-    mvf.scatter_plot('r_mesh', 'T', t_range=(10, 80), r_range=(0, 100), symmetric=True, x_range=(0, 6))
-    mvf.comparison_plot()
-    mvf.get_pressure_relax_turb_visc()
-    mvf.scatter_plot('r_mesh', 'turb_visc_ettap_top', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
-    mvf.scatter_plot('r_mesh', 'turb_visc_ettap_bot', t_range=(10, 80), symmetric=True, log_y=True, show_grid=True)
-    mvf.scatter_plot('r_mesh', 'turb_visc_ettap', t_range=(10, 80), symmetric=True, show_grid=True)
-
-    mvf.get_cylindrical_strain_rates()
-    mvf.scatter_plot('r_mesh', 'sr_cx1', component_c='t_mesh', t_range=(40, 50), symmetric=True, log_y=True)
-    mvf.contour_plot('sr_cx1', t_range=(40, 50), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 2), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 2), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'turb_visc', t_range=(0, 2), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'sr_cx2', t_range=(0, 1), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'sr_cx4', t_range=(0, 1), symmetric=True)
-    mvf.scatter_plot('r_mesh', 'sr_cx_tot', t_range=(0, 1), symmetric=True)
-    mvf.contour_plot('ctke', log_colorbar=False, outpath="tke_temp.png")
-
-    mvf.hist_plot('dudx')
-    mvf.hist_plot('dudy')
-    mvf.hist_plot('dvdx')
-    mvf.hist_plot('dvdy')
-    mvf.hist_plot('dwdx')
-    mvf.hist_plot('dwdy')
-
-    mvf.contour_plot('dudx', outpath="dudx_temp.png")
-    mvf.contour_plot('dudy', outpath="dudy_temp.png")
-    mvf.contour_plot('dvdx', outpath="dvdx_temp.png")
-    mvf.contour_plot('dvdy', outpath="dvdy_temp.png")
-    mvf.contour_plot('dwdx', outpath="dwdx_temp.png")
-    mvf.contour_plot('dwdy', outpath="dwdy_temp.png")
-
-    mvf.contour_plot('uu', outpath="uu_temp.png")
-    mvf.contour_plot('uv', outpath="uv_temp.png")
-    mvf.contour_plot('uw', outpath="uw_temp.png")
-    mvf.contour_plot('vw', outpath="vw_temp.png")
-    mvf.contour_plot('vv', outpath="vv_temp.png")
-    mvf.contour_plot('ww', outpath="ww_temp.png")
-    '''
-
+    mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
+    mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
+    mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
+    mvf.scatter_plot('r_mesh', 'turb_visc_total', log_y=True, **kwargs)
