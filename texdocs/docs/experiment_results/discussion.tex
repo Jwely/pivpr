@@ -259,9 +259,8 @@ Within the core region, a one or two equation turbulence model where $\nu_T$ is
 a function of the velocity gradients, such as the $k-\epsilon$ model is likely 
 required. While the scatter plot is very noisy outside the core region, 
 90\% of values consistently fell within a band of small positive values between 
-0 and 0.1, an expected range of a reasonable value for a constant turbulent 
-viscosity assumption to valid. The These trends were observed consistently in 
-all vortices.
+0 and 0.1 $m^2/s$, which is 6 orders of magnitude larger than expected. The 
+These trends were observed consistently in all vortices.
 
 \subsection{Non-equilibrium turbulence}
 The solution describing the behavior of an axial wake vortex derived from 
@@ -317,14 +316,13 @@ Since the dominant terms in the numerator and denomenator are of similar orders
 of magnitude, the resulting turbulent viscosity loses the strong logarithmic 
 nature, but is subject to significant noise. The final result of experimentally 
 calculated turbulent viscosity by combining all the terms as in Equation 
-\ref{eq:etap_nut} was found to reflect a non-negligible radial dependence in 
-turbulent energy dissipation as indicated by the turbulent viscosity as shown 
-in Figure \ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. Within one and a 
-half core radii, the turbulent viscosity departs from near zero and moves 
-upwards. It was at the same 1.5 core radii boundary that the classical 
-turbulent viscosity hypothesis began to demonstrate a significant reduction in 
-variance. Though both models show changes occurring in similar radial zones, no 
-further relationship was found between them.
+\ref{eq:etap_nut} was found become increasingly unstable in the vicinity of the 
+vortex core as shown in Figure 
+\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. Furthermore, the magnitude 
+of turbulent viscosity is much greater than is realistic. Though both the 
+classical turbulent viscosity model and the non equilibrium model show changes 
+occurring in similar radial zones, no further relationship could be established 
+between them.
 
 \input{figs/run_55/run_55_turb_visc_total_vs_r_meshscatter}
 
@@ -345,6 +343,11 @@ Which can be rearranged to solve for turbulent viscosity as
 \noindent
 When this equation is evaluated for the pressure relaxation coefficient, 
 velocity, and station shown in 
-Figure\ref{fig:run_55_turb_visc_total_vs_r_meshscatter},
+Figure\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}, the resulting 
+turbulent viscosity is $6.15 mm^2/s$, about 40\% the value of the kinematic 
+viscosity of air. Similarly to the classical turbulent viscosity, this value 
+calculated from experimental velocity gradients and Reynolds stresses is many 
+times larger than expected.
 
-(flag, what????)
+(flag, I cannot explain this, i've looked at everything and cant find any 
+mistakes)
