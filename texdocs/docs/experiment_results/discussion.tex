@@ -218,8 +218,11 @@ Reynolds stresses represent components of the total stress tensor, and have
 been used extensively in the study of turbulence. Turbulent viscosity models, 
 which use a scalar viscosity term to represent the transport and dissipation of 
 energy in small scale flows make direct assumptions about the Reynolds stresses 
-in a given fluid flow. The turbulent viscosity approximation, in the notation 
-of \cite{pope2000}, can be described by
+in a given fluid flow. 
+
+\subsection{Constant turbulent viscosity}
+The turbulent viscosity hypothesis first introduced by 
+Boussinesq \cite{pope2000} in the notation of Pope, can be described by
 
 \begin{equation}
 -\rho \langle u_i u_j \rangle + \frac{2}{3}\rho k \delta_{ij} = \rho \nu_T
@@ -229,25 +232,81 @@ of \cite{pope2000}, can be described by
 
 \noindent
 Which is to say the deviatoric Reynolds stress is proportional to the mean rate 
-of strain. Because the vortex model proposed by Ash, Zuckerwar, and Zardkahan 
-in \cite{ash2011} is an exact solution the Reynolds averaged Navier-Stokes 
-equations, and very accurately predicts the azimuthal velocity profile of an 
-axial wake vortex, it was of interest to verify the validity of the turbulent 
-viscosity hypothesis with experimental data. All terms in the summation of this 
-equation were calculated from the PIV dataset, with the exception of gradients 
-in the axial direction. Neglecting those terms, the turbulent viscosity 
-assumption could was examined for each vortex dataset. The turbulent 
-viscosity calculation involves division by spatial derivatives, which can 
-locally be very close to zero. In area between 0.5 and 1.5 core radii where the 
-velocity gradients were consistently high, that turbulent viscosity calculation 
+of strain. Because the non-equilibrium vortex model proposed by Ash, Zuckerwar, 
+and Zardkahan in \cite{ash2011} is an exact solution the Reynolds averaged 
+Navier-Stokes equations, and very accurately predicts the azimuthal velocity 
+profile of an axial wake vortex, it was of interest to verify the validity of 
+the turbulent viscosity hypothesis with experimental data. All terms in the 
+summation of this equation were calculated from the PIV dataset, with the 
+exception of gradients in the axial direction. Neglecting those terms, the 
+turbulent viscosity assumption could was examined for each vortex dataset. The 
+turbulent viscosity calculation involves division by spatial derivatives, which 
+can locally be very close to zero. In area within 1.5 core radii where the 
+velocity gradients were consistently high, the turbulent viscosity calculation 
 was subject to much less noise than areas far from the core with more gentle 
-gradient as shown in figure \ref{fig:run_55_turb_visc_vs_r_meshscatter}. Though 
-the scatter plot is noisy, 80\% of values consistently fell within a band of 
-small positive values between 0 and 0.1, an expected range of a reasonable 
-constant turbulent viscosity value. These trends were observed consistently in 
-all vortices.
+gradient as shown in figure \ref{fig:run_55_turb_visc_vs_r_meshscatter}. 
+Calculations were performed in the cartesian coordinate space, and the values 
+of derivatives near the $X$ and $Y$ axes through the center of the vortex 
+tended to be near zero, and caused unrealistically high values to occur very 
+frequently in these zones with no physical significance. To reduce noise, the 
+scatter plots shown do not include points within 5 degrees of a vertical or 
+horizontal axis.
 
 \input{figs/run_55/run_55_turb_visc_vs_r_meshscatter}
 
+\noindent
+Within the core region, a one or two equation turbulence model where $\nu_T$ is 
+a function of the velocity gradients, such as the $k-\epsilon$ model is likely 
+required. While the scatter plot is very noisy outside the core region, 
+90\% of values consistently fell within a band of small positive values between 
+0 and 0.1, an expected range of a reasonable value for a constant turbulent 
+viscosity assumption to valid. The These trends were observed consistently in 
+all vortices.
 
+\subsection{Non-equilibrium turbulence}
+The solution describing the behavior of an axial wake vortex derived from 
+non-equilibrium pressure theory also presents a definition for turbulent 
+viscosity. The definition can be derived from the Reynolds stress form of the 
+cylindrical conservation of linear momentum equations and the continuity 
+equation.
 
+(flag, insert derivation??)
+
+In the individual reynolds component notation used previously, turbulent 
+viscosity derived from non-equilibrium pressure theory for an axial vortex can 
+be expressed as
+
+\begin{equation}
+\nu_T =
+    \cfrac{\cfrac{d}{dr}\Big[r^2 (\overline{t^\prime r^\prime})\Big] +
+	\eta_p \bar{t}\Bigg[\overline{r^\prime r^\prime} - \overline{t^\prime 
+	t^\prime} + \cfrac{d(\overline{r^\prime r^\prime})}{dr}\Bigg]}
+	{r^2\Bigg[\cfrac{d^2 \bar{t}}{dr^2} + \cfrac{d}{dr}
+	\Bigg(\cfrac{\bar{t}}{r}\Bigg)\Bigg]}
+\label{fig:etap_nut}
+\end{equation}
+
+\noindent
+The magnitude of the pressure relaxation term is expected to be small compared 
+with the first term with the radial derivative of the azimuthal-radial Reynolds 
+stress, due in part to the typical microsecond order of the pressure relaxation 
+coefficient, $\eta_p$. All radial gradient terms are expected to be quite 
+large, especially in the vicinity of the core. The relative magnitudes of the 
+Reynolds stress term in the numerator and the azimuthal velocity gradient terms 
+in the denominator cannot be easily determined at a glance. Each of the three 
+terms was examined individually. The first Reynolds stress term in the 
+numerator was found to increase at a greater than logarithmic rate as 
+$R/r_{core}$ decreased as shown in Figure 
+\ref{fig:run_55_turb_visc_reynolds_vs_r_meshscatter}. As expected, the 
+magnitude of the pressure relaxation term was consistently found to smaller as 
+shown in Figure \ref{fig:run_55_turb_visc_ettap_vs_r_meshscatter}.
+
+\input{figs/run_55/run_55_turb_visc_reynolds_vs_r_meshscatter}
+\input{figs/run_55/run_55_turb_visc_ettap_vs_r_meshscatter}
+
+By calculating the turbulent viscosity implicit in the non-equilibrium pressure 
+solution for an axial wake vortex, it was demonstrated that the theory predicts 
+a very significant increase in the rate of turbulent kinetic energy dissipation 
+in the core region of an axial vortex. The predicted dissipation rate within 
+the core was found to be up to two orders of magnitude larger than is estimated 
+by the standard turbulent viscosity hypothesis.
