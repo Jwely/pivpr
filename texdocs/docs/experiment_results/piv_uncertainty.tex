@@ -7,7 +7,7 @@ detailed information about the optical geometry of the PIV setup. Monte Carlo
 based error estimation techniques can be applied by creating artificially 
 simulated images with randomly distributed particles \cite{adeyinka2005}. 
 The distribution of these particles can be modeled using a Gaussian intensity  
-profile by (flag, reference) as described in Equation 
+profile by \cite{raffel1998} as described in Equation 
 \ref{eq:piv_gaussian_uncertainty}.
 
 \begin{equation}
@@ -15,7 +15,7 @@ profile by (flag, reference) as described in Equation
 	{\frac{1}{8}d_\tau^2} \right)
 	\label{eq:piv_gaussian_uncertainty}
 \end{equation}
-%
+
 Where $x_p$ and $y_p$ are the locations of the particle centroid, $d_\tau$ is 
 the diameter of of the particle, and $I_0$ is particle intensity. Particle 
 intensity is directly related to the intensity of the light sheet, which is 
@@ -27,7 +27,7 @@ to express particle intensity as \ref{eq:particle_intensity_gaus}
 	I_0(z_p) = (q)exp\left(- \frac{z_p^2}{\frac{1}{8}\Delta Z_L^2}\right)
 	\label{eq:particle_intensity_gaus}
 \end{equation}
-%
+
 Where $z_p$ is the particles position within the thickness of the light sheet, 
 $q$ is the particle light scattering efficiency, and $\Delta Z_L$ is the 
 thickness of the light sheet.
@@ -70,7 +70,7 @@ velocity calculated by the PIV software are compared as follows
 \overline{\Delta W} = \frac{1}{N} \left(\sum_{i=1}^N \Delta W_i \right)
 \label{eq:Werror}
 \end{equation}
-%
+
 Which is simply the average difference between the known velocity components 
 and the measured velocity components $\Delta U$, $\Delta V$, and $\Delta W$ for 
 a large number of simulations. This is referred to as the bias, and the three 
@@ -152,9 +152,23 @@ tangential velocity about the vortex core, the distance of this high tangential
 velocity region from the core, which defined the core radius, and the typical 
 axial velocity distribution near the free stream velocity. Understanding the 
 uncertainty of these measurements required a Monte Carlo approach from 
-synthetically created particle imagery. Artificial pixel displacements were 
-specified to approximate the typical displacement associated with the 
-velocities of greatest interest. 
+synthetically created particle imagery as shown in Figures \ref{fig:la} and 
+\ref{fig:lb}. Artificial pixel displacements were specified to approximate the 
+typical displacement associated with the velocities of greatest interest. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=4in]{figs/artificial_images/la}
+	\caption{Left artificial image subset example, station 1, $t=0$.}
+	\label{fig:la}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=4in]{figs/artificial_images/lb}
+	\caption{Left artificial image subset example, station 1, $t=dt$.}
+	\label{fig:lb}
+\end{figure}
 
 To add complexity, the time between frame captures, $dt$ was expected to have a 
 significant impact on uncertainty. Since the range of velocities used in this 
