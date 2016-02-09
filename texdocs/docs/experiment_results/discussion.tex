@@ -184,6 +184,11 @@ Figures \ref{fig:run_51_ctke_01rdynamic} through
 \input{figs/run_59/run_59_ctke_01rdynamic}
 \input{figs/run_60/run_60_ctke_01rdynamic}
 
+A regular upward trend in peak turbulence at the cores center was observed with 
+increasing free stream velocity. These were compared to hot-wire anemometry 
+measurements by \cite{thompson2016} at greater free stream velocities and up to 
+14 chord lengths downstream, and found to be consistent.
+
 Over the range of velocities tested, the time between frame captures, $dt$ was 
 changed between nominal free stream velocities of 25 and 27 $m/s$. A smaller 
 $dt$ value was required at higher velocities to ensure that some particles 
@@ -209,5 +214,40 @@ turbulent structures. The topic is discussed in greater detail in section
 
 \section{Reynolds stress and turbulence relationships}
 
-flag
+Reynolds stresses represent components of the total stress tensor, and have 
+been used extensively in the study of turbulence. Turbulent viscosity models, 
+which use a scalar viscosity term to represent the transport and dissipation of 
+energy in small scale flows make direct assumptions about the Reynolds stresses 
+in a given fluid flow. The turbulent viscosity approximation, in the notation 
+of \cite{pope2000}, can be described by
+
+\begin{equation}
+-\rho \langle u_i u_j \rangle + \frac{2}{3}\rho k \delta_{ij} = \rho \nu_T
+\frac{\partial \langle U_i \rangle}{\partial x_j} + \frac{\partial \langle U_j 
+\rangle}{\partial x_i}
+\end{equation} 
+
+\noindent
+Which is to say the deviatoric Reynolds stress is proportional to the mean rate 
+of strain. Because the vortex model proposed by Ash, Zuckerwar, and Zardkahan 
+in \cite{ash2011} is an exact solution the Reynolds averaged Navier-Stokes 
+equations, and very accurately predicts the azimuthal velocity profile of an 
+axial wake vortex, it was of interest to verify the validity of the turbulent 
+viscosity hypothesis with experimental data. All terms in the summation of this 
+equation were calculated from the PIV dataset, with the exception of gradients 
+in the axial direction. Neglecting those terms, the turbulent viscosity 
+assumption could was examined for each vortex dataset. The turbulent 
+viscosity calculation involves division by spatial derivatives, which can 
+locally be very close to zero. In area between 0.5 and 1.5 core radii where the 
+velocity gradients were consistently high, that turbulent viscosity calculation 
+was subject to much less noise than areas far from the core with more gentle 
+gradient as shown in figure \ref{fig:run_55_turb_visc_vs_r_meshscatter}. Though 
+the scatter plot is noisy, 80\% of values consistently fell within a band of 
+small positive values between 0 and 0.1, an expected range of a reasonable 
+constant turbulent viscosity value. These trends were observed consistently in 
+all vortices.
+
+\input{figs/run_55/run_55_turb_visc_vs_r_meshscatter}
+
+
 
