@@ -103,26 +103,26 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_vel_grad', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
-    kwargs = merge_dicts(log_kwargs, {"title": r"$\eta_P \bar{t}[\overline{r^\prime r^\prime} - \overline{t^\prime t^\prime}"
+    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\eta_P \bar{t}}{r^2}[\overline{r^\prime r^\prime} - \overline{t^\prime t^\prime}"
                                                r" + \frac{d(\overline{r^\prime r^\prime})}{dr}]$"})
-    kwargs['y_range'] = (1e-5, 1e3)     # much much much smaller.
+    kwargs['y_range'] = (1e-4, 1e3)     # much much much smaller.
     caption = "Scatter plot of $\\nu_T$ pressure relaxation term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
-    turb_kwargs = {"x_range": (0,5),
+    turb_kwargs = {"x_range": (0, 5),
                   "t_range": (10, 80),
                   "symmetric": True,
                   "title": "Radial profile of $\\nu_T$",
                   "y_label": " "}
 
-    kwargs = merge_dicts(turb_kwargs, {"y_range": (-1, 30)})
+    kwargs = merge_dicts(turb_kwargs, {"y_range": (-1, 100)})
     caption = "Scatter plot of non-equilibrium based $\\nu_T$ vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_total', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # plots of turbulent viscosity as calculated by turbulent viscosity hypothesis
-    kwargs = merge_dicts(turb_kwargs, {"y_range": (0, 0.6)})
+    kwargs = merge_dicts(turb_kwargs, {"y_range": (0, 1.0)})
     caption = "Scatter plot of $\\nu_T$ vs radius as calculated from the turbulent viscosity hypothesis. " \
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
