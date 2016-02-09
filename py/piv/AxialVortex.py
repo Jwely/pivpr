@@ -5,6 +5,7 @@ import cPickle
 import os
 import math
 import numpy as np
+import copy
 from matplotlib import ticker
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
@@ -121,6 +122,7 @@ class AxialVortex(MeanVecFieldCartesian):
         """ dumps the contents of this object to a pickle """
 
         # delete the constituent objects with hundreds of additional matrices to reduce pkl size
+        temp_dynamic = self.dynamic_set    # save a copy of the unmodified dynamic set
         if not include_dynamic:
             del self.dynamic_set
         else:
@@ -136,6 +138,10 @@ class AxialVortex(MeanVecFieldCartesian):
         with open(pickle_path, 'wb+') as f:
             cPickle.dump(self, f)
             print("Saved to {0}".format(pickle_path))
+            
+        # restore the dynamic data to this instance in case it needs to be used subsequently
+            self.dynamic_set = temp_dynamic
+            del temp_dynamic
 
     @staticmethod
     def from_pickle(pickle_path):
