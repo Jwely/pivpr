@@ -1,0 +1,36 @@
+\item,$X$,\tabto{1in},Span wise position
+\item,$Y$,\tabto{1in},Height wise position
+\item,$Z$,\tabto{1in},Stream wise position
+\item,$R$,\tabto{1in},Radial position relative to vortex core
+\item,$\theta$,\tabto{1in},Azimuthal position relative to vortex core
+\item,$U$,\tabto{1in},Generalized velocity in the $X$ direction
+\item,$V$,\tabto{1in},Generalized velocity in the $Y$ direction
+\item,$W$,\tabto{1in},Generalized velocity in the $Z$ direction
+\item,$\bar{u}$,\tabto{1in},Time averaged stable component of span wise velocity
+\item,$\bar{v}$,\tabto{1in},Time averaged stable component of vertical velocity
+\item,$\bar{w}$,\tabto{1in},Time averaged stable component of axial velocity
+\item,$\bar{r}$,\tabto{1in},Time averaged stable component of radial velocity
+\item,$\bar{t}$,\tabto{1in},Time averaged stable component of azimuthal velocity
+\item,$\bar{u^\prime}$,\tabto{1in},Time averaged fluctuating component of span wise velocity
+\item,$\bar{v^\prime}$,\tabto{1in},Time averaged fluctuating component of vertical velocity
+\item,$\bar{w^\prime}$,\tabto{1in},Time averaged fluctuating component of axial velocity
+\item,$\bar{r^\prime}$,\tabto{1in},Time averaged fluctuating component of radial velocity
+\item,$\bar{t^\prime}$,\tabto{1in},Time averaged fluctuating component of azimuthal velocity
+\item,$\overline{u^\prime v^\prime}$,\tabto{1in},"Cartesian reynolds stress in $X, Y$"
+\item,$\overline{u^\prime w^\prime}$,\tabto{1in},"Cartesian reynolds stress in $X, z$"
+\item,$\overline{v^\prime w^\prime}$,\tabto{1in},"Cartesian reynolds stress in $Y, Z$"
+\item,$\overline{u^\prime u^\prime}$,\tabto{1in},Cartesian double correlation in $X$
+\item,$\overline{v^\prime v^\prime}$,\tabto{1in},Cartesian double correlation in $Y$
+\item,$\overline{w^\prime w^\prime}$,\tabto{1in},Cartesian double correlation in  $Z$
+\item,$\overline{r^\prime t^\prime}$,\tabto{1in},"Cylindrical reynolds stress in $R, \theta$"
+\item,$\overline{r^\prime w^\prime}$,\tabto{1in},"Cylindrical reynolds stress in $R, Z$"
+\item,$\overline{t^\prime w^\prime}$,\tabto{1in},"Cylindrical reynolds stress in $\theta, Z$"
+\item,$\overline{r^\prime r^\prime}$,\tabto{1in},Cylindrical double correlation in $R$
+\item,$\overline{t^\prime t^\prime}$,\tabto{1in},Cylindrical double correlation in $\theta$
+,$v_{\theta}$,,Generalized azimuthal velocity
+,$\Gamma$,,Circulation strength
+,$\Gamma_0$,,Far field circulation strength
+,$r$,,Generalized radial position
+,$r_{core}$,,Radius of a vortex core
+,$\nu$,,Dynamic viscosity
+,$\alpha$,,Davenport constant
