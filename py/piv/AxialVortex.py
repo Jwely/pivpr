@@ -1163,7 +1163,7 @@ class AxialVortex(MeanVecFieldCartesian):
 if __name__ == "__main__":
 
     exp_num = 55
-    force = False
+    force = True
     if not os.path.exists("temp{0}.pkl".format(exp_num)) or force:
         directory = os.path.join(DATA_FULL_DIR, str(exp_num))
         paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
@@ -1176,6 +1176,11 @@ if __name__ == "__main__":
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
 
 
+
+
+    mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
+
+
     kwargs = {"t_range": (15, 75),
               "r_range": (0, '5r'),
               "symmetric": True,
@@ -1183,7 +1188,7 @@ if __name__ == "__main__":
               #"y_range": (1e1, 1e9),
               }
 
-    mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_total', log_y=True, **kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_total', **kwargs)
