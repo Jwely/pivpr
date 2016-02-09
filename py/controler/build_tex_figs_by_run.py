@@ -110,14 +110,20 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
-    kwargs = {"y_range": (-1, 30), "x_range": (0,5), "t_range": (10, 80), "symmetric": True, "title": "Radial profile of $\\nu_T$"}
-    caption = "Scatter plot of non-equilibrium based $\\nu_T$ radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+    turb_kwargs = {"x_range": (0,5),
+                  "t_range": (10, 80),
+                  "symmetric": True,
+                  "title": "Radial profile of $\\nu_T$",
+                  "y_label": " "}
+
+    kwargs = merge_dicts(turb_kwargs, {"y_range": (-1, 30)})
+    caption = "Scatter plot of non-equilibrium based $\\nu_T$ vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_total', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # plots of turbulent viscosity as calculated by turbulent viscosity hypothesis
-    kwargs = {"y_range": (0, 0.6), "x_range": (0,5), "t_range": (10, 80), "symmetric": True, "title": "Radial profile of $\\nu_T$"}
-    caption = "Scatter plot of $\\nu_T$ as calculated from the turbulent viscosity hypothesis. " \
+    kwargs = merge_dicts(turb_kwargs, {"y_range": (0, 0.6)})
+    caption = "Scatter plot of $\\nu_T$ vs radius as calculated from the turbulent viscosity hypothesis. " \
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
@@ -146,6 +152,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 def main():
     # build tex figs for all trials
     run_ids = range(1, 71)
+    #run_ids = [55]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=True)
 
