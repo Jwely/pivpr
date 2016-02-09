@@ -272,16 +272,17 @@ equation.
 
 (flag, insert derivation??)
 
-In the individual reynolds component notation used previously, turbulent 
+In the individual Reynolds component notation used previously, turbulent 
 viscosity derived from non-equilibrium pressure theory for an axial vortex can 
 be expressed as
 
 \begin{equation}
 \nu_T =
-    \cfrac{\cfrac{d}{dr}\Big[r^2 (\overline{t^\prime r^\prime})\Big] +
-	\eta_p \bar{t}\Bigg[\overline{r^\prime r^\prime} - \overline{t^\prime 
-	t^\prime} + \cfrac{d(\overline{r^\prime r^\prime})}{dr}\Bigg]}
-	{r^2\Bigg[\cfrac{d^2 \bar{t}}{dr^2} + \cfrac{d}{dr}
+    \cfrac{\cfrac{1}{r^2}\cfrac{d}{dr}\Big[r^2 (\overline{t^\prime 
+    r^\prime})\Big] +
+	\cfrac{\eta_p \bar{t}}{r^2}\Bigg[\overline{r^\prime r^\prime} - 
+	\overline{t^\prime 	t^\prime} + \cfrac{d(\overline{r^\prime 
+	r^\prime})}{dr}\Bigg]} {\Bigg[\cfrac{d^2 \bar{t}}{dr^2} + \cfrac{d}{dr}
 	\Bigg(\cfrac{\bar{t}}{r}\Bigg)\Bigg]}
 \label{eq:etap_nut}
 \end{equation}
