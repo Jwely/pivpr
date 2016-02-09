@@ -154,17 +154,47 @@ With the region inside the core boundary highlighted, the increasing
 concentration of turbulence between stations 4 and 5 was seen more clearly. The 
 power spectral density profile of the core region however did not appear to 
 change significantly, with most frequencies remaining between -5 and -10 
-$db/Hz$ at all three chord lengths. 
+$db/Hz$ at all three chord lengths. The power spectral density profiles were 
+examined for the entire range of velocities at each station, and no distinct 
+trends were discovered. 
 
 \input{figs/run_35/run_35_ctke_12rdynamic}
 \input{figs/run_45/run_45_ctke_12rdynamic}
 \input{figs/run_55/run_55_ctke_12rdynamic}
 
-The range over which some insight can be gained was 
-expanded slightly with the variation of free stream velocity between 15 and 33 
-$m/s$.
+Another quantity of interest is the average turbulence within specific regions 
+around the core. Average turbulent energy within the core was found to increase 
+proportionally with free stream velocity. The power spectral density reflected 
+a similar trend of an even increasing magnitude across the frequency range. The 
+distribution within the core however undergoes seemingly cyclical periods as 
+velocity increases; between phases with high intensity turbulence spread in 
+spokes extending to near the edges of the core boundary, and with the 
+turbulence concentrated more tightly within half of the total radii as shown in 
+Figures \ref{fig:run_51_ctke_01rdynamic} through 
+\ref{fig:run_60_ctke_01rdynamic} at $z/c = 9.5$.
 
-(flag, unfinished, more turbulent plots varying by velocity)
+\input{figs/run_51/run_51_ctke_01rdynamic}
+\input{figs/run_52/run_52_ctke_01rdynamic}
+\input{figs/run_53/run_53_ctke_01rdynamic}
+\input{figs/run_54/run_54_ctke_01rdynamic}
+\input{figs/run_55/run_55_ctke_01rdynamic}
+\input{figs/run_56/run_56_ctke_01rdynamic}
+\input{figs/run_57/run_57_ctke_01rdynamic}
+\input{figs/run_58/run_58_ctke_01rdynamic}
+\input{figs/run_59/run_59_ctke_01rdynamic}
+\input{figs/run_60/run_60_ctke_01rdynamic}
+
+Over the range of velocities tested, the time between frame captures, $dt$ was 
+changed between nominal free stream velocities of 25 and 27 $m/s$. A smaller 
+$dt$ value was 
+required at higher velocities to ensure that some particles within the light 
+sheet for the first image capture would remain there for the second. 
+Uncertainty analysis demonstrated that, since the average particle moves 
+fewer pixels in the shorter period of time, the precision in the displacement 
+computations is reduced for a shorter $dt$. Since the Reynolds averaged 
+fluctuating components used to calculate turbulent energy are directly related 
+to the precision in the measurement, this change in $dt$ could have impacted 
+the relationship between free stream velocity and turbulent kinetic energy.
 
 The PIV measurements have an uncertainty associated with the stable components 
 which benefits from an increased number of measurements. However, the 
@@ -172,7 +202,7 @@ uncertainty associated with each individual measurement (N=1) will have a
 significant impact on power spectral density analysis of the fluctuating 
 values. An uncertainty analysis has been conducted and indicates that the 
 precision of PIV measurements is sufficient to study time averaged quantities 
-including Reynolds stresses and quantities related to the root-mean-square of 
+including Reynolds stresses and those related to the root-mean-square of 
 velocity fluctuations, but insufficient to study the dynamic nature of 
 turbulent structures. The topic is discussed in greater detail in section 
 \ref{sec:piv_uncert}.
@@ -180,3 +210,4 @@ turbulent structures. The topic is discussed in greater detail in section
 \section{Reynolds stress and turbulence relationships}
 
 flag
+
