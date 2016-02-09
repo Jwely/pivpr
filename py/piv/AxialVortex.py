@@ -533,7 +533,7 @@ class AxialVortex(MeanVecFieldCartesian):
         ettap = self['T'] * (self['rr'] - self['tt'] + drrdr)
         self.equation_terms['turb_visc_reynolds'] = top
         self.equation_terms['turb_visc_vel_grad'] = bot
-        self.equation_terms['turb_visc_ettap'] = pressure_relaxation / 1e6 * ettap
+        self.equation_terms['turb_visc_ettap'] = (pressure_relaxation / 1e6) * ettap
         self.equation_terms['turb_visc_total'] = abs(dbz(ettap + top, bot))
 
         # ratio of the noneq turb visc and classical turb visc, no real relationship appears to be there
