@@ -96,19 +96,24 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{1}{r^2}\frac{d}{dr}[r^2 \overline{t^\prime r^\prime}]$"})
     caption = "Scatter plot of $\nu_T$ reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
-    tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_top', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
+    tfp.add_scatter_plot('r_mesh', 'turb_visc_reynolds', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}(\frac{\bar{t}}{r})$"})
     caption = "Scatter plot of $\\nu_T$ velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
-    tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap_bot', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
+    tfp.add_scatter_plot('r_mesh', 'turb_visc_vel_grad', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     kwargs = merge_dicts(log_kwargs, {"title": r"$\eta_P \bar{t}[\overline{r^\prime r^\prime} - \overline{t^\prime t^\prime}"
                                                r" + \frac{d(\overline{r^\prime r^\prime})}{dr}]$"})
-    kwargs['y_range'] = (1e-5, 1e3) # much much much smaller.
+    kwargs['y_range'] = (1e-5, 1e3)     # much much much smaller.
     caption = "Scatter plot of $\\nu_T$ pressure relaxation term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
+
+    kwargs['y_range'] = (-1, 30)
+    caption = "Scatter plot of non-equilibrium based $\\nu_T$ radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+        z_location, av.velocity_fs, station_id)
+    tfp.add_scatter_plot('r_mesh', 'turb_visc_tot', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # plots of turbulent viscosity as calculated by turbulent viscosity hypothesis
     kwargs = {"y_range": (0, 0.6), "x_range": (0, 5), "title": "Radial profile of $\\nu_T$"}
@@ -141,11 +146,12 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 def main():
     # build tex figs for all trials
     run_ids = range(1, 71)
+    run_ids = [55, 56]
     for run_id in run_ids:
-        build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=False)
+        build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=True)
 
     # include cartesian coordinate tex figs for example run number 55
-    build_tex_figs_by_run(55, include_cartesian=True)
+    #build_tex_figs_by_run(55, include_cartesian=True)
 
 
 
