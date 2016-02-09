@@ -114,7 +114,8 @@ class AxialVortex(MeanVecFieldCartesian):
         self.equation_terms.update({'turb_visc_reynolds': None,  # for turbulent viscosity by pressure relaxation calc
                                     'turb_visc_vel_grad': None,  # for turbulent viscosity by pressure relaxation calc
                                     'turb_visc_ettap': None,     # the pressure relaxation term
-                                    'turb_visc_total': None      # for turbulent viscosity by pressure relaxation calc
+                                    'turb_visc_total': None,     # for turbulent viscosity by pressure relaxation calc
+                                    'turb_visc_ratio': None,     #the ratio between total and classical turb_visc
                                     })
 
 
@@ -533,7 +534,11 @@ class AxialVortex(MeanVecFieldCartesian):
         self.equation_terms['turb_visc_reynolds'] = top
         self.equation_terms['turb_visc_vel_grad'] = bot
         self.equation_terms['turb_visc_ettap'] = pressure_relaxation / 1e6 * ettap
-        self.equation_terms['turb_visc_total'] = dbz(ettap + top, bot)
+        self.equation_terms['turb_visc_total'] = abs(dbz(ettap + top, bot))
+
+        # ratio of the noneq turb visc and classical turb visc, no real relationship appears to be there
+        self.equation_terms['turb_visc_ratio'] = (self.equation_terms['turb_visc_total'] /
+                                                  self.equation_terms['turb_visc'])
 
         '''
         # this section of code uses an approximate where x ~ r and  r * y ~ theta
@@ -1171,6 +1176,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
 if __name__ == "__main__":
 
+    DEFAULT_DPI = 120
     exp_num = 55
     force = True
     if not os.path.exists("temp{0}.pkl".format(exp_num)) or force:
@@ -1187,8 +1193,7 @@ if __name__ == "__main__":
 
 
 
-    mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
-
+    #mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
 
     kwargs = {"t_range": (15, 75),
               "r_range": (0, '5r'),
@@ -1201,3 +1206,6 @@ if __name__ == "__main__":
     #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_total', **kwargs)
+    mvf.scatter_plot('r_mesh', 'turb_visc_ratio')
+
+
