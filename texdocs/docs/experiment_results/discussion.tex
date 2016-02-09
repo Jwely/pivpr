@@ -314,25 +314,36 @@ though the slope was found to be slightly shallower as shown in Figure
 
 Since the dominant terms in the numerator and denomenator are of similar orders 
 of magnitude, the resulting turbulent viscosity loses the strong logarithmic 
-nature, but is subject to significant noise. The final result of turbulent 
-viscosity by combining all the terms as in Equation \ref{eq:etap_nut} was found 
-to reflect a very significant radial dependence in turbulent energy dissipation 
-as indicated by the turbulent viscosity as shown in Figure 
-\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. Within one and a half core 
-radii, the turbulent viscosity departs from near zero and moves upwards. It was 
-at the same 1.5 core radii boundary that the classical turbulent viscosity 
-hypothesis began to demonstrate a significant reduction in variance. Though 
-both models show changes occurring in similar radial zones, no further 
-relationship was found between them.
+nature, but is subject to significant noise. The final result of experimentally 
+calculated turbulent viscosity by combining all the terms as in Equation 
+\ref{eq:etap_nut} was found to reflect a non-negligible radial dependence in 
+turbulent energy dissipation as indicated by the turbulent viscosity as shown 
+in Figure \ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. Within one and a 
+half core radii, the turbulent viscosity departs from near zero and moves 
+upwards. It was at the same 1.5 core radii boundary that the classical 
+turbulent viscosity hypothesis began to demonstrate a significant reduction in 
+variance. Though both models show changes occurring in similar radial zones, no 
+further relationship was found between them.
 
 \input{figs/run_55/run_55_turb_visc_total_vs_r_meshscatter}
 
+In theory, assuming a constant turbulent viscosity, the non-equilibrium 
+solution  implies that turbulent viscosity, the maximum azimuthal velocity, and 
+pressure relaxation can be related by
 
-These trends in turbulent viscosity shown above remain generally consistent 
-over all velocities and stations. By calculating the turbulent viscosity 
-implicit in the non-equilibrium pressure solution for an axial wake vortex, it 
-was demonstrated that the theory predicts a very significant increase in the 
-rate of turbulent kinetic energy dissipation in the core region of an axial 
-vortex. The predicted dissipation rate within the core was found to be up to 
-two orders of magnitude larger than is estimated by the standard turbulent 
-viscosity hypothesis.
+\begin{equation}
+v_{\theta, max} = \frac{\Gamma_\infty}{4 \pi r} = \sqrt{\frac{2 \nu_T}{\eta_P}}
+\end{equation}
+
+Which can be rearranged to solve for turbulent viscosity as
+
+\begin{equation}
+\nu_T = \frac{\eta_P}{2} v_{\theta, max}^2 
+\end{equation}
+
+\noindent
+When this equation is evaluated for the pressure relaxation coefficient, 
+velocity, and station shown in 
+Figure\ref{fig:run_55_turb_visc_total_vs_r_meshscatter},
+
+(flag, what????)
