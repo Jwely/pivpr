@@ -62,7 +62,6 @@ class TeXRunFigurePage(TeXWriter):
         :param width:           the width of the plot on the page such as '5in'
         :param create_kwargs:   manual kwargs for the contour_plot function
         :param write_unique:    set to True to immediately save a tex file with just this figure within it
-        :return:
         """
 
         if create_kwargs is None:
@@ -88,14 +87,14 @@ class TeXRunFigurePage(TeXWriter):
         automatically. This is used to generate all the contour plots of interest for a given
         experiment run.
 
-        :param component_x:         x axis component to plot
-        :param component_y:         y axis component to plot
-        :param caption:             Tex caption to add to figure
-        :param width:               the width of the plot on the page such as '5in'
-        :param special_tag:         extra tag to place inside the filename for unique id of something with
-                                    unique kwargs.
-        :param create_kwargs:       manual kwargs for the scatter_plot function
-        :return:
+        :param component_x:     x axis component to plot
+        :param component_y:     y axis component to plot
+        :param caption:         Tex caption to add to figure
+        :param width:           the width of the plot on the page such as '5in'
+        :param special_tag:     extra tag to place inside the filename for unique id of something with
+                                unique kwargs.
+        :param create_kwargs:   manual kwargs for the scatter_plot function
+        :param write_unique:    set True to write a tex file for this individual figure.
         """
 
         if create_kwargs is None:
@@ -122,6 +121,7 @@ class TeXRunFigurePage(TeXWriter):
 
         :param caption:         Tex caption to add to figure
         :param width:           the width of the plot on the page such as '5in'
+        :param write_unique:    set True to write a tex file for this individual figure.
         """
 
         create_kwargs = {}  # no interesting kwargs at the moment
@@ -138,6 +138,7 @@ class TeXRunFigurePage(TeXWriter):
 
         :param caption:         Tex caption to add to figure
         :param width:           the width of the plot on the page such as '5in'
+        :param write_unique:    set True to write a tex file for this individual figure.
         """
 
         create_kwargs = {}  # no interesting kwargs at the moment
@@ -153,13 +154,13 @@ class TeXRunFigurePage(TeXWriter):
         wraps TeXWriter.add_figure and the AxialVortex.dynamic functions to add a dynamic plot
         to the page
 
-        :param component_y:         y axis component to plot
-        :param caption:             Tex caption to add to figure
-        :param width:               the width of the plot on the page such as '5in'
-        :param special_tag:         extra tag to place inside the filename for unique id of something with
-                                    unique kwargs.
-        :param create_kwargs:       manual kwargs for the scatter_plot function
-        :return:
+        :param component_y:     y axis component to plot
+        :param caption:         Tex caption to add to figure
+        :param width:           the width of the plot on the page such as '5in'
+        :param special_tag:     extra tag to place inside the filename for unique id of something with
+                                unique kwargs.
+        :param create_kwargs:   manual kwargs for the scatter_plot function
+        :param write_unique:    set True to write a tex file for this individual figure.
         """
 
         if create_kwargs is None:
@@ -183,6 +184,8 @@ class TeXRunFigurePage(TeXWriter):
 
         :param caption:         Tex caption to add to figure
         :param width:           the width of the plot on the page such as '5in'
+        :param create_kwargs:   manual kwargs for the scatter_plot function
+        :param write_unique:    set True to write a tex file for this individual figure.
         """
 
         if create_kwargs is None:
