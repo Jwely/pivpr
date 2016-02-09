@@ -55,7 +55,12 @@ class TeXWriter:
 
         with open(self.texfile_path, 'w+') as f:
             for line in self.content:
-                if include_labels and r"\label" not in line:
+                if include_labels:
+                    if r"\label" not in line:
+                        if verbose:
+                            print(line)
+                        f.write(line + "\n")
+                else:
                     if verbose:
                         print(line)
                     f.write(line + "\n")
