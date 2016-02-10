@@ -83,6 +83,8 @@ A summary of these characteristics can be found in Tables
 \input{tables/experiment_results_7}
 
 \subsection{Macro-Turbulent Structures}
+\label{section:macroturb}
+
 The vortex core sizes at all velocities were observed to drop from 
 17-20$mm$ in radius to 13-16$mm$ in radius between station 4 at 8.5 chord 
 lengths and station 5 at 9 chord lengths. The abrupt contraction of the core 
@@ -208,8 +210,8 @@ significant impact on power spectral density analysis of the fluctuating
 values. An uncertainty analysis has been conducted and indicates that the 
 precision of PIV measurements is sufficient to study time averaged quantities 
 including Reynolds stresses and those related to the root-mean-square of 
-velocity fluctuations, but insufficient to study the dynamic nature of 
-turbulent structures. The topic is discussed in greater detail in section 
+velocity fluctuations, but insufficient to study the real time dynamic nature 
+of turbulent structures. The topic is discussed in greater detail in section 
 \ref{sec:piv_uncert}.
 
 \section{Reynolds stress and turbulence relationships}
@@ -257,24 +259,58 @@ different. In principle, a small increase in free stream velocity is analogous
 to taking a small step upstream to where the vortex is 'younger'. With this 
 perspective, a consistent sizing of periodic structures in velocity 
 fluctuations is indicative of a slowly evolving. If it can be assumed that 
-vortices of the same age are similar, the frequency of the periodicity 
-indicated by this repeated pattern can be 
-found by
+vortex cross sections of the same 'age' are similar, the frequency of the 
+periodicity indicated by this repeated pattern can be found by
 
 \begin{equation}
-f = \Big(\frac{Z}{V_1} - \frac{Z}{V_2}\Big)^{-1} = 
-\Big(\frac{0.9144m}{21 m/s}-\frac{0.9144m}{33 m/s}\Big)^{-1} = 63 Hz
+f = \Big(\frac{Z_1}{V_1} - \frac{Z_1}{V_2}\Big)^{-1} = 
+\Big(\frac{0.9144m}{21 m/s}-\frac{0.9144m}{33 m/s}\Big)^{-1} \approx 63 Hz
+\label{eq:period_frequency}
 \end{equation}
 
 \noindent
 Where $V_1$ is the lesser velocity, $V_2$ is the greater, and $Z$ is the 
-position of the interrogation plane. A similar periodicity was seen at 
-stations 4, 6, and 7 over the range of 50 to 80Hz. The sampling rate of 
-the PIV system used for these experiments was 1Hz, well below the rate required 
-to observe this periodicity by examination of power spectral density of 
-velocity fluctuations.
+position of the interrogation plane. A similar periodicity of 57Hz was easily
+observed in radial fluctuations at station 6. The PIV system used for these 
+experiments was 1Hz, well below the rate required to observe this periodicity 
+by examination of power spectral density of velocity fluctuations.
 
-\newpage
+Similar patterns such as the set of four protruding elliptical structures were 
+seen in the axial velocity fluctuations as shown in 
+Figure \ref{fig:run_50_ww_contour}, but were not as pronounced as those in the 
+radial direction and did not demonstrate periodicity with the same level of 
+clarity.
+
+\input{figs/run_50/run_50_ww_contour}
+
+Interestingly, the azimuthal velocity fluctuations demonstrated some
+periodic fluctuations as well as some very consistent zones of low intensity.
+Figures \ref{fig:run_41_tt_contour} through \ref{run_50_tt_contour} 
+consistently show areas of very low tangential velocity fluctuation on the left 
+and right sides of the vortex core, each between 1 and 2 times the size of the 
+vortex core. A cyclical appearance and disappearance of high intensity 
+fluctuations occurs in the large regions above and below the core with the 
+vector fields at 19, 23, and 29 $m/s$ exhibiting very little azimuthal velocity 
+fluctuations in the regions above and below.
+
+\input{figs/run_41/run_41_tt_contour}
+\input{figs/run_42/run_42_tt_contour}
+\input{figs/run_43/run_43_tt_contour}
+\input{figs/run_44/run_44_tt_contour}
+\input{figs/run_45/run_45_tt_contour}
+\input{figs/run_46/run_46_tt_contour}
+\input{figs/run_47/run_47_tt_contour}
+\input{figs/run_48/run_48_tt_contour}
+\input{figs/run_49/run_49_tt_contour}
+\input{figs/run_50/run_50_tt_contour}
+
+Using a similar approach as Equation \ref{eq:period_frequency}, the frequency 
+of this motion was estimated to be 120Hz, approximately twice that of the 
+observed frequency of period radial fluctuations. Each of these periodicities 
+is more clearly visible than that observed in turbulent energies within the 
+core as described in Section \ref{section:macroturb}, but are likely related.
+
+
 \subsection{Constant turbulent viscosity}
 The turbulent viscosity hypothesis first introduced by 
 Boussinesq \cite{pope2000} in the notation of Pope, can be described by
@@ -322,13 +358,9 @@ The solution describing the behavior of an axial wake vortex derived from
 non-equilibrium pressure theory also presents a definition for turbulent 
 viscosity. The definition can be derived from the Reynolds stress form of the 
 cylindrical conservation of linear momentum equations and the continuity 
-equation.
-
-(flag, insert derivation??)
-
-In the individual Reynolds component notation used previously, turbulent 
-viscosity derived from non-equilibrium pressure theory for an axial vortex can 
-be expressed as
+equation. In the individual Reynolds component notation used previously, 
+turbulent viscosity derived from non-equilibrium pressure theory for an axial 
+vortex can be expressed as
 
 \begin{equation}
 \nu_T =
@@ -400,9 +432,15 @@ When this equation is evaluated for the pressure relaxation coefficient,
 velocity, and station shown in 
 Figure\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}, the resulting 
 turbulent viscosity is $6.15 mm^2/s$, about 40\% the value of the kinematic 
-viscosity of air. Similarly to the classical turbulent viscosity, this value 
-calculated from experimental velocity gradients and Reynolds stresses is many 
-times larger than expected.
-
-(flag, I cannot explain this, i've looked at everything and cant find any 
-mistakes)
+viscosity of air. Similarly to the classical turbulent viscosity, the range of 
+values calculated from experimental velocity gradients and Reynolds stresses is 
+many times larger than expected. Insight 
+was gained as to the relative magnitudes of diffusion, strain rate, and 
+momentum terms, but direct evaluation of turbulent 
+viscosity was not found to yield a steady value. Spatial derivatives in 
+cylindrical coordinates were obtained by a chain rule product between a 
+Cartesian spatial derivative and the sin or cosine of $\theta$, leaving many 
+opportunities for velocities at small angles or small errors in denominators to 
+turn into very large errors. Additionally, once spatial derivatives were in 
+cylindrical coordinates, further division by potentially zero gradients 
+amplified the effect further. 
