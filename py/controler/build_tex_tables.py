@@ -24,7 +24,7 @@ def build_tex_tables():
     # the measurements for each station
     for station in [1, 2, 3, 4, 5, 6, 7]:
         csv_to_tex(os.path.join(TEX_TABLE_DIR, "station_{0}_measurements.csv".format(station)),
-                   caption="Experimental measurements for station {0}".format(station),
+                   caption="Experimental conditions for tests at station {0}".format(station),
                    horizontal_line_rows=[2])
 
     # v3d format example
