@@ -6,7 +6,7 @@ def _character_to_symbol(character):
     if character == "T":
         return r"v_{\theta}"
     elif character == "W":
-        return r"v_{z}$"
+        return r"v_{z}"
     elif character == "R":
         return r"v_{r}"
     elif character == "U":
