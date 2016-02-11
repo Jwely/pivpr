@@ -93,18 +93,19 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
                                               "t_range": (10, 80),
                                               "symmetric": True})
 
-    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{1}{r^2}\frac{d}{dr}[r^2 \overline{t^\prime r^\prime}]$"})
+    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{1}{r^2}\frac{d}{dr}[r^2 (\overline{v_{\theta}^\prime v_{r}^\prime})]$"})
     caption = "Scatter plot of $\nu_T$ reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_reynolds', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
-    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{d^2\bar{t}}{dr^2} + \frac{d}{dr}(\frac{\bar{t}}{r})$"})
+    kwargs = merge_dicts(log_kwargs, {"title": r"$[\frac{d^2 \bar{v_{\theta}}}{dr^2} + \frac{d}{dr}(\frac{\bar{v_{\theta}}}{r})]$"})
     caption = "Scatter plot of $\\nu_T$ velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_vel_grad', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
-    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\eta_P \bar{t}}{r^2}[\overline{r^\prime r^\prime} - \overline{t^\prime t^\prime}"
-                                               r" + \frac{d(\overline{r^\prime r^\prime})}{dr}]$"})
+    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\eta_p \bar{t}}{r^2}[\overline{v_{r}^\prime v_{r}^\prime} - "
+                                               r"\overline{v_{\theta}^\prime v_{\theta}^\prime} + "
+                                               r"\frac{d(\overline{v_{r}^\prime r^\prime})}{dr}]$"})
     kwargs['y_range'] = (1e-4, 1e3)     # much much much smaller.
     caption = "Scatter plot of $\\nu_T$ pressure relaxation term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
