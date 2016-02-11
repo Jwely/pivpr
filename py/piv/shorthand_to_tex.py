@@ -1,6 +1,49 @@
 __author__ = 'Jwely'
 
 
+def _character_to_symbol(character):
+    """ converts a single character to the mathematic symbol, does not apply all tex formatting """
+    if character == "T":
+        return r"v_{\theta}"
+    elif character == "W":
+        return r"v_{z}$"
+    elif character == "R":
+        return r"v_{r}"
+    elif character == "U":
+        return r"v_{x}"
+    elif character == "V":
+        return r"v_{y}"
+    elif character == "t":
+        return r"v_{\theta}^{\prime}"
+    elif character == "w":
+        return r"v_{z}^{\prime}"
+    elif character == "r":
+        return r"v_{r}^{\prime}"
+    elif character == "u":
+        return r"v_{x}^{\prime}"
+    elif character == "v":
+        return r"v_{y}^{\prime}"
+
+    elif character == "M":
+        return r"v_{magnitude}"
+    elif character == "P":
+        return r"v_{in-plane}"
+    else:
+        return character
+
+
+def _overline(symbol_list):
+    """ applies the overline function """
+    if not isinstance(symbol_list, list):
+        symbol_list = [symbol_list]
+    return r"\overline{{{0}}}".format(" ".join(symbol_list))
+
+
+def _tex(string):
+    """ applies the dollar signs needed to bound math expressions """
+    return "${0}$".format(string)
+
+
 def shorthand_to_tex(component):
         """
         Converts component symbols used extensively in the code syntax into TeX formatted math expressions.
@@ -10,36 +53,28 @@ def shorthand_to_tex(component):
         shorthand
         """
 
-        # turbulent viscosity is a special case
-        if component == "turb_visc":
-            return "$\\nu_{t}$"
 
-        # turbulent energy is a special case
-        elif component == "ctke":
-            return "$k$"
+        if component == "turb_visc":        # turbulent viscosity
+            return r"$\\nu_{t}$"
 
-        elif component == "num":
-            return "$N$"
+        elif component == "ctke":           # turbulent energy
+            return r"$k$"
 
-        # handles single components
+        elif component == "num":            # number of measurements N
+            return r"$N$"
+
+        # handles single components and double correlation components.
         elif len(component) == 1:
-
-            # stable components
-            if component.isupper():
-                return "$\overline{{{comp}}}$".format(comp=component.lower())
-
-            # fluctuating components
-            else:
-                return "$\overline{{{comp}^\prime}}$".format(comp=component)
-
-        # double correlations, reynolds stresses.
+            return _tex(_overline(_character_to_symbol(component)))
         elif len(component) == 2:
-            # note the use of double enclosing brackets, this is required to eval literal {}
-            return "$\overline{{{comp0}^\prime {comp1}^\prime}}$".format(comp0=component[0], comp1=component[1])
+            return _tex(_overline([_character_to_symbol(component[0]), _character_to_symbol(component[1])]))
 
         # handles partial derivatives of format 'dxdy'
         elif len(component) == 4 and "d" in component:
-            return "$\\frac{{\\partial {0}}}{{\\partial {1}}}$".format(component[1], component[3])
+            comp1 = component[1]
+            comp2 = component[3]
+            fmt = r"$\\frac{{\\partial {0}}}{{\\partial {1}}}$"
+            return fmt.format(_overline( [_character_to_symbol(comp1), comp2] ))
 
         # meshgrid attributes
         elif "mesh" in component:
@@ -49,3 +84,14 @@ def shorthand_to_tex(component):
         else:
             Warning("Don't recognize input {0}".format(component))
             return component
+
+
+# testing
+if __name__ == "__main__":
+
+    from py.piv import AxialVortex
+    a = AxialVortex()
+    keys = a.meshgrid.keys() + a.mean_set.keys() + a.derivative_set.keys() + a.equation_terms.keys()
+    for key in keys:
+        print(key, shorthand_to_tex(key))
+
