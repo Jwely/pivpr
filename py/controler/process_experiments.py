@@ -38,7 +38,7 @@ def process_experiments(outname, table_caption, ids=None, min_points=DEFAULT_MIN
     units = ["", "$mm$", "$m/s$", "$\\mu s$", "$m/s$", "$Pa$", "$Pa$", "K", "$\\%$", "$mm$", "$m/s$", "$m/s$"]
 
     tex_names = ["Run", "$I_Z$", "$V_{nom}$", "$dt$", "$V_{fs}$", "$Q$", "$P_{atm}$",
-                 "$T_{tunnel}$", "$\phi$", "$R_{core}$", "$\\overline{t}_{max}$", "$\\overline{w}_{mean}$"]
+                 "$T_{tunnel}$", "$\phi$", "$R_{core}$", "$\\overline{v_{\\theta}}_{max}$", "$\\overline{v_{z}}_{mean}$"]
 
     df = df[kw_names]
     df.columns = pd.MultiIndex.from_tuples(zip(tex_names, units))
