@@ -844,7 +844,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.plot(r_plot, t_exp, linewidth=2, linestyle='-', color='black', label="Experimental Fit")
         plt.plot(r_plot, t_rankine, linewidth=2, linestyle='--', color='firebrick', label="Rankine: $r_{core}$")
         plt.plot(r_plot, t_lamboseen, linewidth=2, linestyle=':', color='navy', label="Lamb-Oseen: $V_{\\theta, max}$")
-        plt.plot(r_plot, t_ash, linewidth=2, linestyle='-.', color='purple', label="Ash: $V_{\\theta, max}$")
+        plt.plot(r_plot, t_ash, linewidth=2, linestyle='-.', color='purple', label="Ash et al.: $V_{\\theta, max}$")
 
         if pressure_relaxation is not None:     # ash vortex based on pressure relaxation
             ettap  = pressure_relaxation / 1e6
