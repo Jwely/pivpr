@@ -2,54 +2,59 @@
 \section{Discussion}
 
 Axial vortices were created over a range of velocities, and interrogated at 
-seven different stations ranging between 546$mm$ and 1016$mm$ downstream, or 
-5.4 and 10.0 chord lengths respectively, measured from the end of the vortex 
-generator center body. For the 
-purposes of results and discussion, it is desirable to reduce the set to a few 
-exemplary data sets that illustrate observed phenomena. The vortex generator 
+seven different stations ranging between 546$mm$ and 1016$mm$ downstream of the 
+end of the vortex generators center body, representing distances between 5.4 
+and 10 chord lengths. For the 
+purposes of results and discussion, it is desirable to focus on a smaller group 
+of exemplary data sets that illustrate observed phenomena. The vortex generator 
 used in these experiments had a center body with a 1 inch diameter, and thus 
-produced two co-rotating vortices that merge together as they moved downstream. 
+produced two co-rotating vortices that merge together as they progressed 
+downstream. 
 The first three stations display characteristics that resemble co-rotating 
 vortices that had not yet finished merging. Furthermore, analysis shows that 
 the uncertainty in measurements decreases significantly as the interrogation 
 plane moves down stream. Therefore, results from only a few vortices at 
-downstream locations of are discussed here. Full results for all vortices 
-generated can be obtained from an online public repository, the URL for which 
-can be found in the notes. Turbulent quantities are compared to hot-wire 
-anemometry experiments conducted by Thompson \cite{thompson2016}.
+downstream locations of are discussed here. Complete measurement sets for all 
+vortices generated as part of this study can be obtained from an online public 
+repository at \url{https://github.com/Jwely/pivpr}. Turbulent quantities have 
+been compared with hot-wire anemometry experiments using a bodiless bi-wing 
+vortex generator in the same wind tunnel conducted by Thompson 
+\cite{thompson2016}.
 
 
 \subsection{Vortex Stabilization}
-A bi wing vortex generator actually creates a set of co-rotating vortices from 
-the intersections of the wing and center body or the wing edges. A single axial 
-vortex stabilizes as the co rotating vortices merge together and as the 
+A bi-wing vortex generator creates a pair of co-rotating vortices, emanating 
+from the intersections of the wing and center body. A single 
+axial vortex stabilizes as the co rotating vortices merge together and as the 
 wake of the center body diminishes. The rotational motion of the vortex 
-stretches the axial velocity deficit around the core region. This was observed 
+wraps the axial velocity deficit around the core region. This was observed 
 in the PIV data in Figure \ref{fig:run_1_W_contour} showing a far upstream 
-average axial velocity distribution with very clear wing wakes coming off 
-center, and in Figure \ref{fig:run_55_W_contour} showing a downstream station 
-at a higher velocity with wake remnants wound about the core. In these figures, 
-positive values indicate fluid flowing away from the core.
+mean axial velocity distribution with very clear wing wake zones radiating from 
+the center.Those rays largely disappear further downstream as shown in Figure 
+\ref{fig:run_55_W_contour} at a higher velocity with wake remnants wound about 
+the core. 
 
 \input{figs/run_1/run_1_W_contour}
 \input{figs/run_55/run_55_W_contour}
 
 Each wing generated a lifting force which converted axial momentum into radial 
-and tangential momentum about the vortex core. As the vortex developed, radial 
-movements in the fluid persisted with similar magnitude, though were broken up 
+and tangential momentum about the vortex core. As the vortex developed, mean 
+radial fluid motion persisted with similar magnitude, though began to break up 
 into smaller localized jets as shown in Figures \ref{fig:run_1_R_contour} and 
 \ref{fig:run_51_R_contour}, which were taken at similar free stream velocities 
-but several chord lengths apart. For the majority of tests, the radial velocity 
-patterns from the wings remain intact, with radial outflow in the top right and 
-bottom left quadrants. 
+but several chord lengths apart. For radial velocity components, positive 
+values indicate fluid flowing away from the core. For the majority of tests, 
+the radial velocity patterns from the wings remain intact, with radial outflow 
+in the top right and bottom left quadrants. 
 
 \input{figs/run_1/run_1_R_contour}
 \input{figs/run_51/run_51_R_contour}
 
 Under the conditions of early vortex formation, stronger asymmetry was seen in 
-the azimuthal velocity component, $\bar{t}$ than in more developed vortices as 
+the azimuthal velocity component, $\overline v_{t}$ than in more developed 
+vortices as 
 shown in Figures \ref{fig:run_1_T_contour} and \ref{fig:run_55_T_contour}. When 
-this data is flattened into a scatter plot for every grid point making up the 
+this data is mapped into a scatter plot for every grid point making up the 
 two dimensional dataset, the asymmetries become particularly apparent as shown 
 in Figure \ref{fig:run_1_T_vs_r_mesh_scatter}.
 
@@ -58,21 +63,32 @@ in Figure \ref{fig:run_1_T_vs_r_mesh_scatter}.
 \input{figs/run_1/run_1_T_vs_r_mesh_scatter}
 
 Vortices are characterized principally by the maximum azimuthal velocity 
-and the radius of the core. The absolute maximum velocity from the scatter plot 
-is likely to be impacted by random noise in the data, and may 
+and the associated radius of the core. The absolute maximum velocity from the 
+scatter plot is likely to be impacted by random noise in the data, and may 
 not occur near the true core boundary. Therefore, the vortices were 
-characterized by taking a moving average of the azimuthal velocity plot, and 
-taking the maximum value and radial point at which it occurs. Thus, more 
-developed vortices with greater radial symmetry were better suited for further 
-study. With a smoothed azimuthal velocity profile, the experimental data were 
-compared to the theoretical profiles of common vortices introduced previously, 
-as in figure \ref{fig:run_55_comparison}. In this comparison, the Lamb-Oseen 
-and Ash vortices are scaled to match the experimental maximum azimuthal 
-velocity, while the Rankine vortex is scaled to match the core radius.
+characterized by sorting the scattered set of points of azimuthal velocity vs 
+radius as shown in \ref{fig:run_1_T_vs_r_mesh_scatter} in ascending order and 
+performing a Gaussian smoothing to create a smoothed profile as shown in Figure 
+\ref{fig:run_55_comparison}. The maximum azimuthal velocity and core radius was 
+then obtained from the smoothed curve. Thus,
+developed vortex planes with pronounced radial symmetry were better suited for 
+further study. With a smoothed azimuthal velocity profile, the experimental 
+data were compared to the theoretical profile models of common vortices 
+introduced previously, as shown in Figure \ref{fig:run_55_comparison}. In this 
+comparison, the Lamb-Oseen and Ash vortices are scaled to match the 
+experimental maximum azimuthal velocity, while the Rankine vortex is scaled to 
+match the core radius.
 
 \input{figs/run_55/run_55_comparison}
 
-A summary of these characteristics can be found in Tables 
+The measured vortex characteristics where, $I_Z$ is the downstream distance, 
+$V_{nom}$ is the nominal free stream velocity, $dt$ is the time step between 
+image pairs, $V_{fs}$ is the actual free stream velocity, $Q$ is the dynamic 
+pressure, $P_{atm}$ is the atmospheric pressure at the time of the test, 
+$T_{tunnel}$ is the temperature measured inside the wind tunnel, $\Phi$ is the 
+relative humidity, $R_{core}$ is the core radius, $\overline{v_{\theta}}_{max}$ 
+is the maximum azimuthal velocity, and $\overline{w}_{mean}$ is the axial 
+velocity averaged over the entire observation area.
 \ref{table:experiment_results_1} through \ref{table:experiment_results_7}. 
 
 \input{tables/experiment_results_1}
