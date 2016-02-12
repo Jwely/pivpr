@@ -71,7 +71,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     scatter_kwargs = {"x_range": (0, 4)}
 
     t_kwargs = merge_dicts(scatter_kwargs, {"title": "Azimuthal Velocity vs Radius"})
-    caption = "Scatter plot of azimuthal velocity vs radius at $z/c$={0}, $V_{{free}}$={1}, station{2}.".format(
+    caption = "Scatter plot of azimuthal velocity vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'T', caption, scatter_width, create_kwargs=t_kwargs, write_unique=True)
 
