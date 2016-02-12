@@ -705,7 +705,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # default color of white
         if color is None:
-            color = 'white'
+            color = DEFAULT_CORE_MARKER_COLOR
 
         # plot the core location for reference
         if normalized:
@@ -1122,7 +1122,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return
 
     def contour_plot(self, component, t_range=None, r_range=None, symmetric=False,
-                     title=None, outpath=None, log_colorbar=False):
+                     title=None, outpath=None, log_colorbar=False, cmap=None):
         """
         creates a contour plot of input component
 
@@ -1132,6 +1132,8 @@ class AxialVortex(MeanVecFieldCartesian):
         :return:
         """
 
+        if cmap is None:
+            cmap = CONTOUR_DEFAULT_CMAP
         if isinstance(component, np.ma.MaskedArray):
             data = component
         else:
@@ -1146,10 +1148,10 @@ class AxialVortex(MeanVecFieldCartesian):
         vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
         if log_colorbar:
             cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,
-                              norm=LogNorm(), cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
+                              norm=LogNorm(), cmap=cmap, vmin=vmin, vmax=vmax)
         else:
             cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,
-                              cmap=CONTOUR_DEFAULT_CMAP, vmin=vmin, vmax=vmax)
+                              cmap=cmap, vmin=vmin, vmax=vmax)
 
         cf.set_clim(vmin=vmin, vmax=vmax)
         plt.colorbar(cf)
@@ -1206,7 +1208,9 @@ if __name__ == "__main__":
               #"y_range": (1e1, 1e9),
               }
 
-    mvf.contour_plot('dPdr')
+    from matplotlib import cm
+
+    mvf.contour_plot('dPdr', r_range=('0.3r','4r'), t_range=(30,60), symmetric=True, cmap=cm.PRGn)
     #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
