@@ -1,6 +1,6 @@
 __author__ = 'Jwely'
 
-from py.utils import csv_to_tex
+from py.tex import csv_to_tex
 from py.config import *
 import os
 
