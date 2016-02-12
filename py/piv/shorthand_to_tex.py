@@ -63,6 +63,9 @@ def shorthand_to_tex(component):
         elif component == "num":            # number of measurements N
             return r"$N$"
 
+        elif component == "dPdr":
+            return "$\\frac{dP}{dr}$"
+
         # handles single components and double correlation components.
         elif len(component) == 1:
             return _tex(_overline(_character_to_symbol(component)))
@@ -73,8 +76,8 @@ def shorthand_to_tex(component):
         elif len(component) == 4 and "d" in component:
             comp1 = component[1]
             comp2 = component[3]
-            fmt = r"$\\frac{{\\partial {0}}}{{\\partial {1}}}$"
-            return fmt.format(_overline( [_character_to_symbol(comp1), comp2] ))
+            fmt = r"\frac{{\partial {0}}}{{\partial {1}}}"
+            return _tex(_overline(fmt.format(_character_to_symbol(comp1), comp2)))
 
         # meshgrid attributes
         elif "mesh" in component:
