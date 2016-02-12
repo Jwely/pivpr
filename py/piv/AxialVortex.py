@@ -499,15 +499,17 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         if pressure_relaxation is None:
-            pressure_relaxation = 1
+            pressure_relaxation = 1e-6
+        else:
+            pressure_relaxation *= 1e-6
 
         # top = 1/r*2 * d/dr(r^2 * vtheta_vr reynolds stress)
         # bottom = second derivative of vtheta with respect to r +  d/dr(vtheta / r)
         # result = top / bottom
 
         r = self['r_mesh'] / 1000
-        x = self['x_mesh'] / 1000
-        y = self['y_mesh'] / 1000
+        x = (self['x_mesh'] - self.core_location[0]) / 1000
+        y = (self['y_mesh'] - self.core_location[1]) / 1000
         t = self['t_mesh']
 
         # this section of code with proper converted cylindrical derivatives has lots of opportunities
@@ -530,7 +532,7 @@ class AxialVortex(MeanVecFieldCartesian):
         noneq_press_term = self['T'] * (self['rr'] - self['tt'] + drrdr) / (r * r)
         self.equation_terms['turb_visc_reynolds'] = reynolds_term
         self.equation_terms['turb_visc_vel_grad'] = vel_grad_term
-        self.equation_terms['turb_visc_ettap'] = (pressure_relaxation / 1.0e6) * noneq_press_term
+        self.equation_terms['turb_visc_ettap'] = pressure_relaxation * noneq_press_term
         self.equation_terms['turb_visc_total'] = abs(dbz(noneq_press_term + reynolds_term, vel_grad_term))
 
         # ratio of the noneq turb visc and classical turb visc, no real relationship appears to be there
@@ -539,8 +541,9 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # now calculate the pressure gradient
         # this is closely related to the velocity gradient term
-        mu = AIR_DYNAMIC_VISCOSITY
-        dPdr = - (mu * vel_grad_term) / (pressure_relaxation * self['T'] / r)
+        #dPdr = - (AIR_DYNAMIC_VISCOSITY * vel_grad_term) / (pressure_relaxation * self['T'] / r)
+        dPdr = AIR_DENSITY * (self['T'] ** 2) / r
+        #dPdr = mu * vel_grad_term - (pressure_relaxation * AIR_DENSITY * self['T'] ** 3 / (r ** 2))
         self.equation_terms['dPdr'] = dPdr
 
         '''
@@ -1205,18 +1208,22 @@ if __name__ == "__main__":
 
     #mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
 
-    kwargs = {"t_range": (10, 80),
-              "r_range": (0, '3r'),
+    scatter_kwargs = {"t_range": (15, 75),
+              "r_range": (0, '4r'),
               "symmetric": True,
               "show_grid": True,
               #"y_range": (1e1, 1e9),
               }
 
+    contour_kwargs = {"t_range": (10, 80),
+                      "r_range": ('0.3r', '4r'),
+                      "symmetric": True
+                      }
     from matplotlib import cm
 
-    #mvf.contour_plot('dPdr', r_range=('1r','5r'), t_range=(20,70), symmetric=True, cmap=cm.PRGn)
-    #mvf.contour_plot('dPdr', r_range=('0.3r','3r'), t_range=(20,70), symmetric=True, cmap=cm.PRGn)
-    mvf.scatter_plot('r_mesh', 'dPdr', 'ctke', r_range=('1r','5r'), t_range=(20,70), symmetric=True)
+    mvf.contour_plot('dPdr')
+    #mvf.contour_plot('turb_visc_vel_grad', **contour_kwargs)
+    mvf.scatter_plot('r_mesh', 'dPdr')
     #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
