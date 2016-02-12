@@ -39,6 +39,7 @@ CONTOUR_DEFAULT_CMAP = cm.jet       # default color ramp to use on contour plots
 CONTOUR_DEFAULT_RRANGE = (0, 50)    # default radius range to subset contour plots by
 SCATTER_DEFAULT_CMAP = cm.jet       # default colormap to use on scatter plots with third variable
 SCATTER_DEFAULT_COLOR = 'navy'      # default color used on scatter plots with just one variable
+DEFAULT_CORE_MARKER_COLOR = 'k'     # default color of lines and crosshair used to mark the core boundary
 SCATTER_DEFAULT_MARKER = 'x'        # marker to use on scatter plots
 SCATTER_DEFAULT_RLIM = 100          # default plot
 VRANGE_DEFAULT = (1, 99)            # default percentile values for defining color ramp boundaries
