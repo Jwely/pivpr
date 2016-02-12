@@ -1015,7 +1015,9 @@ class AxialVortex(MeanVecFieldCartesian):
         if log_y is None:
             log_y = False
         elif log_y is True:
-            y = abs(y)
+            pass
+            #y = abs(y)
+
 
         # if the x axis is the core radius, normalize by the radius of the core.
         if component_x == "r_mesh":
@@ -1233,7 +1235,7 @@ if __name__ == "__main__":
     #mvf.contour_plot('turb_visc_total', **contour_kwargs)
     #mvf.scatter_plot('r_mesh', 'dPdr')
     #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **scatter_kwargs)
+    mvf.scatter_plot('r_mesh', 'momentum_vel_grad', log_y=True, **scatter_kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
     mvf.scatter_plot('r_mesh', 'turb_visc_total', **scatter_kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ratio')
