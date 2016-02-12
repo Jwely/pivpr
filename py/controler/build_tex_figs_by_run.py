@@ -1,5 +1,7 @@
 __author__ = 'Jwely'
 
+from matplotlib import cm
+
 from py.tex import TeXRunFigurePage
 from py.piv import construct_experiments
 from py.piv import shorthand_to_tex as stt
@@ -93,16 +95,19 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
                                               "t_range": (10, 80),
                                               "symmetric": True})
 
+    # reynolds stress term
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{1}{r^2}\frac{d}{dr}[r^2 (\overline{v_{\theta}^\prime v_{r}^\prime})]$"})
     caption = "Scatter plot of $\nu_T$ reynolds stress term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_reynolds', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
+    # velocity gradient term
     kwargs = merge_dicts(log_kwargs, {"title": r"$[\frac{d^2 \bar{v_{\theta}}}{dr^2} + \frac{d}{dr}(\frac{\bar{v_{\theta}}}{r})]$"})
     caption = "Scatter plot of $\\nu_T$ velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_vel_grad', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
+    # pressure relaxation term
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\eta_p \bar{t}}{r^2}[\overline{v_{r}^\prime v_{r}^\prime} - "
                                                r"\overline{v_{\theta}^\prime v_{\theta}^\prime} + "
                                                r"\frac{d(\overline{v_{r}^\prime r^\prime})}{dr}]$"})
@@ -111,6 +116,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_ettap', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
+    # combined non equilibrium pressure based turbulent viscosity
     turb_kwargs = {"x_range": (0, 5),
                   "t_range": (10, 80),
                   "symmetric": True,
@@ -128,6 +134,14 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
+    # plot of dPdr as calculated from non-eq pressure theory
+    dPdr_kwargs = {"t_range": (15, 75),
+                   "r_range": ('0.3r', '4r'),
+                   "symmetric": True,
+                   "cmap": cm.PRGn}
+    caption = "Diverging contour plot of $\frac{dP}{dr} from non-equilibrium theory. " \
+              "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
+    tfp.add_contour_plot('dPdr', caption, contour_width, create_kwargs=dPdr_kwargs, write_unique=True)
 
     # include dynamic plots
     if include_dynamic:
@@ -152,8 +166,8 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 
 def main():
     # build tex figs for all trials
-    run_ids = range(60, 71)
-    #run_ids = [55]
+    run_ids = range(64, 71)
+    run_ids = range(51, 61)
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=False)
 
