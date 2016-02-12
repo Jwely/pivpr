@@ -1122,7 +1122,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return
 
     def contour_plot(self, component, t_range=None, r_range=None, symmetric=False,
-                     title=None, outpath=None, log_colorbar=False, cmap=None):
+                     title=None, outpath=None, log_colorbar=False, diverging=False):
         """
         creates a contour plot of input component
 
@@ -1132,8 +1132,12 @@ class AxialVortex(MeanVecFieldCartesian):
         :return:
         """
 
-        if cmap is None:
+        # sets the color ramp to diverge
+        if diverging:
+            cmap = CONTOUR_DIVERGE_CMAP
+        else:   # standard color ramp
             cmap = CONTOUR_DEFAULT_CMAP
+
         if isinstance(component, np.ma.MaskedArray):
             data = component
         else:
@@ -1144,8 +1148,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
         xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
         yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
-        fig, ax = plt.subplots(figsize=(8, 7), dpi=DEFAULT_DPI)
         vmin, vmax = self._get_vrange(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
+        fig, ax = plt.subplots(figsize=(8, 7), dpi=DEFAULT_DPI)
         if log_colorbar:
             cf = plt.contourf(xplot_mesh, yplot_mesh, data, CONTOUR_DEFAULT_LEVELS,
                               norm=LogNorm(), cmap=cmap, vmin=vmin, vmax=vmax)

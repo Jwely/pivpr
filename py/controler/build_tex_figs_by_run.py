@@ -1,7 +1,5 @@
 __author__ = 'Jwely'
 
-from matplotlib import cm
-
 from py.tex import TeXRunFigurePage
 from py.piv import construct_experiments
 from py.piv import shorthand_to_tex as stt
@@ -138,7 +136,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     dPdr_kwargs = {"t_range": (20, 70),
                    "r_range": ('0.3r', '3r'),
                    "symmetric": True,
-                   "cmap": cm.PRGn}
+                   "diverging": True}
     caption = r"Diverging contour plot of $\frac{{d\bar{{P}}}}{{dr}}$ from non-equilibrium theory. " \
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     tfp.add_contour_plot('dPdr', caption, contour_width, create_kwargs=dPdr_kwargs, write_unique=True)
