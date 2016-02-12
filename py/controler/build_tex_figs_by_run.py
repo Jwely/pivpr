@@ -108,9 +108,9 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     tfp.add_scatter_plot('r_mesh', 'turb_visc_vel_grad', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # pressure relaxation term
-    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\eta_p \bar{t}}{r^2}[\overline{v_{r}^\prime v_{r}^\prime} - "
+    kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\eta_p \bar{v_\theta}}{r^2}[\overline{v_{r}^\prime v_{r}^\prime} - "
                                                r"\overline{v_{\theta}^\prime v_{\theta}^\prime} + "
-                                               r"\frac{d(\overline{v_{r}^\prime r^\prime})}{dr}]$"})
+                                               r"\frac{d(\overline{v_{r}^\prime v_{r}^\prime})}{dr}]$"})
     kwargs['y_range'] = (1e-4, 1e3)     # much much much smaller.
     caption = "Scatter plot of $\\nu_T$ pressure relaxation term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
@@ -118,7 +118,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 
     # combined non equilibrium pressure based turbulent viscosity
     turb_kwargs = {"x_range": (0, 5),
-                  "t_range": (10, 80),
+                  "t_range": (20, 70),
                   "symmetric": True,
                   "title": "Radial profile of $\\nu_T$",
                   "y_label": " "}
@@ -139,7 +139,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
                    "r_range": ('0.3r', '3r'),
                    "symmetric": True,
                    "cmap": cm.PRGn}
-    caption = "Diverging contour plot of $\frac{{d\bar{{P}}}}{{dr}}$ from non-equilibrium theory. " \
+    caption = r"Diverging contour plot of $\frac{{d\bar{{P}}}}{{dr}}$ from non-equilibrium theory. " \
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     tfp.add_contour_plot('dPdr', caption, contour_width, create_kwargs=dPdr_kwargs, write_unique=True)
 
@@ -166,7 +166,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 
 def main():
     # build tex figs for all trials
-    run_ids = range(1, 71)
+    run_ids = range(1, 35)
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, include_dynamic=False, force_recalc=False)
 
