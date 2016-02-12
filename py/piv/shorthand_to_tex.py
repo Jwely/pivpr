@@ -55,7 +55,7 @@ def shorthand_to_tex(component):
 
 
         if component == "turb_visc":        # turbulent viscosity
-            return r"$\\nu_{t}$"
+            return r"$\nu_{t}$"
 
         elif component == "ctke":           # turbulent energy
             return r"$k$"
@@ -64,7 +64,7 @@ def shorthand_to_tex(component):
             return r"$N$"
 
         elif component == "dPdr":
-            return "$\\frac{dP}{dr}$"
+            return r"$\frac{d\bar{P}}{dr}$"
 
         # handles single components and double correlation components.
         elif len(component) == 1:
