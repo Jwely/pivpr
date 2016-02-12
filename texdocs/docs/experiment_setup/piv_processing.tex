@@ -54,73 +54,73 @@ computed with a root mean squared method as shown in equations \ref{eq:ubar}
 through \ref{eq:wprime}.
 
 \begin{equation}
-\overline{u}  = \frac{1}{N} \sum_{i=1}^{200} u_i
+\overline{v_x}  = \frac{1}{N} \sum_{i=1}^{200} v_{x_i}
 \label{eq:ubar}
 \end{equation}
 
 \begin{equation}
-\overline{v}  = \frac{1}{N} \sum_{i=1}^{200} v_i
+\overline{v_y}  = \frac{1}{N} \sum_{i=1}^{200} v_{y_i}
 \end{equation}
 
 \begin{equation}
-\overline{w}  = \frac{1}{N} \sum_{i=1}^{200} w_i
+\overline{v_z}  = \frac{1}{N} \sum_{i=1}^{200} v_{z_i}
 \end{equation}
 
 \begin{equation}
-\overline{u^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (u_i - 
-\overline{u})^2}
+\overline{v_x^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (v_{x_i} - 
+\overline{v_x})^2}
 \end{equation}
 
 \begin{equation}
-\overline{v^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (v_i - 
-\overline{v})^2}
+\overline{v_y^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (v_{y_i} - 
+	\overline{v_y})^2}
 \end{equation}
 
 \begin{equation}
-\overline{w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (w_i - 
-\overline{w})^2}
+\overline{v_z^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (v_{z_i} - 
+	\overline{v_z})^2}
 \label{eq:wprime}
 \end{equation}
 
-Where $\overline{u}$, $\overline{v}$ and $\overline{w}$ are the time averaged 
-velocity 
+Where $\overline{v_x}$, $\overline{v_y}$ and $\overline{v_z}$ are the time 
+averaged velocity 
 components in the $X$, $Y$, $Z$ directions respectively, and  
-$\overline{u^\prime}$, $\overline{v^\prime}$ and $\overline{w^\prime}$ are the 
-time averaged fluctuating velocity components.
+$\overline{v_x^\prime}$, $\overline{v_y^\prime}$ and $\overline{v_z^\prime}$ 
+are the time averaged fluctuating velocity components.
 
 Similarly, time averaged Reynolds stresses can be calculated by multiplying the 
 fluctuating components together before taking the root mean square average by 
 equations \ref{eq:rs_uu} through \ref{eq:rs_vw}.
 
 \begin{equation}
-\overline{u^\prime u^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
-	((u_i - \overline{u})(u_i - \overline{u}))^2}
+\overline{v_x^\prime v_x^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
+	((v_{x_i} - \overline{v_x})(v_{x_i} - \overline{v_x}))^2}
 \label{eq:rs_uu}
 \end{equation}
 
 \begin{equation}
-\overline{v^\prime v^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
-	((v_i - \overline{v})(v_i - \overline{v}))^2}
+\overline{v_y^\prime v_y^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
+	((v_{y_i} - \overline{v_y})(v_{y_i} - \overline{v_y}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{w^\prime w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
-	((w_i - \overline{w})(w_i - \overline{w}))^2}
+\overline{v_z^\prime v_z^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
+	((v_{z_i} - \overline{v_z})(v_{z_i} - \overline{v_z}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{u^\prime v^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
-	((u_i - \overline{u})(v_i - \overline{v}))^2}
+\overline{v_x^\prime v_y^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
+	((v_{x_i} - \overline{v_x})(v_{y_i} - \overline{v_y}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{u^\prime w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
-	((u_i - \overline{u})(w_i - \overline{w}))^2}
+\overline{v_x^\prime v_z^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
+	((v_{x_i} - \overline{v_x})(v_{z_i} - \overline{z_y}))^2}
 \end{equation}
 
 \begin{equation}
-\overline{v^\prime w^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
-	((v_i - \overline{v})(w_i - \overline{w}))^2}
+\overline{v_y^\prime v_z^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
+	((v_{y_i} - \overline{v_y})(v_{z_i} - \overline{z_y}))^2}
 \label{eq:rs_vw}
 \end{equation}
 
@@ -129,9 +129,9 @@ of the sum of the three double correlation components as in equation
 \ref{eq:tke}.
 
 \begin{equation}
-k = \frac{1}{2} \left(\overline{u^\prime u^\prime}^2 + 
-	\overline{v^\prime v^\prime}^2 + 
-	\overline{w^\prime w^\prime}^2\right)
+k = \frac{1}{2} \left(\overline{v_x^\prime v_x^\prime}^2 + 
+	\overline{v_y^\prime v_y^\prime}^2 + 
+	\overline{v_z^\prime v_z^\prime}^2\right)
 \label{eq:tke}
 \end{equation}
 
@@ -150,46 +150,48 @@ core correctly in every test.
 
 With a location for the vortex core, new mesh grids in radial and tangential 
 coordinates, $R$ and $\theta$, are created from the $X$ and 
-$Y$ mesh grids. Velocity components, $r$ and $t$,are then 
+$Y$ mesh grids. Velocity components, $v_r$ and $v_\theta$,are then 
 calculated by equations \ref{eq:uv_r} and \ref{eq:uv_t}.
 
 \begin{equation}
-r_i = u_i \cos{(\theta)} + v_i \sin{(\theta)}
+v_{r} = v_{x} \cos{(\theta)} + v_{y} \sin{(\theta)}
 \label{eq:uv_r}
 \end{equation}
 
 \begin{equation}
-t_i = u_i \sin{(\theta)} - v_i \cos{(\theta)}
+v_{\theta} = v_{x} \sin{(\theta)} - v_{y} \cos{(\theta)}
 \label{eq:uv_t}
 \end{equation}
 
-Where $r_i$ and $t_i$ represent a radial and tangential velocity matrix for 
-just one of the 200 total surveys, and $\theta$ is the mesh grid of angles 
+Where $v_{r}$ and $v_{\theta}$ represent a radial and tangential velocity 
+matrix, and $\theta$ is the mesh grid of angles 
 about the vortex core. These equations were applied on an element wise basis to 
 every grid point in the vector field. Once this was done, the same Reynolds 
 averaging technique was applied to separate the radial and tangential velocity 
-components $r$ and $t$ into stable and fluctuating components in equations 
+components $v_{r}$ and $v_{\theta}$ into stable and fluctuating components in 
+equations 
 \ref{eq:rbar} through \ref{eq:tprime}.
 
 \begin{equation}
-\overline{r}  = \frac{1}{N} \sum_{i=1}^{200} r_i
+\overline{v_r}  = \frac{1}{N} \sum_{i=1}^{200} v_{r_i}
 \label{eq:rbar}
 \end{equation}
 
 \begin{equation}
-\overline{t}  = \frac{1}{N} \sum_{i=1}^{200} t_i
+\overline{v_\theta}  = \frac{1}{N} \sum_{i=1}^{200} v_{\theta_i}
 \label{eq:tbar}
 \end{equation}
 
 \begin{equation}
-\overline{r^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (r_i - 
-\overline{r})^2}
+\overline{v_r^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (v_{r_i} - 
+\overline{v_r})^2}
 \label{eq:rprime}
 \end{equation}
 
 \begin{equation}
-\overline{t^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (t_i - 
-\overline{t})^2}
+\overline{v_\theta^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} (v_{\theta_i} 
+- 
+\overline{v_\theta})^2}
 \label{eq:tprime}
 \end{equation}
 
