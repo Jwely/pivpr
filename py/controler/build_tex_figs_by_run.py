@@ -139,7 +139,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
                    "r_range": ('0.3r', '3r'),
                    "symmetric": True,
                    "cmap": cm.PRGn}
-    caption = "Diverging contour plot of $\frac{{dP}}{{dr}}$ from non-equilibrium theory. " \
+    caption = "Diverging contour plot of $\frac{{d\bar{{P}}}}{{dr}}$ from non-equilibrium theory. " \
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     tfp.add_contour_plot('dPdr', caption, contour_width, create_kwargs=dPdr_kwargs, write_unique=True)
 
@@ -166,11 +166,9 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 
 def main():
     # build tex figs for all trials
-    run_ids = range(64, 71)
-    run_ids = range(51, 61)
-    run_ids = [55]
+    run_ids = range(1, 71)
     for run_id in run_ids:
-        build_tex_figs_by_run(run_id, include_dynamic=True, force_recalc=True)
+        build_tex_figs_by_run(run_id, include_dynamic=False, force_recalc=False)
 
     # include cartesian coordinate tex figs for example run number 55
     build_tex_figs_by_run(55, include_cartesian=True)
