@@ -5,8 +5,6 @@ import cPickle
 import os
 import math
 import numpy as np
-import copy
-from matplotlib import ticker
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 
