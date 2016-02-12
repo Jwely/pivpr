@@ -33,11 +33,11 @@ generated with TeX.
 TeXWriter                   # manages relative filepaths for writing tex files which point to images
     ↳ TeXRunFigurePage      # top level interface for creating tex figures, wraps piv.Experiment instance
 TeXFigureGenerator          # invokes any function which generates a figure at "outpath", controls TeX format
+csv_to_tex                  # function that converts a csv file into tex formatted table with caption/label
 ```
 
 ### uncertainty
 Limited amount of code for synthesizing artificial PIV data used for monte carlo uncertainty analysis. Holds just two classes, one for parsing the config files and generating artificial images with known particle displacements, and one for reading vector results computed from those images and comparing those results to the `.json` record of generation parameters.
 
 ### utils
-General utilities folder of short little useful functions. Includes a dependencies installer, a csv_to_tex converter, 
-and a few other things.
+General utilities folder of short little useful functions.
