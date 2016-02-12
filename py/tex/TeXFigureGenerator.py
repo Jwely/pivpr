@@ -1,7 +1,6 @@
 __author__ = 'Jwely'
 
 import os
-import traceback
 
 
 class TeXFigureGenerator():
