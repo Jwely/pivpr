@@ -29,6 +29,12 @@ shorthand_to_tex              # Translates shorthand notations used to code to T
 Contains code specifically for creating TeX formatted figures and tables for use in the actual thesis document
 generated with TeX. 
 
+```
+TeXWriter                   # manages relative filepaths for writing tex files which point to images
+    ↳ TeXRunFigurePage      # top level interface for creating tex figures, wraps piv.Experiment instance
+TeXFigureGenerator          # invokes any function which generates a figure at "outpath", controls TeX format
+```
+
 ### uncertainty
 Limited amount of code for synthesizing artificial PIV data used for monte carlo uncertainty analysis.
 
