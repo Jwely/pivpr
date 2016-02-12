@@ -3,7 +3,7 @@ __author__ = "Jwely"
 import os
 import json
 import pandas as pd
-from py.utils import csv_to_tex
+from py.tex import csv_to_tex
 from py.piv import construct_experiments
 from py.config import *
 

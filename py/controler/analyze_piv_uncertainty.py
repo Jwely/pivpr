@@ -2,9 +2,8 @@ __author__ = 'Jwely'
 
 import os
 import pandas as pd
-from py.utils import csv_to_tex
 from py.uncertainty import ArtificialVecField
-from py.tex import TeXWriter
+from py.tex import TeXWriter, csv_to_tex
 from py.config import *
 
 
