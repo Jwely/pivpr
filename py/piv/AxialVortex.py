@@ -519,19 +519,19 @@ class AxialVortex(MeanVecFieldCartesian):
             return dqdr
 
         top_dadr = radius_chain_rule(self['rt'], x, y, r, t)
-        top = top_dadr / (r ** 2)
+        reynolds_term = top_dadr / (r ** 2)
 
         bot_dTdr = radius_chain_rule(self['T'], x, y, r, t)
         bot_dTdr2 = radius_chain_rule(bot_dTdr, x, y, r, t)
         bot_dTrdr = radius_chain_rule(self['T'] / r, x, y, r, t)
-        bot = bot_dTdr2 + bot_dTrdr
+        vel_grad_term = bot_dTdr2 + bot_dTrdr
 
         drrdr = radius_chain_rule(self['rr'], x, y, r, t)
-        ettap = self['T'] * (self['rr'] - self['tt'] + drrdr) / (r * r)
-        self.equation_terms['turb_visc_reynolds'] = top
-        self.equation_terms['turb_visc_vel_grad'] = bot
-        self.equation_terms['turb_visc_ettap'] = (pressure_relaxation / 1.0e6) * ettap
-        self.equation_terms['turb_visc_total'] = abs(dbz(ettap + top, bot))
+        noneq_press_term = self['T'] * (self['rr'] - self['tt'] + drrdr) / (r * r)
+        self.equation_terms['turb_visc_reynolds'] = reynolds_term
+        self.equation_terms['turb_visc_vel_grad'] = vel_grad_term
+        self.equation_terms['turb_visc_ettap'] = (pressure_relaxation / 1.0e6) * noneq_press_term
+        self.equation_terms['turb_visc_total'] = abs(dbz(noneq_press_term + reynolds_term, vel_grad_term))
 
         # ratio of the noneq turb visc and classical turb visc, no real relationship appears to be there
         self.equation_terms['turb_visc_ratio'] = (self.equation_terms['turb_visc_total'] /
@@ -540,7 +540,7 @@ class AxialVortex(MeanVecFieldCartesian):
         # now calculate the pressure gradient
         # this is closely related to the velocity gradient term
         mu = AIR_DYNAMIC_VISCOSITY
-        dPdr = - (mu * bot) / (pressure_relaxation * self['T'] / r)
+        dPdr = - (mu * vel_grad_term) / (pressure_relaxation * self['T'] / r)
         self.equation_terms['dPdr'] = dPdr
 
         '''
