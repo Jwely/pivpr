@@ -1202,7 +1202,7 @@ if __name__ == "__main__":
     #mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
 
     kwargs = {"t_range": (10, 80),
-              "r_range": (0, '5r'),
+              "r_range": (0, '3r'),
               "symmetric": True,
               "show_grid": True,
               #"y_range": (1e1, 1e9),
@@ -1210,7 +1210,8 @@ if __name__ == "__main__":
 
     from matplotlib import cm
 
-    mvf.contour_plot('dPdr', r_range=('0.3r','4r'), t_range=(30,60), symmetric=True, cmap=cm.PRGn)
+    mvf.contour_plot('dPdr', r_range=('1r','5r'), t_range=(20,70), symmetric=True, cmap=cm.PRGn)
+    mvf.contour_plot('dPdr', r_range=('0.3r','3r'), t_range=(20,70), symmetric=True, cmap=cm.PRGn)
     #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
