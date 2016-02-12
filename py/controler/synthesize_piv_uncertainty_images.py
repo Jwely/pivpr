@@ -3,7 +3,6 @@ __author__ = 'Jwely'
 import os
 from py.uncertainty import ArtificialPIV
 from py.config import *
-import copy
 
 
 def synthesize_piv_uncertainty_images(uncertainty_image_dir):
