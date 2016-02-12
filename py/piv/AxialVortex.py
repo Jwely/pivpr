@@ -113,7 +113,8 @@ class AxialVortex(MeanVecFieldCartesian):
                                     'turb_visc_vel_grad': None,  # for turbulent viscosity by pressure relaxation calc
                                     'turb_visc_ettap': None,     # the pressure relaxation term
                                     'turb_visc_total': None,     # for turbulent viscosity by pressure relaxation calc
-                                    'turb_visc_ratio': None,     #the ratio between total and classical turb_visc
+                                    'turb_visc_ratio': None,     # the ratio between total and classical turb_visc
+                                    'dPdr': None,                # The calculated radial pressure gradient
                                     })
 
 
@@ -488,12 +489,10 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return self.derivative_set
 
-    def get_pressure_relax_turb_visc(self, pressure_relaxation=None):
+    def get_pressure_relax_terms(self, pressure_relaxation=None):
         """
         Calculates the relatinshib between reynolds stress and turbulent viscosity as derived by the
         pressure relaxation equations.
-
-        #Function uses the approximation for the x axis where x ~ r and y ~ theta.
 
         :param pressure_relaxation: the pressure relaxation coefficientin microseconds
         :return:
@@ -537,6 +536,12 @@ class AxialVortex(MeanVecFieldCartesian):
         # ratio of the noneq turb visc and classical turb visc, no real relationship appears to be there
         self.equation_terms['turb_visc_ratio'] = (self.equation_terms['turb_visc_total'] /
                                                   self.equation_terms['turb_visc'])
+
+        # now calculate the pressure gradient
+        # this is closely related to the velocity gradient term
+        mu = AIR_DYNAMIC_VISCOSITY
+        dPdr = - (mu * bot) / (pressure_relaxation * self['T'] / r)
+        self.equation_terms['dPdr'] = dPdr
 
         '''
         # this section of code uses an approximate where x ~ r and  r * y ~ theta
@@ -1176,17 +1181,18 @@ if __name__ == "__main__":
 
     DEFAULT_DPI = 120
     exp_num = 55
-    force = True
+    force = False
     if not os.path.exists("temp{0}.pkl".format(exp_num)) or force:
         directory = os.path.join(DATA_FULL_DIR, str(exp_num))
         paths = [os.path.join(directory, filename) for filename in os.listdir(directory) if filename.endswith(".v3d")]
         mvf = AxialVortex("temp{0}".format(exp_num), v3d_paths=paths, min_points=20)
         mvf.find_core()
         mvf.get_cart_turbulent_viscosity()
-        mvf.get_pressure_relax_turb_visc()
+        mvf.get_pressure_relax_terms()
         mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=False)
     else:
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
+        mvf.get_pressure_relax_terms()
 
 
 
@@ -1200,10 +1206,11 @@ if __name__ == "__main__":
               #"y_range": (1e1, 1e9),
               }
 
-    mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_total', **kwargs)
+    mvf.contour_plot('dPdr')
+    #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_total', **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ratio')
 
 

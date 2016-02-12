@@ -44,7 +44,7 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
     # find the core and build cylindrical coordinate data around it
     av_instance.find_core()
     av_instance.get_cart_turbulent_viscosity()
-    av_instance.get_pressure_relax_turb_visc()
+    av_instance.get_pressure_relax_terms()
 
     # pickle both the full dynamic set and the reduced set
     av_instance.to_pickle(pkl_path_dyn, include_dynamic=True)
