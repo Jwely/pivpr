@@ -3,8 +3,6 @@ __author__ = 'Jwely'
 import os
 from py.tex.TeXWriter import TeXWriter
 from py.piv import Experiment, shorthand_to_tex
-from py.piv.construct_experiments import construct_experiments
-from py.config import *
 
 
 class TeXRunFigurePage(TeXWriter):
