@@ -11,6 +11,7 @@ rcParams.update({'figure.autolayout': True})
 
 # aerodynamic params to assume
 AIR_KINEMATIC_VISCOSITY = 15.68e-6      # m^2 / s
+AIR_DYNAMIC_VISCOSITY = 18.46e-6        # kg / m*s
 
 # resource filepaths and directories
 EXPERIMENT_TABLE_PATH = abspath(join(config_root, "piv/dat/experiment_table.csv"))
