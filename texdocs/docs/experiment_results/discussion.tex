@@ -334,13 +334,6 @@ speed is controlled by voltage. No evidence has been found to suggest these
 findings have been influenced by the utility frequency, which is also 50 or 
 60Hz.
 
-\subsection{Pressure Gradients}
-
-Pressure measurements are challenging to acquire concurrently with PIV 
-measurements, and were not included in this study. However, non-equilibrium 
-pressure theory relates the radial pressure gradient to the velocity gradient 
-via
-
 \subsection{Constant turbulent viscosity}
 The turbulent viscosity hypothesis first introduced by 
 Boussinesq \cite{pope2000} in the notation of Pope, can be described by
@@ -432,19 +425,55 @@ though the slope was found to be slightly shallower as shown in Figure
 
 \input{figs/run_55/run_55_turb_visc_vel_grad_vs_r_meshscatter}
 
-Since the dominant terms in the numerator and denomenator are of similar orders 
+
+Since the dominant terms in the numerator and denominator are of similar orders 
 of magnitude, the resulting turbulent viscosity loses the strong logarithmic 
 nature, but is subject to significant noise. The final result of experimentally 
 calculated turbulent viscosity by combining all the terms as in Equation 
-\ref{eq:etap_nut} was found become increasingly unstable in the vicinity of the 
-vortex core as shown in Figure 
-\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. Furthermore, the magnitude 
-of turbulent viscosity is much greater than is realistic. Though both the 
-classical turbulent viscosity model and the non equilibrium model show changes 
-occurring in similar radial zones, no further relationship could be established 
-between them.
+\ref{eq:etap_nut} was found to be unstable, become increasingly unstable 
+in the vicinity of the vortex core as shown in Figure 
+\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. 
 
 \input{figs/run_55/run_55_turb_visc_total_vs_r_meshscatter}
+
+The velocity gradient term in the denominator from Equation \ref{eq:etap_nut}, 
+shown for one test in Figure 
+\ref{fig:run_55_turb_visc_vel_grad_vs_r_meshscatter} can be 
+alternately represented by combining the radial and azimuthal conservation of 
+momentum equations
+
+\begin{equation}
+\rho \frac{v_{\theta}^2}{r} = \frac{dP}{dr}
+\end{equation}
+
+\noindent
+and
+
+\begin{equation}
+\eta_P \frac{v_\theta}{r} \frac{dP}{dr} = 
+\mu \Big[ \frac{d^2 v_\theta}{dr^2} + \frac{d}{dr} \frac{v_\theta}{r}\Big]
+\end{equation}
+
+\noindent
+to yield a non-linear ordinary differential equation:
+
+\begin{equation}
+\rho \frac{\eta_P}{\mu} \frac{v_{\theta}^3}{r^2} = 
+\Big[ \frac{d^2 v_\theta}{dr^2} + \frac{d}{dr} \frac{v_\theta}{r}\Big]
+\label{eq:momentum_vel_grad}
+\end{equation}
+
+\noindent
+The left hand side of Equation \ref{eq:momentum_vel_grad} contains no spatial 
+derivatives and is much less susceptible to experimental noise as shown in 
+figure \ref{fig:run_55_momentum_vel_grad_vs_r_meshscatter} \cite{ash2011}. With 
+both sides of Equation \ref{eq:momentum_vel_grad} directly evaluated from 
+experimental data, it was found to be especially valid in the core region. 
+However, the steady decline beyond 2 core radii that is seen in the evaluation 
+of the left hand side, it is not seen in that of the right hand side.
+
+\input{figs/run_55/run_55_momentum_vel_grad_vs_r_meshscatter}
+
 
 In theory, assuming a constant turbulent viscosity, the non-equilibrium 
 solution  implies that turbulent viscosity, the maximum azimuthal velocity, and 
@@ -454,6 +483,7 @@ pressure relaxation can be related by
 v_{\theta, max} = \frac{\Gamma_\infty}{4 \pi r} = \sqrt{\frac{2 \nu_T}{\eta_P}}
 \end{equation}
 
+\noindent
 Which can be rearranged to solve for turbulent viscosity as
 
 \begin{equation}
