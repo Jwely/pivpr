@@ -10,6 +10,7 @@ config_root = dirname(abspath(__file__))
 rcParams.update({'figure.autolayout': True})
 
 # aerodynamic params to assume
+AIR_DENSITY = 1.225                     # kg/m^3
 AIR_KINEMATIC_VISCOSITY = 15.68e-6      # m^2 / s
 AIR_DYNAMIC_VISCOSITY = 18.46e-6        # kg / m*s
 
