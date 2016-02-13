@@ -90,7 +90,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     log_kwargs = merge_dicts(scatter_kwargs, {"log_y": True,
                                               "y_range": (1e2, 1e9),
                                               "y_label": " ",
-                                              "t_range": (10, 80),
+                                              "t_range": (20, 70),
                                               "symmetric": True})
 
     # reynolds stress term
