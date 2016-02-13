@@ -107,7 +107,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 
     # momentum solution (should be identical to velocity gradient term
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\rho \eta_P}{\mu}\frac{v_{\theta}^3}{r^2}$"})
-    caption = "Scatter plot of the momentum velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+    caption = "Scatter plot of the momentum based velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'momentum_vel_grad', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
@@ -171,7 +171,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 def main():
     # build tex figs for all trials
     run_ids = range(1, 71)
-    run_ids = [55]
+    #run_ids = [55]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, include_dynamic=False, force_recalc=False)
 
