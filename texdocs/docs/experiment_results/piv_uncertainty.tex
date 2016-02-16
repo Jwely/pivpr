@@ -180,31 +180,33 @@ study required the use of multiple values of $dt$, artificial images were
 generated for a scenario at each value of $dt$ with appropriate associated 
 velocities. 
 With the exception of measurements at station one, all tests were conducted 
-with a $dt$ value of 25, or 40 $\mu s$. At station one $dt$ values of 35 were 
-also used. During the experimentation period, great difficulty 
-was encountered in tuning PIV parameters to achieve well resolved vector fields 
-at station one. The uncertainty analysis will demonstrate that the geometry of 
-viewing angles was also unfavorable at this station, and the quality of 
-measurements taken this far upstream was poor, they were therefore entirely 
-disregarded. 
+with a $dt$ value of 25, or 40 $\mu s$. At station one $dt$ values of 35 $\mu 
+s$ were also used. During the experimentation period, great difficulty 
+was encountered in tuning PIV parameters to achieve well-resolved vector fields 
+at station one. The uncertainty analysis demonstrated that the actual geometry 
+of the viewing angles was also unfavorable at this station, and the quality of 
+measurements taken this far upstream was poor. Hence, that data was entirely 
+disregarded.
 
 Creation of these artificial images by Monte Carlo was performed with custom 
-software written in Python. This software parses the calibration files output 
+software written in Python\texttrademark. This software parses the calibration 
+files output 
 from INSIGHT software and constructs the set of equations needed for all 
 coordinate transformations. In order to simulate as accurately as possible, 
-artificial images were generated at the full resolution of the PIV cameras 
-used, (1280 x 1024). Particles were only generated randomly at coordinates 
+artificial images were generated at the full resolution of the specific PIV 
+cameras, (1280 x 1024). Particles were only generated randomly at coordinates 
 that were within the field of view of both cameras, to eliminate wasted 
 computation time generating particles which would not aid in the production of 
-a three dimensional vector. An excess of 100,000 particles were simulated for 
-each image set in order to ensure particle density was sufficient to resolve a 
-vector in the majority of all sectors, and to match the experimental seed 
-density as closely as possible. The most accurate way to ensure the intensities 
-of each particle are accurately represented is to evaluate the intensity for 
-every particle every point in the full image space of 1280 x 1024 pixels, and 
-then add them together. Since this produces a three dimensional space in excess 
+a three-dimensional vector. An excess of 100,000 particles were simulated for 
+each image set in order to ensure that the particle density was sufficient to 
+resolve a vector in the majority of sectors, and to approximate the 
+experimental seed density as closely as possible. The most accurate way to 
+ensure that the intensities of each particle was represented accurately was to 
+evaluate the intensity for every particle at every point in the full image 
+space of 1280 x 1024 pixels, and then add them together. Since this produces a 
+three-dimensional space in excess 
 of a five billion values for a set of $La, Lb, Ra$ and $Rb$ images, computation 
-time for uncertainty images was a limiting factor. At minimum, one set of 
+time for uncertainty images was a limiting factor. At a minimum, one set of 
 uncertainty images for each combination of viewing geometry and time step $dt$ 
 was required. Therefore, simulated velocity values were chosen for each of the 
 14 cases to approximate the velocities of greatest interest. 
@@ -215,18 +217,19 @@ tests conducted, including the maximum
 observed azimuthal velocity, the average measured axial velocity, and the low 
 axial velocity at the vortex core. At the three furthest positions downstream 
 where the vortex appears to have stabilized, the typical value of maximum 
-tangential velocity, $\overline{t}_{max}$ in component notation, ranges from 
-6.0 to 7.9 $m/s$ for each run with a $dt$ of $25 \mu s$. This tangential 
-velocity could align with the $X$ or the $Y$ axis, and 
+tangential velocity, $\overline{v_{\theta, max}$ in component notation, ranges 
+from 6.0 to 7.9 $m/s$ for each run with a $dt$ of $25 \mu s$. This tangential 
+velocity could align with the $X$ or $Y$-axis, and 
 it was desirable to simulate displacements in both directions at once to limit 
-the number of Monte Carlo tests to be performed, so simulated velocities
+the number of Monte Carlo simulations to be performed, so simulated velocities
 $\overline{u}_{sim}$ and $\overline{v}_{sim}$
-of $4.9 m/s$ was used such that the in-plane magnitude would be equal 
+of $4.9 m/s$ was employed so that the in-plane magnitude would be equal 
 to the the middle of this range. Likewise, a simulated $\overline{u}_{sim}$ and 
 $\overline{v}_{sim}$  velocity of 
 $3.3 m/s$ was used to create synthetic images for testing experiments with a 
-$dt$ of $40 \mu s$. In the axial direction, $Z$ , mean values $19 m/s$ and $29 
-m/s$ were used for the high and low velocity experiments respectively. of These 
+$dt$ of $40 \mu s$. In the axial direction, $Z$ , mean values of $19 m/s$ and 
+$29 
+m/s$ were used for the high and low velocity experiments respectively. These 
 conditions are summarized in Table \ref{table:uncertainty_sim_table}.
 
 \input{tables/uncertainty_sim_table}
