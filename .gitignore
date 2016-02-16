@@ -27,7 +27,8 @@ texdocs/figs/run*/*jpg
 *pdf.gz
 
 # ignore tall the pdfs in texdocs
-texdocs/*.pdf
+texdocs/pdf_drafts/*.pdf
+main.pdf
 
 # lets ignore all files in the references for now
 texdocs/references
