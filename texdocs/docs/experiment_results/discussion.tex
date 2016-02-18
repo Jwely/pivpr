@@ -236,7 +236,7 @@ detail in section \ref{sec:piv_uncert}.
 
 \section{Reynolds stress and turbulence relationships}
 
-Reynolds stresses represent components of the total stress tensor, and have 
+Reynolds stresses represent components of the overall stress tensor, and have 
 been used extensively in the study of turbulence. Turbulent viscosity models, 
 which use a scalar viscosity term to represent the transport and dissipation of 
 energy in small scale flows make direct assumptions about the Reynolds stresses 
@@ -245,22 +245,25 @@ in a given fluid flow.
 \subsection{Velocity fluctuations}
 
 While turbulent energy and Reynolds stress, especially the radial-tangential 
-reynolds stress, were very closely related, each component held a few unique 
+reynolds stress, were very closely related, each component exhibited unique 
 characteristics. The following progression is shown one velocity step at 
 a time in Figures \ref{fig:run_41_rr_contour} through 
-\ref{fig:run_50_rr_contour}. In these figures, the color bars are scaled to 
-place the top 1\% of values in the top color to prevent core region from 
-reducing the dynamic range for viewing structures outside the core region.
+\ref{fig:run_50_rr_contour}. In these figures, the color values are scaled to 
+range from the minimum value to the 99 percentile value. This was done to 
+preserve the dynamic range of coloring in the moderate intensity regions where 
+the structures of greatest interest reside.
 At 9 chord lengths down stream and 15 $m/s$, four lobes of 
 large magnitude radial fluctuations could be seen faintly. At 17 $m/s$, the 
-lobes appeared turn in on each other to form two crescents coming out of the 
-left and right sides of the vortex core. At 19 $m/s$, the C shapes were 
+lobes appeared to turn in on each other to form two crescents radiating from 
+the left and right sides of the vortex core. At 19 $m/s$, the C shapes were 
 observed to split, giving the plot an open four leaf clover shape. At 21 $m/s$, 
-the four leaves appear to finish closing in on themselves to form four 
-elliptical protrusions extending about one core radii. At 23 $m/s$, these 
+the four leaves appear to finish closing on themselves to form four 
+elliptical lobes extending about one core radii. At 23 $m/s$, these 
 structures appeared to break up, only for familiar C shapes to arose again at 
 25, 27, and 29 $m/s$. By 31 and 33 $m/s$ the C shaped protrusions closed and 
-became elliptical in appearance once more. 
+became elliptical in appearance once more.  The size of the 
+elliptical lobes between 21 $m/s$ and 33 $m/s$ were not distinguishably 
+different. 
 
 \input{figs/run_41/run_41_rr_contour}
 \input{figs/run_42/run_42_rr_contour}
@@ -273,12 +276,10 @@ became elliptical in appearance once more.
 \input{figs/run_49/run_49_rr_contour}
 \input{figs/run_50/run_50_rr_contour}
 
-The size of the 
-elliptical protrusions between 21 $m/s$ and 33 $m/s$ were not distinguishably 
-different. In principle, a small increase in free stream velocity is analogous 
+In principle, a small increase in free stream velocity is analogous 
 to taking a small step upstream to where the vortex is 'younger'. With this 
 perspective, a consistent sizing of periodic structures in velocity 
-fluctuations is indicative of a slowly evolving. If it can be assumed that 
+fluctuations is indicative of a gradual evolution. If it can be assumed that 
 vortex cross sections of the same 'age' are similar, the frequency of the 
 periodicity indicated by this repeated pattern can be found by
 
@@ -289,14 +290,15 @@ f = \Big(\frac{Z_1}{V_1} - \frac{Z_1}{V_2}\Big)^{-1} =
 \end{equation}
 
 \noindent
-Where $V_1$ is the lesser velocity, $V_2$ is the greater, and $Z$ is the 
+Where $V_1$ is the lower velocity, $V_2$ is the greater, and $Z$ is the 
 position of the interrogation plane. A similar periodicity of 57Hz was easily
 observed in radial fluctuations at station 6. The PIV system used for these 
-experiments was 1Hz, well below the rate required to observe this periodicity 
-by examination of power spectral density of velocity fluctuations.
+experiments sampled at 1Hz, well below the sampling rate required to observe 
+this periodicity by examination of power spectral density of the velocity 
+fluctuations.
 
 Similar patterns such as the set of four protruding elliptical structures were 
-seen in the axial velocity fluctuations as shown in 
+observed in the axial velocity fluctuations as shown in 
 Figure \ref{fig:run_50_ww_contour}, but were not as pronounced as those in the 
 radial direction and did not demonstrate periodicity with the same level of 
 clarity.
@@ -304,7 +306,8 @@ clarity.
 \input{figs/run_50/run_50_ww_contour}
 
 Interestingly, the azimuthal velocity fluctuations demonstrated some
-periodic fluctuations as well as some very consistent zones of low intensity.
+periodic fluctuations as well as some very consistent zones of low fluctuation 
+intensity.
 Figures \ref{fig:run_41_tt_contour} through \ref{fig:run_50_tt_contour} 
 consistently show areas of very low tangential velocity fluctuation on the left 
 and right sides of the vortex core, each between 1 and 2 times the size of the 
@@ -324,15 +327,14 @@ fluctuations in the regions above and below.
 \input{figs/run_49/run_49_tt_contour}
 \input{figs/run_50/run_50_tt_contour}
 
-Using a similar approach as Equation \ref{eq:period_frequency}, the frequency 
-of this motion was estimated to be 120Hz, approximately twice that of the 
-observed frequency of period radial fluctuations. Each of these periodicities 
-is more clearly visible than that observed in turbulent energies within the 
-core as described in Section \ref{section:macroturb}, but are likely related. 
-The wind tunnel flow is driven by a direct current electric motor, and the 
-speed is controlled by voltage. No evidence has been found to suggest these 
-findings have been influenced by the utility frequency, which is also 50 or 
-60Hz.
+Using a similar vortex age approach as Equation \ref{eq:period_frequency}, the 
+frequency of this motion was estimated to be 120Hz, approximately twice that of 
+the observed frequency of periodic radial fluctuations. Each of these 
+periodicities is more clearly visible than that observed in turbulent energies 
+within the core as described in Section \ref{section:macroturb}, but are likely 
+related. The wind tunnel flow is driven by a direct current electric motor, and 
+the speed is controlled by voltage. No evidence has been found to suggest these 
+findings have been influenced by the utility frequency, which is also 60Hz.
 
 \subsection{Constant turbulent viscosity}
 The turbulent viscosity hypothesis first introduced by 
@@ -345,21 +347,22 @@ Boussinesq \cite{pope2000} in the notation of Pope, can be described by
 \end{equation} 
 
 \noindent
-Which is to say the deviatoric Reynolds stress is proportional to the mean rate 
+which assumes the deviatoric Reynolds stress is proportional to the mean rate 
 of strain. Because the non-equilibrium vortex model proposed by Ash, Zuckerwar, 
 and Zardkahan in \cite{ash2011} is an exact solution the Reynolds averaged 
 Navier-Stokes equations, and very accurately predicts the azimuthal velocity 
-profile of an axial wake vortex, it was of interest to verify the validity of 
+profile of a turbulent axial wake vortex, it was of interest to examine the 
+validity of 
 the turbulent viscosity hypothesis with experimental data. All terms in the 
 summation of this equation were calculated from the PIV dataset, with the 
 exception of gradients in the axial direction. Neglecting those terms, the 
-turbulent viscosity assumption could was examined for each vortex dataset. The 
+turbulent viscosity assumption was examined for each vortex dataset. The 
 turbulent viscosity calculation involves division by spatial derivatives, which 
-can locally be very close to zero. In area within 1.5 core radii where the 
+can locally be very close to zero. In the area within 1.5 core radii where the 
 velocity gradients were consistently high, the turbulent viscosity calculation 
-was subject to much less noise than areas far from the core with more gentle 
-gradient as shown in figure \ref{fig:run_55_turb_visc_vs_r_meshscatter}. 
-Calculations were performed in the cartesian coordinate space, and the values 
+was subject to much less noise than regions far from the core with small 
+gradients as shown in figure \ref{fig:run_55_turb_visc_vs_r_meshscatter}. 
+Calculations were performed in Cartesian coordinate space, and the values 
 of derivatives near the $X$ and $Y$ axes through the center of the vortex 
 tended to be near zero, and caused unrealistically high values to occur very 
 frequently in these zones with no physical significance. To reduce noise, the 
