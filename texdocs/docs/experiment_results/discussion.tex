@@ -376,7 +376,7 @@ Within the core region, a one or two equation turbulence model where $\nu_T$ is
 a function of the velocity gradients, such as the $k-\epsilon$ model is likely 
 required. While the scatter plot is very noisy outside the core region, 
 90\% of values consistently fell within a band of small positive values between 
-0 and 0.1 $m^2/s$, which is 6 orders of magnitude larger than expected. The 
+0 and 0.1 $m^2/s$, which is 6 orders of magnitude larger than expected.
 These trends were observed consistently in all vortices.
 
 \subsection{Non-equilibrium turbulence}
@@ -409,7 +409,7 @@ stress, due in part to the typical microsecond order of the pressure relaxation
 coefficient, $\eta_p$. All radial gradient terms are expected to be quite 
 large, especially in the vicinity of the core. The relative magnitudes of the 
 Reynolds stress term in the numerator and the azimuthal velocity gradient terms 
-in the denominator cannot be easily determined at a glance. Each of the three 
+in the denominator required investigation. Each of the three 
 terms was examined individually. The first Reynolds stress term in the 
 numerator was found to increase at a greater than logarithmic rate as 
 $R/r_{core}$ decreased as shown in Figure 
@@ -431,10 +431,10 @@ though the slope was found to be slightly shallower as shown in Figure
 
 Since the dominant terms in the numerator and denominator are of similar orders 
 of magnitude, the resulting turbulent viscosity loses the strong logarithmic 
-nature, but is subject to significant noise. The final result of experimentally 
-calculated turbulent viscosity by combining all the terms as in Equation 
-\ref{eq:etap_nut} was found to be unstable, become increasingly unstable 
-in the vicinity of the vortex core as shown in Figure 
+nature, but is subject to significant noise. The experimentally 
+calculated turbulent viscosity utilizing all the terms as in Equation 
+\ref{eq:etap_nut} was found too scattered to be of use, particularly in the 
+vicinity of the vortex core as shown in Figure 
 \ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. 
 
 \input{figs/run_55/run_55_turb_visc_total_vs_r_meshscatter}
@@ -473,7 +473,7 @@ figure \ref{fig:run_55_momentum_vel_grad_vs_r_meshscatter} \cite{ash2011}. With
 both sides of Equation \ref{eq:momentum_vel_grad} directly evaluated from 
 experimental data, it was found to be especially valid in the core region. 
 However, the steady decline beyond 2 core radii that is seen in the evaluation 
-of the left hand side, it is not seen in that of the right hand side.
+of the left hand side is not seen in that of the right hand side.
 
 \input{figs/run_55/run_55_momentum_vel_grad_vs_r_meshscatter}
 
@@ -487,7 +487,7 @@ v_{\theta, max} = \frac{\Gamma_\infty}{4 \pi r} = \sqrt{\frac{2 \nu_T}{\eta_P}}
 \end{equation}
 
 \noindent
-Which can be rearranged to solve for turbulent viscosity as
+which can be rearranged to solve for turbulent viscosity as
 
 \begin{equation}
 \nu_T = \frac{\eta_P}{2} v_{\theta, max}^2 
