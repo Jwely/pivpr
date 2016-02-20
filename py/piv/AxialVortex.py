@@ -576,10 +576,10 @@ class AxialVortex(MeanVecFieldCartesian):
             "turb_visc_vel_grad", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
         # convert from log, take polynomial fit, and then convert back to log scale
-        rs_poly_fit = np.poly1d(np.ma.polyfit(r_scat, np.log10(abs(rs_scat)), 4))
+        rs_poly_fit = np.poly1d(np.ma.polyfit(r_scat, np.log10(abs(rs_scat)), 3))
         self.equation_terms['turb_visc_reynolds_fit'] = 10 ** rs_poly_fit(r_scat)
 
-        vg_poly_fit = np.poly1d(np.ma.polyfit(r_scat, np.log10(abs(vg_scat)), 4))
+        vg_poly_fit = np.poly1d(np.ma.polyfit(r_scat, np.log10(abs(vg_scat)), 3))
         self.equation_terms['turb_visc_vel_grad_fit'] = 10 ** vg_poly_fit(r_scat)
 
         self.equation_terms['turb_visc_total_fit'] = (self.equation_terms['turb_visc_reynolds_fit'] /
@@ -1290,7 +1290,7 @@ if __name__ == "__main__":
     #mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
 
     scatter_kwargs = {"t_range": (10, 80),
-                      "r_range": ('0.3r', '3.5r'),
+                      "r_range": ('0.5r', '3.5r'),
                       "symmetric": True,
                       #"show_grid": True,
                       #"y_range": (1e1, 1e9),
