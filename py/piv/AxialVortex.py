@@ -1212,8 +1212,7 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.show()
         return
 
-    def pressure_relax_turb_visc_ratio_plot(self, r_range=None, t_range=None, symmetric=None, title=None,
-                                            x_label=None, y_label=None, outpath=None):
+    def pressure_relax_turb_visc_ratio_plot(self, r_range=None, t_range=None, symmetric=None, outpath=None):
         """
         plots pressure relaxation based turbulent viscosity relationships
         """
@@ -1289,7 +1288,7 @@ if __name__ == "__main__":
 
     #mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
 
-    scatter_kwargs = {"t_range": (10, 80),
+    scatter_kwargs = {"t_range": (20, 70),
                       "r_range": ('0.5r', '3.5r'),
                       "symmetric": True,
                       #"show_grid": True,
