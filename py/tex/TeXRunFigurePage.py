@@ -194,3 +194,43 @@ class TeXRunFigurePage(TeXWriter):
         figure_filename = "{0}_comparison.jpg".format(self.tex_title)
         figure_path = os.path.join(self.figure_dir, figure_filename)
         self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
+
+
+    def add_turb_visc_ratio_plot(self, caption, width, create_kwargs=None, write_unique=False):
+        """
+        Adds a turbulent viscosity polynomial fit plot to the texdoc
+
+        :param caption:         Tex caption to add to figure
+        :param width:           the width of the plot on the page such as '5in'
+        :param create_kwargs:   manual kwargs for the scatter_plot function
+        :param write_unique:    set True to write a tex file for this individual figure.
+        """
+
+        if create_kwargs is None:
+            create_kwargs = {}
+
+        create_from_function = self.axial_vortex.pressure_relax_turb_visc_ratio_plot
+
+        figure_filename = "{0}_nut_ratio_fit.jpg".format(self.tex_title)
+        figure_path = os.path.join(self.figure_dir, figure_filename)
+        self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
+
+
+    def add_turb_visc_tot_plot(self, caption, width, create_kwargs=None, write_unique=False):
+        """
+        Adds a turbulent viscosity polynomial fit plot to the texdoc
+
+        :param caption:         Tex caption to add to figure
+        :param width:           the width of the plot on the page such as '5in'
+        :param create_kwargs:   manual kwargs for the scatter_plot function
+        :param write_unique:    set True to write a tex file for this individual figure.
+        """
+
+        if create_kwargs is None:
+            create_kwargs = {}
+
+        create_from_function = self.axial_vortex.pressure_relax_turb_visc_tot_plot
+
+        figure_filename = "{0}_nut_tot_fit.jpg".format(self.tex_title)
+        figure_path = os.path.join(self.figure_dir, figure_filename)
+        self._write_or_log(figure_path, caption, width, create_from_function, create_kwargs, write_unique)
