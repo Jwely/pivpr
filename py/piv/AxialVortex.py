@@ -17,6 +17,7 @@ from py.config import *
 
 
 class AxialVortex(MeanVecFieldCartesian):
+
     def __init__(self, name_tag=None, v3d_paths=None, velocity_fs=None, z_location=None, min_points=20):
         """
         Built to extend the cartesian version of this class. Since all PIV data is
@@ -116,8 +117,12 @@ class AxialVortex(MeanVecFieldCartesian):
                                     'turb_visc_ratio': None,     # the ratio between total and classical turb_visc
                                     'dPdr': None,                # The calculated radial pressure gradient
                                     'momentum_vel_grad': None,   # momentum solved for the vel_grad term in viscosity
-                                    })
 
+                                    'turb_visc_reynolds_fit': None,
+                                    'turb_visc_vel_grad_fit': None,
+                                    'turb_visc_ettap_fit': None,
+                                    'turb_visc_total_fit': None,
+                                    })
 
     def to_pickle(self, pickle_path, include_dynamic=False):
         """ dumps the contents of this object to a pickle """
@@ -545,28 +550,40 @@ class AxialVortex(MeanVecFieldCartesian):
         # ratio of the noneq turb visc and classical turb visc, no real relationship appears to be there
         self.equation_terms['turb_visc_ratio'] = (self.equation_terms['turb_visc_total'] /
                                                   self.equation_terms['turb_visc'])
+        return
 
-        # now calculate the pressure gradient
-        # this is closely related to the velocity gradient term
-        #dPdr = - (AIR_DYNAMIC_VISCOSITY * vel_grad_term) / (pressure_relaxation * self['T'] / r)
-        dPdr = AIR_DENSITY * (self['T'] ** 2) / r
-        #dPdr = mu * vel_grad_term - (pressure_relaxation * AIR_DENSITY * self['T'] ** 3 / (r ** 2))
-        self.equation_terms['dPdr'] = dPdr
+    def get_pressure_relax_fits(self, r_range=None, t_range=None, symmetric=None):
+        """
+        Creates polynomial fits to the other wise very noisy terms from pressure relaxation turbulent
+        viscosity solutions. Since the terms are logarithmically scaled but of similar magnitude,
+        dividing them really amplifies the noise in the data. this ignores the pressure relaxation
+        term, as it is consistently 3 or 4 orders of magnitude less than the others.
 
-        '''
-        # this section of code uses an approximate where x ~ r and  r * y ~ theta
-        drsdr, _ = get_spatial_derivative(r * r * self['rt'], r, r * t)
-        top = drsdr / (r ** 2)
+        :param r_range:     tuple of (min, max) radius range in mm from the core. Supports string arguments
+                            followed with a "r" to indicate units of core radii; so ('0.9r', '1.1r') will
+                            set the r_range automatically to units of mm based on the calculated core radius.
+        :param t_range:     tuple of (min, max) theta range in degrees about the core.
+        :param symmetric:   if True, the hv_mesh is used instead of t_mesh.
+        :return:
+        """
 
-        dTdr1, _ = get_spatial_derivative(self['T'], r, r * t)
-        dTdr2, _ = get_spatial_derivative(dTdr1, r, r * t)
-        dTrdr, _ = get_spatial_derivative(self['T'] / r, r, r * t)
-        bot = dTdr2 + dTrdr
+        # load and flatten relevant data to scatter
+        r_scat = self._getitem_by_rt(
+            "r_mesh", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten() / self.core_radius
+        rs_scat = self._getitem_by_rt(
+            "turb_visc_reynolds", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        vg_scat = self._getitem_by_rt(
+            "turb_visc_vel_grad", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
-        self.equation_terms['turb_visc_reynolds'] = top
-        self.equation_terms['turb_visc_vel_grad'] = bot
-        self.equation_terms['turb_visc_ettap'] = dbz(top, bot)
-        '''
+        # convert from log, take polynomial fit, and then convert back to log scale
+        rs_poly_fit = np.poly1d(np.ma.polyfit(r_scat, np.log10(abs(rs_scat)), 4))
+        self.equation_terms['turb_visc_reynolds_fit'] = 10 ** rs_poly_fit(r_scat)
+
+        vg_poly_fit = np.poly1d(np.ma.polyfit(r_scat, np.log10(abs(vg_scat)), 4))
+        self.equation_terms['turb_visc_vel_grad_fit'] = 10 ** vg_poly_fit(r_scat)
+
+        self.equation_terms['turb_visc_total_fit'] = (self.equation_terms['turb_visc_reynolds_fit'] /
+                                                      self.equation_terms['turb_visc_vel_grad_fit'])
         return
 
 
@@ -574,6 +591,9 @@ class AxialVortex(MeanVecFieldCartesian):
     def get_smoothed_line(self, x, y, numpoints=None, M=None, std=None, order=None,
                           r_range=None, t_range=None, symmetric=None):
         """
+        :param symmetric:
+        :param t_range:
+        :param r_range:
         :param x:               either a component name string or a flattened array
         :param y:               either a component name string or a flattened array
         :param numpoints:       length of vectors, proportional to resolution
@@ -1016,7 +1036,7 @@ class AxialVortex(MeanVecFieldCartesian):
             log_y = False
         elif log_y is True:
             pass
-            #y = abs(y)
+            y = abs(y)
 
 
         # if the x axis is the core radius, normalize by the radius of the core.
@@ -1192,7 +1212,59 @@ class AxialVortex(MeanVecFieldCartesian):
         plt.show()
         return
 
+    def pressure_relax_turb_visc_ratio_plot(self, r_range=None, t_range=None, symmetric=None, title=None,
+                                            x_label=None, y_label=None, outpath=None):
+        """
+        plots pressure relaxation based turbulent viscosity relationships
+        """
 
+        # ensure the fits have been created
+        self.get_pressure_relax_fits(r_range=r_range, t_range=t_range, symmetric=symmetric)
+
+        # redundantly load the data, this is evidence of a bad code architecture choice
+        r_scat = self._getitem_by_rt(
+            "r_mesh", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten() / self.core_radius
+        rs_scat = self._getitem_by_rt(
+            "turb_visc_reynolds", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        vg_scat = self._getitem_by_rt(
+            "turb_visc_vel_grad", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+
+
+        fig, ax1 = plt.subplots(figsize=(8, 4), dpi=DEFAULT_DPI, facecolor='w')
+
+        # reynolds stress term poly fit
+        rs_label = r"$\frac{1}{r^2}\frac{d}{dr}[r^2 (\overline{v_{\theta}^\prime v_{r}^\prime})]$"
+        plt.scatter(r_scat, rs_scat, s=0.4, marker='x', color='firebrick')
+        plt.plot(r_scat, self.equation_terms['turb_visc_reynolds_fit'], color='firebrick', label=rs_label)
+
+        # velocity gradient poly fit
+        vg_label = r"$[\frac{d^2 \bar{v_{\theta}}}{dr^2} + \frac{d}{dr}(\frac{\bar{v_{\theta}}}{r})]$"
+        plt.scatter(r_scat, vg_scat, s=0.4, marker='.', color='navy')
+        plt.plot(r_scat, self.equation_terms['turb_visc_vel_grad_fit'], color='navy', label=vg_label)
+
+        # plot labels and legends
+        plt.xlabel("$R/r_{core}$")
+        plt.title("{0} and {1}".format(rs_label, vg_label), fontsize=DEFAULT_TITLE_SIZE, y=1.04)
+        plt.yscale('log')
+        plt.ylim([1e2, 1e8])
+
+        plt.legend()
+        self._save_or_show(outpath)
+        return
+
+    def pressure_relax_turb_visc_tot_plot(self, r_range=None, t_range=None, symmetric=None, **plot_kwargs):
+        """
+        plots the total turbulent viscosity, simply wraps the scatter plot function with an extra check to
+        ensure the best fit has the proper dimensions
+
+        :param plot_kwargs: precisely as would be passed to AxialVortex.scatter_plot
+        """
+
+        # ensure the fits have been created
+        self.get_pressure_relax_fits(r_range=r_range, t_range=t_range, symmetric=symmetric)
+        self.scatter_plot('r_mesh', 'turb_visc_total_fit',
+                          r_range=r_range, t_range=t_range, symmetric=symmetric, **plot_kwargs)
+        return
 
 
 if __name__ == "__main__":
@@ -1217,12 +1289,12 @@ if __name__ == "__main__":
 
     #mvf.scatter_plot('r_mesh', 'turb_visc') #, log_y=True)
 
-    scatter_kwargs = {"t_range": (15, 75),
-              "r_range": (0, '4r'),
-              "symmetric": True,
-              "show_grid": True,
-              #"y_range": (1e1, 1e9),
-              }
+    scatter_kwargs = {"t_range": (10, 80),
+                      "r_range": ('0.3r', '3.5r'),
+                      "symmetric": True,
+                      #"show_grid": True,
+                      #"y_range": (1e1, 1e9),
+                      }
 
     contour_kwargs = {"t_range": (10, 80),
                       "r_range": ('0.3r', '3r'),
@@ -1234,10 +1306,12 @@ if __name__ == "__main__":
     #mvf.contour_plot('turb_visc_vel_grad', **contour_kwargs)
     #mvf.contour_plot('turb_visc_total', **contour_kwargs)
     #mvf.scatter_plot('r_mesh', 'dPdr')
-    #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'momentum_vel_grad', log_y=True, **scatter_kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **scatter_kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **scatter_kwargs)
+    mvf.pressure_relax_turb_visc_ratio_plot(**scatter_kwargs)
+    mvf.pressure_relax_turb_visc_tot_plot(title="$\\nu_T$", y_label="$\\nu_T$", **scatter_kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
-    mvf.scatter_plot('r_mesh', 'turb_visc_total', **scatter_kwargs)
+    #mvf.scatter_plot('r_mesh', 'turb_visc_total', **scatter_kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ratio')
 
 
