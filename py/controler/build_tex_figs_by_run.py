@@ -9,9 +9,10 @@ from py.utils import merge_dicts
 
 def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False, force_recalc=False):
     """
+    Master level data figure generator. If starting from raw vector dataset, it will take many hours.
     Creates a separate tex document for every figure to include in the discussion section where lots 
     of text will be manually placed between images.
-    
+
     At this point, everything has become a little convoluted, but running this
     function will complete all processing for input run_id and produce all the relevant figures and
     create individual tex files that can be called and referenced with a one liner wherever they are 
@@ -105,6 +106,20 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_vel_grad', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
+    # comparison of the two terms
+    comp_kwargs = {"r_range": ('0.5r', '3.5r'),
+                   "t_range": (20, 70),
+                   "symmetric": True}
+    caption = "Polynomial fits of reynolds stress and velocity gradient terms at " \
+              "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
+    tfp.add_turb_visc_ratio_plot(caption, scatter_width, create_kwargs=comp_kwargs, write_unique=True)
+
+    # and the total best fit plot
+    tot_fit_kwargs = merge_dicts(comp_kwargs, {"title": "$\\nu_T$", "y_label": "$\\nu_T$"})
+    caption = "Polynomial fits of reynolds stress and velocity gradient terms at " \
+              "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
+    tfp.add_turb_visc_tot_plot(caption, scatter_width, create_kwargs=tot_fit_kwargs, write_unique=True)
+
     # momentum solution (should be identical to velocity gradient term
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\rho \eta_P}{\mu}\frac{v_{\theta}^3}{r^2}$"})
     caption = "Scatter plot of the momentum based velocity gradient term vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
@@ -145,7 +160,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
                    "diverging": True}
     caption = r"Diverging contour plot of $\frac{{d\bar{{P}}}}{{dr}}$ from non-equilibrium theory. " \
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
-    tfp.add_contour_plot('dPdr', caption, contour_width, create_kwargs=dPdr_kwargs, write_unique=True)
+    #tfp.add_contour_plot('dPdr', caption, contour_width, create_kwargs=dPdr_kwargs, write_unique=True)
 
     # include dynamic plots
     if include_dynamic:
@@ -171,7 +186,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 def main():
     # build tex figs for all trials
     run_ids = range(1, 71)
-    #run_ids = [55]
+    run_ids = range(40, 60)
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, include_dynamic=False, force_recalc=False)
 
