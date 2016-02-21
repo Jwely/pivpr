@@ -122,6 +122,8 @@ class AxialVortex(MeanVecFieldCartesian):
                                     'turb_visc_vel_grad_fit': None,
                                     'turb_visc_ettap_fit': None,
                                     'turb_visc_total_fit': None,
+
+                                    'turb_visc_by_vtheta': None,
                                     })
 
     def to_pickle(self, pickle_path, include_dynamic=False):
@@ -173,7 +175,7 @@ class AxialVortex(MeanVecFieldCartesian):
         r_range = tuple(r_range_list)
         return r_range
 
-    def _getitem_by_rt(self, component, r_range=None, t_range=None, symmetric=None):
+    def _get_item_by_rt(self, component, r_range=None, t_range=None, symmetric=None):
         """
         Subsets a specific component by radius and angle theta. Defaults to subset to 50mm from
         the vortex core around the entire 360 degree range. Note that the t_range is counter clockwise
@@ -304,8 +306,8 @@ class AxialVortex(MeanVecFieldCartesian):
         self.Tmax = t_max
         self.core_radius = r_core
         self.core_location = core_location
-        self.Wcore = self._getitem_by_rt('W', r_range=(0, 10)).min()
-        self.Wmean = self._getitem_by_rt('W', r_range=(0, 80)).mean()
+        self.Wcore = self._get_item_by_rt('W', r_range=(0, 10)).min()
+        self.Wmean = self._get_item_by_rt('W', r_range=(0, 80)).mean()
 
         # if free stream velocity isn't specified, infer it from mean axial velocity.
         if self.velocity_fs is None:
@@ -495,6 +497,23 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return self.derivative_set
 
+    def get_turb_visc_by_vtheta(self, pressure_relaxation=1):
+        """
+        calculates viscosity based on the mean velocity profile.
+        (perhaps mixing kinematic and eddy viscosity too much?)
+
+        :param pressure_relaxation:     eta_p in units of microseconds. Defaults to 1.
+        :return:
+        """
+
+        vt = self._get_item_by_rt('T')
+        r = self._get_item_by_rt('r_mesh') / 1000
+        c = self.core_radius / 1000
+        etap = pressure_relaxation / 1e6
+
+        nu = (vt * (etap ** 0.5) / 2) * (((r / c) ** 2 + 1) / (r / c))
+        self.equation_terms['turb_visc_by_vtheta'] = nu
+
     def get_pressure_relax_terms(self, pressure_relaxation=None):
         """
         Calculates the relatinshib between reynolds stress and turbulent viscosity as derived by the
@@ -568,11 +587,11 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         # load and flatten relevant data to scatter
-        r_scat = self._getitem_by_rt(
+        r_scat = self._get_item_by_rt(
             "r_mesh", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten() / self.core_radius
-        rs_scat = self._getitem_by_rt(
+        rs_scat = self._get_item_by_rt(
             "turb_visc_reynolds", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
-        vg_scat = self._getitem_by_rt(
+        vg_scat = self._get_item_by_rt(
             "turb_visc_vel_grad", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
         # convert from log, take polynomial fit, and then convert back to log scale
@@ -612,9 +631,9 @@ class AxialVortex(MeanVecFieldCartesian):
             order = 100
 
         if isinstance(x, str):
-            x = self._getitem_by_rt(x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+            x = self._get_item_by_rt(x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
         if isinstance(y, str):
-            y = self._getitem_by_rt(y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+            y = self._get_item_by_rt(y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
         # smooth the curve
         x_avg, y_avg = smooth_filt(x, y, numpoints, M, std, convolve_mode='same', order=order)
@@ -625,7 +644,7 @@ class AxialVortex(MeanVecFieldCartesian):
         return x_avg, y_avg
 
     def _get_cbar_levels(self, component):
-        comp = self._getitem_by_rt(component).astype('float')
+        comp = self._get_item_by_rt(component).astype('float')
         return np.nanpercentile(comp.filled(np.nan), range(1, 100))
 
     def _get_plot_lims(self, x_core_dist=100, y_core_dist=100):
@@ -680,7 +699,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # get the rest of the layers (component y and the time axis)
         for i in range(0, self.dims[-1]):
-            ysi = self._getitem_by_rt(self.dynamic_set[component_y][:, :, i], **kwargs).flatten()
+            ysi = self._get_item_by_rt(self.dynamic_set[component_y][:, :, i], **kwargs).flatten()
             ysi = ysi[np.invert(ysi.mask)]
             y_sets['mean'].append(np.ma.mean(ysi))
             y_sets['median'].append(np.ma.median(ysi))
@@ -711,7 +730,7 @@ class AxialVortex(MeanVecFieldCartesian):
             high_percentile = VRANGE_DEFAULT[1]
 
         if isinstance(component, str):
-            comp = self._getitem_by_rt(component, r_range=r_range, t_range=t_range, symmetric=symmetric).astype('float')
+            comp = self._get_item_by_rt(component, r_range=r_range, t_range=t_range, symmetric=symmetric).astype('float')
         else:
             comp = component
         vmin = np.nanpercentile(comp.filled(np.nan), low_percentile)
@@ -763,8 +782,8 @@ class AxialVortex(MeanVecFieldCartesian):
         """
 
         # pull in flattened arrays then sort them in ascending order
-        r = self._getitem_by_rt('r_mesh', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
-        t = self._getitem_by_rt('T', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        r = self._get_item_by_rt('r_mesh', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        t = self._get_item_by_rt('T', r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
         # take moving averages for smoothing before taking derivative
         ravg, tavg = smooth_filt(r, t, 1e4, 100, 50, order=50)
@@ -836,10 +855,10 @@ class AxialVortex(MeanVecFieldCartesian):
             kinematic_viscosity = AIR_KINEMATIC_VISCOSITY
 
         # pull in flattened arrays then sort them in ascending order (convert to meters)
-        r_scatter = self._getitem_by_rt('r_mesh', r_range=r_range,
-                                        t_range=t_range, symmetric=symmetric).flatten() / 1000
-        t_scatter = self._getitem_by_rt('T', r_range=r_range,
-                                        t_range=t_range, symmetric=symmetric).flatten()
+        r_scatter = self._get_item_by_rt('r_mesh', r_range=r_range,
+                                         t_range=t_range, symmetric=symmetric).flatten() / 1000
+        t_scatter = self._get_item_by_rt('T', r_range=r_range,
+                                         t_range=t_range, symmetric=symmetric).flatten()
 
         # take moving averages for smoothing before taking derivative
         r_array, t_exp = smooth_filt(r_scatter, t_scatter, 1e4, 100, 50, order=50)
@@ -945,7 +964,7 @@ class AxialVortex(MeanVecFieldCartesian):
         xplot_mesh = (self['x_mesh'] - self.core_location[0]) / self.core_radius
         yplot_mesh = (self['y_mesh'] - self.core_location[1]) / self.core_radius
         areaplot = ax1.contourf(xplot_mesh, yplot_mesh,
-                                self._getitem_by_rt(component_y, **subset_kwargs),
+                                self._get_item_by_rt(component_y, **subset_kwargs),
                                 CONTOUR_DEFAULT_LEVELS,
                                 cmap=CONTOUR_DEFAULT_CMAP)
 
@@ -1028,8 +1047,8 @@ class AxialVortex(MeanVecFieldCartesian):
             cmap = SCATTER_DEFAULT_CMAP
 
         # get the scatter datasets.
-        x = self._getitem_by_rt(component_x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
-        y = self._getitem_by_rt(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        x = self._get_item_by_rt(component_x, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+        y = self._get_item_by_rt(component_y, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
         # convert the data to logarithmic
         if log_y is None:
@@ -1046,7 +1065,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         fig = plt.figure(figsize=figsize, dpi=DEFAULT_DPI, facecolor='w', edgecolor='k')
         if component_c is not None:
-            c = self._getitem_by_rt(component_c, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
+            c = self._get_item_by_rt(component_c, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
             vmin, vmax = self._get_vrange(component_c, r_range=r_range, t_range=t_range)
             plt.scatter(x, y, marker=SCATTER_DEFAULT_MARKER, c=c, cmap=cmap, vmax=vmax, vmin=vmin)
             cb = plt.colorbar(orientation='vertical')
@@ -1173,7 +1192,7 @@ class AxialVortex(MeanVecFieldCartesian):
         if isinstance(component, np.ma.MaskedArray):
             data = component
         else:
-            data = self._getitem_by_rt(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
+            data = self._get_item_by_rt(component, r_range=r_range, t_range=t_range, symmetric=symmetric)
 
         if title is None:
             title = shorthand_to_tex(component)
@@ -1206,7 +1225,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
     def hist_plot(self, component, bins=100):
         """ plots quick and dirty histogram of a component """
-        c = self._getitem_by_rt(component).flatten()
+        c = self._get_item_by_rt(component).flatten()
         fig = plt.figure()
         plt.hist(c[~c.mask], bins=bins, color="grey")
         plt.show()
@@ -1221,11 +1240,11 @@ class AxialVortex(MeanVecFieldCartesian):
         self.get_pressure_relax_fits(r_range=r_range, t_range=t_range, symmetric=symmetric)
 
         # redundantly load the data, this is evidence of a bad code architecture choice
-        r_scat = self._getitem_by_rt(
+        r_scat = self._get_item_by_rt(
             "r_mesh", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten() / self.core_radius
-        rs_scat = self._getitem_by_rt(
+        rs_scat = self._get_item_by_rt(
             "turb_visc_reynolds", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
-        vg_scat = self._getitem_by_rt(
+        vg_scat = self._get_item_by_rt(
             "turb_visc_vel_grad", r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
 
 
@@ -1307,8 +1326,13 @@ if __name__ == "__main__":
     #mvf.scatter_plot('r_mesh', 'dPdr')
     #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **scatter_kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **scatter_kwargs)
-    mvf.pressure_relax_turb_visc_ratio_plot(**scatter_kwargs)
-    mvf.pressure_relax_turb_visc_tot_plot(title="$\\nu_T$", y_label="$\\nu_T$", **scatter_kwargs)
+
+    mvf.get_turb_visc_by_vtheta()
+    mvf.scatter_plot('r_mesh', 'turb_visc_by_vtheta')
+    #mvf.pressure_relax_turb_visc_ratio_plot(**scatter_kwargs)
+    #mvf.pressure_relax_turb_visc_tot_plot(title="$\\nu_T$", y_label="$\\nu_T$", **scatter_kwargs)
+
+
     #mvf.scatter_plot('r_mesh', 'turb_visc_ettap', log_y=True, **kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_total', **scatter_kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_ratio')
