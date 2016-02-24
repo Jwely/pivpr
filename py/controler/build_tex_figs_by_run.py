@@ -44,7 +44,6 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     tfp = TeXRunFigurePage(TEX_MAIN_PATH, "run_{0}".format(run_id), exp, force_recalc=force_recalc)
 
     av = exp.axial_vortex
-    av.get_turb_visc_by_vtheta()
     station_id = (int((run_id - 1) / 10) + 1)
     z_location = "{0:2.2f}".format(av.z_location / 101.6)
 
@@ -124,9 +123,11 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     '''
 
     # scatter plot of mean velocity calculated total viscosity
-    kwargs = {"title": "$\\nu$ by mean tangential velocity"}
-    caption = "Scatter plot of mean total viscosity $\\nu$ vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
-        z_location, av.velocity_fs, station_id)
+    kwargs = {"title": "$\\nu$ solved by ${\\bar{v}_{\\theta}}(r)$",
+              "y_range": (0, 0.015), "x_range": (0, 4), "y_label": ""}
+    caption = "Scatter plot of total viscosity $\\nu$ calculated by mean $\\bar{{v}}_{{\\theta}}$ equation " \
+              "with non-equilibrium pressure at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+              z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_by_vtheta', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # momentum solution (should be identical to velocity gradient term
@@ -151,13 +152,13 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
                   "title": "Radial profile of $\\nu_T$",
                   "y_label": " "}
 
-    kwargs = merge_dicts(turb_kwargs, {"y_range": (-1, 100)})
+    kwargs = merge_dicts(turb_kwargs, {"y_range": (-1, 100), "title": "$\\nu_T$ by Non-Equilibrium Pressure"})
     caption = "Scatter plot of non-equilibrium based $\\nu_T$ vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_total', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # plots of turbulent viscosity as calculated by turbulent viscosity hypothesis
-    kwargs = merge_dicts(turb_kwargs, {"y_range": (0, 1.0)})
+    kwargs = merge_dicts(turb_kwargs, {"y_range": (0, 0.15), "title": "$\\nu_T$ by Turbulent Viscosity Hypothesis"})
     caption = "Scatter plot of $\\nu_T$ vs radius as calculated from the turbulent viscosity hypothesis. " \
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
@@ -201,7 +202,7 @@ def main():
         build_tex_figs_by_run(run_id, include_dynamic=False, force_recalc=False)
 
     # include cartesian coordinate tex figs for example run number 55
-    build_tex_figs_by_run(55, include_cartesian=True)
+    #build_tex_figs_by_run(55, include_cartesian=True)
 
 
 
