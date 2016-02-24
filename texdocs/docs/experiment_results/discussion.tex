@@ -85,10 +85,11 @@ The measured vortex characteristics are shown in Tables
 \ref{table:experiment_results_1} through \ref{table:experiment_results_7} where 
 $I_Z$ is the downstream distance, 
 $V_{nom}$ is the nominal free stream velocity, $dt$ is the time step between 
-image pairs, $V_{free}$ is the actual free stream velocity, $Q$ is the dynamic 
-pressure, $P_{atm}$ is the atmospheric pressure at the time of the test, 
-$T_{tunnel}$ is the temperature measured inside the wind tunnel, $\Phi$ is the 
-relative humidity, $R_{core}$ is the core radius, $\overline{v_{\theta}}_{max}$ 
+image pairs, $V_{free}$ is the actual free stream velocity, $P_{atm}$ is the 
+atmospheric pressure at the time of the test, 
+$T_{tunnel}$ is the temperature measured inside the wind tunnel, $\phi$ is the 
+relative humidity, $\eta_P$ is the pressure relaxation coefficient, $R_{core}$ 
+is the core radius, $\overline{v_{\theta}}_{max}$ 
 is the maximum azimuthal velocity, and $\overline{w}_{mean}$ is the axial 
 velocity averaged over the entire observation area.
 
@@ -460,13 +461,21 @@ and reynolds stress terms in equation \ref{eq:etap_nut}, but did not yield an
 explanation for why a constant turbulent viscosity assumption can be used to 
 accurately approximate the velocity profiles of an axial wave vortex.
 
-Alternatively, and more simply, a total viscosity can be estimated by 
+More simply, a total viscosity can be estimated by 
 substituting circulation strength Reynolds number, $R_\Gamma$, and rearranging 
-equation \ref{eq:ash_vortex_model} for total turbulence, $\nu$.
+equation \ref{eq:ash_vortex_model} for total turbulence, $\nu$, by
 
 \begin{equation}
 \nu = \Bigg[\frac{v_\theta \sqrt{\eta_P}}{2}
 \frac{(r/r_{core})}{(r/r_{core})^2 + 1}\Bigg]^2
 \end{equation}
 
+\noindent
+which was observed to be nearly constant as expected, especially outside of 0.5 
+core radii as shown for an example set in Figure 
+\ref{fig:run_55_turb_visc_by_vtheta_vs_r_meshscatter}
 \input{figs/run_55/run_55_turb_visc_by_vtheta_vs_r_meshscatter}
+
+\begin{equation}
+\nu = \frac{eta_P}{2} v_{\theta, max}^2
+\end{equation}
