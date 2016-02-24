@@ -432,8 +432,8 @@ orders smaller as shown in Figure
 \input{figs/run_55/run_55_turb_visc_reynolds_vs_r_meshscatter}
 \input{figs/run_55/run_55_turb_visc_ettap_vs_r_meshscatter}
 
-The term in the denominator related to the gradient in the stable component of 
-azimuthal velocity, a profile similar to the Reynolds stress term was observed, 
+The term in the denominator related to the mean strain rate, a profile similar 
+to the Reynolds stress term was observed, 
 though the slope was found to be slightly shallower as shown in Figure 
 \ref{fig:run_55_turb_visc_vel_grad_vs_r_meshscatter}.
 
@@ -446,78 +446,27 @@ nature, but is subject to significant noise. The experimentally
 calculated turbulent viscosity utilizing all the terms as in Equation 
 \ref{eq:etap_nut} was found too scattered to be of use, particularly in the 
 vicinity of the vortex core as shown in Figure 
-\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. 
+\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}. Spatial derivatives in 
+cylinrdical coordinates were obtained by a chain rule product between a 
+Cartesian spatial derivative and the sin or cosine of $\theta$, leaving many 
+opportunities for velocities at small angles or small errors in denominators to 
+become very large errors. The opportunities for these errors to arise becomes 
+greater in the vicinity of the core.
 
 \input{figs/run_55/run_55_turb_visc_total_vs_r_meshscatter}
 
-The velocity gradient term in the denominator from Equation \ref{eq:etap_nut}, 
-shown for one test in Figure 
-\ref{fig:run_55_turb_visc_vel_grad_vs_r_meshscatter} can be 
-alternately represented by combining the radial and azimuthal conservation of 
-momentum equations
+This exercise was useful in showing the relative magnitudes of the strain rate 
+and reynolds stress terms in equation \ref{eq:etap_nut}, but did not yield an 
+explanation for why a constant turbulent viscosity assumption can be used to 
+accurately approximate the velocity profiles of an axial wave vortex.
+
+Alternatively, and more simply, a total viscosity can be estimated by 
+substituting circulation strength Reynolds number, $R_\Gamma$, and rearranging 
+equation \ref{eq:ash_vortex_model} for total turbulence, $\nu$.
 
 \begin{equation}
-\rho \frac{v_{\theta}^2}{r} = \frac{dP}{dr}
+\nu = \Bigg[\frac{v_\theta \sqrt{\eta_P}}{2}
+\frac{(r/r_{core})}{(r/r_{core})^2 + 1}\Bigg]^2
 \end{equation}
 
-\noindent
-and
-
-\begin{equation}
-\eta_P \frac{v_\theta}{r} \frac{dP}{dr} = 
-\mu \Big[ \frac{d^2 v_\theta}{dr^2} + \frac{d}{dr} \frac{v_\theta}{r}\Big]
-\end{equation}
-
-\noindent
-to yield a non-linear ordinary differential equation:
-
-\begin{equation}
-\rho \frac{\eta_P}{\mu} \frac{v_{\theta}^3}{r^2} = 
-\Big[ \frac{d^2 v_\theta}{dr^2} + \frac{d}{dr} \frac{v_\theta}{r}\Big]
-\label{eq:momentum_vel_grad}
-\end{equation}
-
-\noindent
-The left hand side of Equation \ref{eq:momentum_vel_grad} contains no spatial 
-derivatives and is much less susceptible to experimental noise as shown in 
-figure \ref{fig:run_55_momentum_vel_grad_vs_r_meshscatter} \cite{ash2011}. With 
-both sides of Equation \ref{eq:momentum_vel_grad} directly evaluated from 
-experimental data, it was found to be especially valid in the core region. 
-However, the steady decline beyond 2 core radii that is seen in the evaluation 
-of the left hand side is not seen in that of the right hand side.
-
-\input{figs/run_55/run_55_momentum_vel_grad_vs_r_meshscatter}
-
-
-In theory, assuming a constant turbulent viscosity, the non-equilibrium 
-solution  implies that turbulent viscosity, the maximum azimuthal velocity, and 
-pressure relaxation can be related by
-
-\begin{equation}
-v_{\theta, max} = \frac{\Gamma_\infty}{4 \pi r} = \sqrt{\frac{2 \nu_T}{\eta_P}}
-\end{equation}
-
-\noindent
-which can be rearranged to solve for turbulent viscosity as
-
-\begin{equation}
-\nu_T = \frac{\eta_P}{2} v_{\theta, max}^2 
-\end{equation}
-
-\noindent
-When this equation is evaluated for the pressure relaxation coefficient, 
-velocity, and station shown in 
-Figure\ref{fig:run_55_turb_visc_total_vs_r_meshscatter}, the resulting 
-turbulent viscosity is $6.15 mm^2/s$, about 40\% the value of the kinematic 
-viscosity of air. Similarly to the classical turbulent viscosity, the range of 
-values calculated from experimental velocity gradients and Reynolds stresses 
-was many times larger than expected. Insight 
-was gained as to the relative magnitudes of diffusion, strain rate, and 
-momentum terms, but direct evaluation of turbulent 
-viscosity was not found to yield a steady value. Spatial derivatives in 
-cylindrical coordinates were obtained by a chain rule product between a 
-Cartesian spatial derivative and the sin or cosine of $\theta$, leaving many 
-opportunities for velocities at small angles or small errors in denominators to 
-turn into very large errors. Additionally, once spatial derivatives were in 
-cylindrical coordinates, further division by potentially zero gradients 
-amplified the effect further. 
+\input{figs/run_55/run_55_turb_visc_by_vtheta_vs_r_meshscatter}
