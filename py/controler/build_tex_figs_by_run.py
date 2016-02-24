@@ -44,6 +44,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     tfp = TeXRunFigurePage(TEX_MAIN_PATH, "run_{0}".format(run_id), exp, force_recalc=force_recalc)
 
     av = exp.axial_vortex
+    av.get_turb_visc_by_vtheta()
     station_id = (int((run_id - 1) / 10) + 1)
     z_location = "{0:2.2f}".format(av.z_location / 101.6)
 
@@ -107,6 +108,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     tfp.add_scatter_plot('r_mesh', 'turb_visc_vel_grad', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # comparison of the two terms
+    '''
     comp_kwargs = {"r_range": ('0.5r', '3.5r'),
                    "t_range": (20, 70),
                    "symmetric": True}
@@ -119,6 +121,13 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     caption = "Polynomial fits of reynolds stress and velocity gradient terms at " \
               "$z/c$={0}, $V_{{free}}$={1}, station {2}.".format(z_location, av.velocity_fs, station_id)
     tfp.add_turb_visc_tot_plot(caption, scatter_width, create_kwargs=tot_fit_kwargs, write_unique=True)
+    '''
+
+    # scatter plot of mean velocity calculated total viscosity
+    kwargs = {"title": r"$\\nu$ by mean tangential velocity"}
+    caption = "Scatter plot of mean total viscosity $\\nu$ vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
+        z_location, av.velocity_fs, station_id)
+    tfp.add_scatter_plot('r_mesh', 'turb_visc_by_vtheta', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
 
     # momentum solution (should be identical to velocity gradient term
     kwargs = merge_dicts(log_kwargs, {"title": r"$\frac{\rho \eta_P}{\mu}\frac{v_{\theta}^3}{r^2}$"})
