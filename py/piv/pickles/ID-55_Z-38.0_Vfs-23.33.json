@@ -18,6 +18,7 @@
     "test_date": "5-Jun", 
     "experiment_id": 55, 
     "n_samples": 200, 
+    "eta_p": 0.392, 
     "temp_tunnel": 295.65, 
     "T_max": 5.5498085309973257, 
     "W_core": 18.66584117647059, 
