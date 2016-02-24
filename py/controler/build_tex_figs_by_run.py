@@ -124,7 +124,7 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
     '''
 
     # scatter plot of mean velocity calculated total viscosity
-    kwargs = {"title": r"$\\nu$ by mean tangential velocity"}
+    kwargs = {"title": "$\\nu$ by mean tangential velocity"}
     caption = "Scatter plot of mean total viscosity $\\nu$ vs radius at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
         z_location, av.velocity_fs, station_id)
     tfp.add_scatter_plot('r_mesh', 'turb_visc_by_vtheta', caption, scatter_width, create_kwargs=kwargs, write_unique=True)
@@ -196,7 +196,7 @@ def main():
     # build tex figs for all trials
     run_ids = range(1, 71)
     #run_ids = range(40, 60)
-    run_ids = [55]
+    #run_ids = [55]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, include_dynamic=False, force_recalc=False)
 
