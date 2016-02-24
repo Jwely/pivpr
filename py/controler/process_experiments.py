@@ -31,14 +31,16 @@ def process_experiments(outname, table_caption, ids=None, min_points=DEFAULT_MIN
 
     # build a dataframe, rename the columns to tex formatting
     df = pd.DataFrame(table.values())
+    df['pres_atm'] /= 1000
+    df['eta_p'] = df['eta_p'].map(lambda x: "%.2f" % x)     # increase precision on eta_p args
 
-    kw_names = ["experiment_id", "z_location_mm", "v_nominal", "dt", "velocity_free_stream", "q", "pres_atm",
-                "temp_tunnel", "rel_humid", "r_mesh_core", "T_max", "W_mean"]
+    kw_names = ["experiment_id", "z_location_mm", "v_nominal", "dt", "velocity_free_stream", "pres_atm",
+                "temp_tunnel", "rel_humid", "eta_p", "r_mesh_core", "T_max", "W_mean"]
 
-    units = ["", "$mm$", "$m/s$", "$\\mu s$", "$m/s$", "$Pa$", "$Pa$", "K", "$\\%$", "$mm$", "$m/s$", "$m/s$"]
+    units = ["", "$mm$", "$m/s$", "$\\mu s$", "$m/s$", "$KPa$", "K", "$\\%$", "$\\mu s$", "$mm$", "$m/s$", "$m/s$"]
 
-    tex_names = ["Run", "$I_Z$", "$V_{nom}$", "$dt$", "$V_{free}$", "$Q$", "$P_{atm}$",
-                 "$T_{tunnel}$", "$\phi$", "$R_{core}$", "$\\overline{v_{\\theta}}_{max}$", "$\\overline{v_{z}}_{mean}$"]
+    tex_names = ["Run", "$I_Z$", "$V_{nom}$", "$dt$", "$V_{free}$", "$P_{atm}$", "$T_{tunnel}$",
+                 "$\\phi$", "$\\eta_P$", "$R_{core}$", "$\\overline{v_{\\theta}}_{max}$", "$\\overline{v_{\\bar{z}}}$"]
 
     df = df[kw_names]
     df.columns = pd.MultiIndex.from_tuples(zip(tex_names, units))
