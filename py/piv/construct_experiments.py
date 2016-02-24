@@ -56,6 +56,7 @@ def construct_experiments(experiment_table_path, experiment_directory_path, ids=
                                         name_tag=name_tag,
                                         include_dynamic=include_dynamic,
                                         velocity_fs=row['v_fs_mean'],
+                                        eta_p=exp.eta_p,
                                         z_location=int(row['z_location'] * 25.4 + 0.5),     # rounded z location in mm
                                         force_recalc=force_recalc,
                                         min_points=min_points)

@@ -5,7 +5,7 @@ from py.piv import AxialVortex
 
 
 def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
-                           velocity_fs=None, z_location=None, min_points=20, force_recalc=False):
+                           velocity_fs=None, z_location=None, eta_p=None, min_points=20, force_recalc=False):
     """
     Returns an AxialVortex instance. Manages pickling of classes to allow one-time-computation
     as often as possible, unless the user overrides it with force_recalc=True.
@@ -31,14 +31,13 @@ def construct_axial_vortex(v3d_dir, pkl_dir, name_tag, include_dynamic=False,
         if os.path.exists(pkl_path_dyn) and not force_recalc:
             av_instance = AxialVortex().from_pickle(pkl_path_dyn)
             av_instance.get_cart_turbulent_viscosity()
-            av_instance.get_pressure_relax_terms()
+            av_instance.get_pressure_relax_terms(eta_p)
             return av_instance
     else:
         if os.path.exists(pkl_path) and not force_recalc:
             av_instance = AxialVortex().from_pickle(pkl_path)
-            av_instance.get_pressure_relax_terms()
             av_instance.get_cart_turbulent_viscosity()
-            av_instance.get_pressure_relax_terms()
+            av_instance.get_pressure_relax_terms(eta_p)
             return av_instance
 
     # build list of all v3d files in directory from which to create the AxialVortex

@@ -497,7 +497,7 @@ class AxialVortex(MeanVecFieldCartesian):
 
         return self.derivative_set
 
-    def get_turb_visc_by_vtheta(self, pressure_relaxation=1):
+    def get_turb_visc_by_vtheta(self, pressure_relaxation):
         """
         calculates viscosity based on the mean velocity profile.
         (perhaps mixing kinematic and eddy viscosity too much?)
@@ -514,7 +514,7 @@ class AxialVortex(MeanVecFieldCartesian):
         nu = (vt * (etap ** 0.5) / 2) * (((r / c) ** 2 + 1) / (r / c))
         self.equation_terms['turb_visc_by_vtheta'] = nu
 
-    def get_pressure_relax_terms(self, pressure_relaxation=None):
+    def get_pressure_relax_terms(self, pressure_relaxation):
         """
         Calculates the relatinshib between reynolds stress and turbulent viscosity as derived by the
         pressure relaxation equations.
@@ -522,6 +522,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :param pressure_relaxation: the pressure relaxation coefficientin microseconds
         :return:
         """
+        print("Solving with pressure relaxation term of {0} microseconds".format(pressure_relaxation))
 
         if pressure_relaxation is None:
             pressure_relaxation = 1e-6

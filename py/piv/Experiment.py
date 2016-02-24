@@ -7,7 +7,7 @@ import json
 class Experiment:
 
     def __init__(self, experiment_id, n_samples, z_location, v_nominal, dt, test_date,
-                 v_fs_mean, v_fs_sigma, q, pres_atm, temp_tunnel, wet_bulb, dry_bulb):
+                 v_fs_mean, v_fs_sigma, q, pres_atm, temp_tunnel, wet_bulb, dry_bulb, eta_p):
         """
         Class to represent the entire state of an experiment. Create one with a
         constructor. Unlike the other classes in the managers module, this class is specific
@@ -27,6 +27,7 @@ class Experiment:
         :param temp_tunnel:     temperature in the tunnel (Celsius float)
         :param wet_bulb:        wet bulb temperature at time of test (Kelvin float)
         :param dry_bulb:        wet bulb temperature at time of test (Kelvin float)
+        :param eta_p:           added pressure relaxation arg
         :return:
         """
 
@@ -45,6 +46,7 @@ class Experiment:
         self.temp_tunnel = temp_tunnel
         self.wet_bulb = wet_bulb
         self.dry_bulb = dry_bulb
+        self.eta_p = eta_p
 
         # calculate relative humidity from inputs
         self.rel_humid = get_rel_humidity(dry_bulb, wet_bulb, pres_atm)
@@ -59,6 +61,9 @@ class Experiment:
         :return:
         """
         self.axial_vortex = axial_vortex_instance
+        self.axial_vortex.get_turb_visc_by_vtheta(self.eta_p)
+        self.axial_vortex.get_pressure_relax_terms(self.eta_p)
+
 
     def to_json(self, json_path):
         """
