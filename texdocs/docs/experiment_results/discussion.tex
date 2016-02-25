@@ -457,7 +457,7 @@ greater in the vicinity of the core.
 \input{figs/run_55/run_55_turb_visc_total_vs_r_meshscatter}
 
 This exercise was useful in showing the relative magnitudes of the strain rate 
-and reynolds stress terms in equation \ref{eq:etap_nut}, but did not yield an 
+and Reynolds stress terms in equation \ref{eq:etap_nut}, but did not yield an 
 explanation for why a constant turbulent viscosity assumption can be used to 
 accurately approximate the velocity profiles of an axial wave vortex.
 
@@ -468,15 +468,50 @@ equation \ref{eq:ash_vortex_model} for total turbulence, $\nu$, by
 \begin{equation}
 \nu(r) = \Bigg[\frac{v_\theta(r) \sqrt{\eta_P}}{2 \sqrt{2}}
 \frac{(r/r_{core})^2 + 1}{(r/r_{core})}\Bigg]^2
+\label{eq:total_visc}
 \end{equation}
 
-Viscosity was calculated from the mean azimuthal velocity and 
-observed to be nearly constant as expected, especially outside of 0.5 
-core radii as shown for an example set in Figure 
-\ref{fig:run_55_turb_visc_by_vtheta_vs_r_meshscatter} where $\eta_P = 0.39 \mu 
-s$,  $v_{\theta, max} = 5.5 m/s$, and $\nu$ cane be estimated to be constant at 
-\num{5.9e-6}.
+Viscosity was calculated from the mean azimuthal velocity, and exhibited an 
+evolving behavior for varied free stream velocities. At low free stream 
+velocities, total viscosity remained fairly constant near the kinematic 
+viscosity of air, with slight increases typically observable between 1 and 1.5 
+core radii and significant increases at less than 0.5 core radii as shown in 
+Figures 
+\ref{fig:run_51_turb_visc_by_vtheta_vs_r_meshscatter} through 
+\ref{fig:run_55_turb_visc_by_vtheta_vs_r_meshscatter}. At a free stream 
+velocity of 27 m/s, two small bumps in total viscosity are present near 1 and 2 
+core radii respectively, and the profile becomes very scattered beyond 2.5 core 
+radii as shown in Figure \ref{fig:run_56_turb_visc_by_vtheta_vs_r_meshscatter}, 
+possibly indicating an incomplete vortex merger. A more extreme scattering and 
+divergence at large core radii continued to be seen with further increasing 
+free stream velocity. Tests at lower free stream velocities consistently showed 
+that total viscosity, and thus turbulent viscosity could be well approximated 
+by a constant value. 
 
+\input{figs/run_51/run_51_turb_visc_by_vtheta_vs_r_meshscatter}
+\input{figs/run_52/run_52_turb_visc_by_vtheta_vs_r_meshscatter}
+\input{figs/run_53/run_53_turb_visc_by_vtheta_vs_r_meshscatter}
+\input{figs/run_54/run_54_turb_visc_by_vtheta_vs_r_meshscatter}
 \input{figs/run_55/run_55_turb_visc_by_vtheta_vs_r_meshscatter}
+\input{figs/run_56/run_56_turb_visc_by_vtheta_vs_r_meshscatter}
+\input{figs/run_57/run_57_turb_visc_by_vtheta_vs_r_meshscatter}
+\input{figs/run_58/run_58_turb_visc_by_vtheta_vs_r_meshscatter}
+\input{figs/run_59/run_59_turb_visc_by_vtheta_vs_r_meshscatter}
+\input{figs/run_60/run_60_turb_visc_by_vtheta_vs_r_meshscatter}
 
-
+While 
+total viscosity generally increased with free stream velocity, the relationship 
+was not as consistent as expected. Equation \ref{eq:total_visc} shows that 
+$\nu$ is related to the square root of the pressure relaxation coefficient, 
+$\eta_P$, which is very strongly dependent upon relative humidity 
+\cite{ash2011}. Relative humidity was calculated from wet bulb and dry bulb 
+measurements were taken with a sling psychrometer, and recorded with a 
+precision no greater than 0.5 degrees Fahrenheit. Variations in relative 
+humidity are likely to have caused sufficient uncertainty in the pressure 
+relaxation coefficient to cause shifts in the total viscosity calculation. A 
+simple comparison revealed that the viscosity seen at low free stream 
+velocities was significantly less than the kinematic viscosity of air, which is 
+very unlikely to be true. Therefore, kinematic 
+viscosity was not subtracted from the total viscosity to yield a measurement of 
+the effective turbulent viscosity.
+\pagebreak
