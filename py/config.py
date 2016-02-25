@@ -45,6 +45,7 @@ DEFAULT_CORE_MARKER_COLOR = 'k'     # default color of lines and crosshair used 
 SCATTER_DEFAULT_MARKER = 'x'        # marker to use on scatter plots
 SCATTER_DEFAULT_RLIM = 100          # default plot
 VRANGE_DEFAULT = (1, 99)            # default percentile values for defining color ramp boundaries
+SCATTER_VRANGE_DFAULT = (5, 95)      # default percentile value for defining scatter plot y axis
 DEFAULT_DPI = 300                   # default dots per inch
 DEFAULT_TITLE_SIZE = 18             # font size for titles
 

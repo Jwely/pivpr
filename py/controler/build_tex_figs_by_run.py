@@ -124,7 +124,8 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 
     # scatter plot of mean velocity calculated total viscosity
     kwargs = {"title": "$\\nu$ solved by ${\\bar{v}_{\\theta}}(r)$",
-              "y_range": (0, 3e-5), "x_range": (0, 4), "y_label": ""}
+              #"y_range": (0, 3e-5),
+              "x_range": (0, 3), "y_label": ""}
     caption = "Scatter plot of total viscosity $\\nu$ calculated by mean $\\bar{{v}}_{{\\theta}}$ equation " \
               "with non-equilibrium pressure at $z/c$={0}, $V_{{free}}$={1}, station {2}.".format(
               z_location, av.velocity_fs, station_id)
@@ -195,9 +196,9 @@ def build_tex_figs_by_run(run_id, include_cartesian=False, include_dynamic=False
 
 def main():
     # build tex figs for all trials
-    run_ids = range(1, 71)
-    #run_ids = range(40, 60)
-    run_ids = [55]
+    run_ids = range(60, 70)
+    #run_ids = range(51, 61)
+    #run_ids = [55]
     for run_id in run_ids:
         build_tex_figs_by_run(run_id, include_dynamic=False, force_recalc=False)
 

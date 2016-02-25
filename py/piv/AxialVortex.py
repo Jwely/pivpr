@@ -1080,8 +1080,8 @@ class AxialVortex(MeanVecFieldCartesian):
 
         # apply manual specifications of x and y range, otherwise guess.
         if y_range is None:
-            vmin, vmax = self._get_vrange(y, 0, 100)
-            plt.ylim(vmin - 0.1, vmax * 1.1)
+            vmin, vmax = self._get_vrange(y, 5, 99)
+            plt.ylim(0, vmax * 1.2)
         else:
             plt.ylim(y_range[0], y_range[1])
         if x_range is not None:
