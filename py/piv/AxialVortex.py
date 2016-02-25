@@ -1301,8 +1301,7 @@ if __name__ == "__main__":
         mvf.to_pickle("temp{0}.pkl".format(exp_num), include_dynamic=False)
     else:
         mvf = AxialVortex().from_pickle("temp{0}.pkl".format(exp_num))
-        mvf.get_pressure_relax_terms()
-
+        mvf.get_spatial_derivatives_cylindrical()
 
 
 
@@ -1323,13 +1322,13 @@ if __name__ == "__main__":
     from matplotlib import cm
 
     #mvf.contour_plot('turb_visc_vel_grad', **contour_kwargs)
-    #mvf.contour_plot('turb_visc_total', **contour_kwargs)
+    mvf.contour_plot('drdr', **contour_kwargs)
     #mvf.scatter_plot('r_mesh', 'dPdr')
     #mvf.scatter_plot('r_mesh', 'turb_visc_reynolds', log_y=True, **scatter_kwargs)
     #mvf.scatter_plot('r_mesh', 'turb_visc_vel_grad', log_y=True, **scatter_kwargs)
 
-    mvf.get_turb_visc_by_vtheta()
-    mvf.scatter_plot('r_mesh', 'turb_visc_by_vtheta')
+    #mvf.get_turb_visc_by_vtheta()
+    #mvf.scatter_plot('r_mesh', 'turb_visc_by_vtheta')
     #mvf.pressure_relax_turb_visc_ratio_plot(**scatter_kwargs)
     #mvf.pressure_relax_turb_visc_tot_plot(title="$\\nu_T$", y_label="$\\nu_T$", **scatter_kwargs)
 

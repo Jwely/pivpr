@@ -388,7 +388,7 @@ Within the core region, a one or two equation turbulence model where $\nu_T$ is
 a function of the velocity gradients, such as the $k-\epsilon$ model is likely 
 required. While the scatter plot is very noisy outside the core region, 
 90\% of values consistently fell within a band of small positive values between 
-0 and 0.1 $m^2/s$, which is 6 orders of magnitude larger than expected.
+0 and 0.1 $m^2/s$, which is 5 orders of magnitude larger than expected.
 These trends were observed consistently in all vortices.
 
 \subsection{Non-equilibrium turbulence}
@@ -466,16 +466,17 @@ substituting circulation strength Reynolds number, $R_\Gamma$, and rearranging
 equation \ref{eq:ash_vortex_model} for total turbulence, $\nu$, by
 
 \begin{equation}
-\nu = \Bigg[\frac{v_\theta \sqrt{\eta_P}}{2}
-\frac{(r/r_{core})}{(r/r_{core})^2 + 1}\Bigg]^2
+\nu(r) = \Bigg[\frac{v_\theta(r) \sqrt{\eta_P}}{2 \sqrt{2}}
+\frac{(r/r_{core})^2 + 1}{(r/r_{core})}\Bigg]^2
 \end{equation}
 
-\noindent
-which was observed to be nearly constant as expected, especially outside of 0.5 
+Viscosity was calculated from the mean azimuthal velocity and 
+observed to be nearly constant as expected, especially outside of 0.5 
 core radii as shown for an example set in Figure 
-\ref{fig:run_55_turb_visc_by_vtheta_vs_r_meshscatter}
+\ref{fig:run_55_turb_visc_by_vtheta_vs_r_meshscatter} where $\eta_P = 0.39 \mu 
+s$,  $v_{\theta, max} = 5.5 m/s$, and $\nu$ cane be estimated to be constant at 
+\num{5.9e-6}.
+
 \input{figs/run_55/run_55_turb_visc_by_vtheta_vs_r_meshscatter}
 
-\begin{equation}
-\nu = \frac{eta_P}{2} v_{\theta, max}^2
-\end{equation}
+
