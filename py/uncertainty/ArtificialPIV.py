@@ -41,7 +41,7 @@ class ArtificialPIV:
 
         self.mesh = {'x_px': x_mesh,            # integer meshgrid of x pixel indices
                      'y_px': y_mesh,            # integer meshgrid of y pixel indices
-                     'z_mm': x_mesh * 0}        # integer meshgrid of z indices (all zero)
+                     'z_mm': np.zeros(dims)}    # integer meshgrid of z indices (all zero)
 
         self.images = {'La': np.zeros(dims),  # left image at time = 0
                        'Lb': np.zeros(dims),  # left image at time = dt
