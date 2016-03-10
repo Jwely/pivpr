@@ -1,7 +1,6 @@
 # pivpr
 
 [![DOI](https://zenodo.org/badge/16003/Jwely/pivpr.svg)](https://zenodo.org/badge/latestdoi/16003/Jwely/pivpr)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Jwely/pivpr/master/LICENSE.md)
 
 Exploration of the Pressure Relaxation phenomena with Particle Image Velocimetry, or `pivpr` for short. 
 
