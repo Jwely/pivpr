@@ -98,14 +98,18 @@ encounters \cite{ahmad2014}.
 
 \section{Vortex Model with non-equilibrium Pressure}
 
-Non equilibrium pressure phenomena arises by the application of the 
-Hamilton variational principle to describe the volume viscosity in fluids 
-\cite{zuckerwar2006}. When subject to conservation of mass, conservation of 
-reacting species, and material entropy constraints, the procedure yields two 
-dissipative terms in the Navier Stokes equation; a traditional volume viscosity 
-term and a term proportional to the material time derivative of the pressure 
-gradient \cite{zuckerwar2009}. The resulting modified Navier Stokes equation 
-can be expressed as
+Non-equilibrium pressure influences on an incompressible, Newtonian fluid can 
+be introduced through the application of the Hamilton variational principle.
+\cite{zuckerwar2006} employed this approach in an attempt to clarify confusion 
+associated with the volume or bulk viscosity coefficient for simple fluids. 
+They were concerned primarily with its relevance to high-speed compressible 
+flows. When Hamilton's principle was subjected to conservation of mass, 
+conservation of reacting species, and material entropy constraints, the 
+procedure resulted in 
+two dissipative coefficients in the Navier Stokes equation; a traditional 
+volume viscosity term and a term that was proportional to the material time 
+derivative of the pressure gradient \cite{zuckerwar2009}. The resulting 
+modified Navier Stokes equation can be expressed as
 
 \begin{equation}
 \rho \frac{Dv}{Dt} = - \nabla[P - \eta_p] -
@@ -117,10 +121,11 @@ can be expressed as
 \end{equation}
 
 \noindent
-Where $\eta_p$ is the pressure relaxation coefficient, $\eta_v$ is the volume 
+where $\eta_p$ is the pressure relaxation coefficient, $\eta_v$ is the volume 
 viscosity, $P$ is pressure, $\rho$ is density of the fluid, and $\mu$ is the 
-dynamic viscosity. If each of these is considered constant, and body forces are 
-neglected, conservation of momentum simplifies to 
+dynamic viscosity. If each of the thermophysical parameters are considered 
+to be constant, and body forces are 
+neglected, the resulting conservation of momentum equation simplifies to 
 
 \begin{equation}
 \rho \frac{Dv}{Dt} = - \nabla P + \eta_p \nabla \frac{DP}{Dt} - 
@@ -143,9 +148,10 @@ x_i} \Bigg( \frac{1}{\rho} \frac{D\rho}{Dt} \Bigg) \Bigg]
 \label{eq:modified_ns3}
 \end{equation}
 
-The term in brackets has been examined for a relationship with sound production 
-in incompressible flows, but in any scenario should be negligibly small when 
-multiplied by the pressure relaxation coefficient. Thus, Equation 
+The term in brackets has been examined and appears to be related to sound 
+production 
+in incompressible flows, but in any scenario, it should be negligibly small 
+when multiplied by the pressure relaxation coefficient. Thus, Equation 
 \ref{eq:modified_ns3} can be dramatically simplified \cite{ash2011}.
 
 \begin{equation}
@@ -165,8 +171,8 @@ v_\theta(r) = \frac{\Gamma_0}{\pi} \frac{\sqrt{2}}{R_\Gamma \sqrt{\nu \eta_p}}
 \end{equation}
 
 \noindent
-Where $R_\Gamma$ is the circulation based Reynolds number. The maximum 
-azimuthal velocity occurs where $r = r_{core}$, and can be given by 
+where $R_\Gamma$ is the circulation based Reynolds number. The maximum 
+azimuthal velocity occurs where $r = r_{core}$, and can be represented as
 
 \begin{equation}
 v_{\theta, max} = \frac{\Gamma_0}{\pi} \frac{1}{R_\Gamma \sqrt{2 \nu 
@@ -183,12 +189,13 @@ v_\theta(r) = 2 v_{\theta, max}\frac{(r / r_{core})}{(r/r_{core})^2 + 1}
 \label{eq:ash_vortex_model2}
 \end{equation}
 
-Equation \ref{eq:ash_vortex_model2} is of the exact same form as the 
-empirically based Burnham-Hallock model, but is an exact solution to the Navier 
-Stokes equations. As the pressure relaxation coefficient shrinks to zero, the 
-solution becomes a potential vortex similar to the Lamb-Oseen model. For very 
-large pressure relaxation coefficients, the velocity distribution becomes 
-similar to that of a rigid body rotation as in the Rankine model. 
+Equation \ref{eq:ash_vortex_model2} is exactly the same form as the 
+empirically based Burnham-Hallock model, but is an exact solution to the 
+modified Navier Stokes equations. As the pressure relaxation coefficient 
+shrinks to zero, the solution becomes a potential vortex similar to the 
+Lamb-Oseen model. For very large pressure relaxation coefficients, the velocity 
+distribution becomes similar to that of a rigid body rotation as in the inner 
+portion of the Rankine model.
 
 
 \section{Turbulent Structure of Axial Vortices}
