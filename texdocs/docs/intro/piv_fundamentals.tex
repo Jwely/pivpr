@@ -1,18 +1,19 @@
 \section{Fundamentals of Particle Image Velocimetry}
 
-Particle Image Velocimetry, or PIV, is a class of methods employed by 
+Particle Image Velocimetry, or PIV, is a class of methods employed in 
 experimental fluid mechanics to measure instantaneous vector velocity fields by 
-measuring the displacements of small visible particles which follow the motion 
-of the fluid. Figure \ref{fig:quiver_example} shows a typical 
-resulting vector field from measurements of a vortical flow. Each of these 
-two-dimensional vectors was measured simultaneously in a thin sheet of fluid. 
-The velocity of the fluid is sensed by acquiring images of well entrained 
-particles at precise times and measuring the displacement of those particles. 
-This is accomplished with the use of cameras for acquiring images and an 
-intense laser to illuminate particles within the desired plane. 
-This technique can be used to study flows in gases and liquids, and is derived 
-from techniques originally developed to measure deformations on the surface of 
-solid material \cite{arroyo1991,adrian1991}.
+measuring the displacements of small visible particles (smoke or fog) which 
+follow the motion of the fluid. Figure \ref{fig:quiver_example} shows a typical 
+resulting vector field produced from measurements of a vortical flow. Each of 
+these two-dimensional vectors was measured simultaneously across a thin sheet 
+of illuminated fluid, captured in the planar volume. The velocity of the fluid 
+is deduced by acquiring images of well entrained particles at precise times and 
+measuring the displacement of those particles detected during the time 
+interval. This is accomplished with the use of cameras for acquiring images 
+and an intense laser light sheet to illuminate particles within the desired 
+plane. This technique can be used to study flows in gases and liquids, and is 
+derived from techniques originally developed to measure deformations on the 
+surface of solid material \cite{arroyo1991,adrian1991}.
 
 \begin{figure}[H]
 	\centering
@@ -25,62 +26,69 @@ solid material \cite{arroyo1991,adrian1991}.
  
 \subsection{The Case for PIV}
 
-Unlike other flow measurement techniques, PIV is a non-invasive method to 
-directly measure time and displacement, and thus velocity. PIV is also capable 
+Unlike other flow measurement techniques, PIV is considered to be a 
+non-invasive method to directly measure particle displacements occurring during 
+a precise time interval, and thus determine the particle velocity in the 
+viewing plane. PIV is also capable 
 of resolving vector measurements at many positions within a two dimensional 
 slice of the flow field simultaneously, while other measurement techniques 
-require taking data at many locations sequentially over a much greater period 
-of time. PIV measurements can also be used to infer lift and drag forces on an 
-solid body \cite{noca1997}. Single camera PIV can measure two components of the 
-velocity vectors aligned with the image plane, but the PIV method is capable of 
-resolving many dimensions of fluid flow with incremental increases in system 
-complexity. The addition of another camera allows the full three dimensional 
-velocity vector to be measured, and a sweeping beam laser or holographic PIV 
-architecture allows the interrogation of an entire volume of flow field instead 
-of a slice \cite{barnhart1994,elsinga2006,kahler2000}.
+require taking data at many locations sequentially over a much longer period 
+of time. PIV measurements can also be used to infer lift and drag forces on a 
+solid body \cite{noca1997}. Single camera PIV can measure the two components of 
+the velocity vectors aligned with the image plane, but the PIV method is 
+capable of resolving many dimensions of fluid flow with incremental increases 
+in system complexity. The addition of a second camera can enable the 
+measurement of the three dimensional velocity vector, and a sweeping beam laser 
+or holographic PIV architecture allows the interrogation of an entire volume of 
+flow field instead of a "planar" slice 
+\cite{barnhart1994,elsinga2006,kahler2000}.
 
-Stereo PIV is used widely because it provides a full velocity vector, and 
-requires only an additional camera, slightly more complex calibration and 
-software to process the imagery. A stereo PIV system with a 
-stationary sheet laser can resolve three dimensional velocity vectors and their 
-fluctuations within a two dimensional slice of fluid flow. A two point 
-correlation tensor containing important information about the turbulent 
-structure of a flow can be obtained readily with PIV. The non-invasive nature 
-of PIV, combined with the  ability to interrogate a flow volume very quickly 
-for information with high dimensionality makes it exceptionally useful in fluid 
-mechanics. \cite{adrian1991}
+Stereo PIV is used widely because it provides full velocity vector resolution, 
+and requires only one additional camera and a slightly more complex 
+calibration process and software to process the imagery. A stereo PIV system 
+employing a  stationary sheet laser can resolve three dimensional mean velocity 
+vectors and their associated fluctuations within a two dimensional slice of 
+fluid flow. A 
+two point correlation tensor containing important information about the 
+turbulent structure of a flow can be obtained readily with PIV. The 
+non-invasive nature of PIV, combined with the  ability to interrogate a flow 
+volume very quickly for information with high dimensionality makes it 
+exceptionally useful in fluid mechanics. \cite{adrian1991}
 
 \subsubsection{PIV for the study of Turbulence}
-The study of turbulent flows requires a large range of spatial and velocity 
-scales. Therefore, measurement techniques used to study turbulent phenomena 
-require a significant spread between the lowest measurable velocity, and the 
-highest \cite{barnhart1994}. Though PIV has grown in popularity, it is not a 
-complete replacement for more mature techniques including hot-wire anemometry. 
+The study of turbulent flows requires a large range of spatial and temporal 
+velocity scales. Therefore, measurement techniques used to study turbulent 
+phenomena require a significant spread between the lowest resolvable velocity, 
+and the highest \cite{barnhart1994}. Although PIV has grown in popularity, it 
+is not a complete replacement for more mature techniques including hot-wire 
+anemometry. 
 It has been shown that the attenuation of the velocity and velocity derivative 
 statistics is significantly higher with PIV than with hot-wire anemometry due 
-to the volume averaging associated with PIV techniques. 
-However, correction procedures have been developed that allow corrected PIV 
-measurements of turbulent kinetic energy to agree closely with hot-wire 
-anemometry measurements \cite{lavoie2007,kasagi1991}. 
+to the volume averaging associated with PIV techniques, and the aerodynamic and 
+inertial behavior of the particles in the flow.
+However, correction procedures have been developed that have been shown to 
+allow corrected PIV measurements of turbulent kinetic energy to agree closely 
+with hot-wire anemometry measurements \cite{lavoie2007,kasagi1991}. 
 
-Reynolds stresses can be extracted from the two point correlation averaged over 
-an interrogation window. With this technique, one Reynolds stress value will be 
+Reynolds stresses can be extracted from the two point correlations averaged 
+over 
+an interrogation window. With this technique, one Reynolds stress value can be 
 obtained for each of the smallest interrogation windows, which are typically 
 several pixels in size. In this technique, the particle displacements are found 
 by finding the peak of the correlation function of image pairs, transformed 
-into velocities and broken down into stable and fluctuating components typical 
+into velocities and divided into mean and fluctuating components typical 
 of a Reynolds averaging approach. Alternatively, single-pixel resolution 
 Reynolds stress measurements can be obtained by direct examination of the 
 correlation function. This technique can estimate Reynolds stresses at an 
-enhanced resolution with a few percentage points of error with a set of several 
-thousand PIV image pairs \cite{scharnowski2011}.
+enhanced resolution with errors on the order of a few percent when employing a 
+set of several thousand PIV image pairs \cite{scharnowski2011}.
 
 \subsection{Principles of Planar PIV}
 
 A simple planar PIV system consists of a double pulsed laser, light sheet 
 forming optics, particle seed, a single lens camera, image digitization 
 hardware, and a computer system for data storage and subsequent analysis. The 
-optical geometry of a planar PIV experiment is shown in figure 
+optical geometry of a planar PIV experiment is shown schematically in figure 
 \ref{fig:mono_piv}.
 
 \begin{figure}[H]
@@ -93,46 +101,49 @@ optical geometry of a planar PIV experiment is shown in figure
 
 The 
 underlying concept behind all PIV is that light scattered from the particles as 
-they move through the flow field allows a pair of images to capture information 
-about the motion of that particle. Double pulsed illumination is commonly used 
-in PIV systems due to its relatively low cost and complexity compared with 
-multiple laser source systems. The energy required to adequately illuminate an 
-area of interest depends upon the size of that area, and the scattering 
-properties of the particle seed. Solid state Nd:YAG lasers are typically used 
-for this purpose \cite{adrian2011}. An $(X, Y, Z)$ coordinate system 
-is defined 
-within the light sheet that exists in $(X, Y)$ space, and relates linearly to a 
+they move through the illuminated flow field allows a pair of images to capture 
+information about the motion of that particle. Double pulsed illumination is 
+commonly employed in PIV systems due to its relatively low cost and simplicity
+compared with multiple laser source systems. The energy required to adequately 
+illuminate a planar area of interest depends upon the size of that area, and 
+the scattering properties of the particle seed. Solid state Nd:YAG lasers are 
+typically used for this purpose \cite{adrian2011}. An $(X, Y, Z)$ coordinate 
+system is defined within the light sheet that exists in a so-called $(X, Y)$ 
+space, and that can be related linearly to a 
 coordinate system in the image plane of the camera in $(X_p, Y_p)$ pixel space. 
-At a time $t$, a laser light sheet is produced for a short pulse and the camera 
-captures an image of the light scattering from particles within the flow. At 
-some short time later, $t + dt$, a second pulse occurs and a second image is 
-taken. By measuring the pixel displacements $(\Delta X_p, \Delta 
+At a specific initiation time $t$, a laser light sheet is produced with a short 
+duration pulse while the camera shutter is open to 
+capture an image of the light scattering from particles within the flow domain. 
+At some short time later, $t + dt$, a second light pulse occurs and a second 
+image is taken. By measuring the pixel displacements $(\Delta X_p, \Delta 
 Y_p)$ for a particle in the image plane, and transforming the coordinates into 
-the plane of the laser one obtains $(\Delta X, \Delta Y, \Delta Z)$. This 
-coordinate transform can be obtained from precise information about the optical 
-geometry of the system, or by direct measurement of calibration data 
+the plane of the laser sheet, one obtains $(\Delta X, \Delta Y, \Delta Z)$. 
+This coordinate transform can be obtained from precise information about the 
+optical geometry of the system, or by direct measurement of calibration data 
 \cite{fouras2007}.The method of direct measurement of a calibration target was 
-used in this research. 
+employed in this research. 
 
 The detection rate, accuracy, and reliability of PIV depends upon careful 
-selection of experimental parameters. Kean and Adrian suggest a set of six 
+selection of experimental parameters. \cite{keane1990} suggest a set of six 
 important dimensionless quantities and ideal operating ranges that improve the 
 chances of high quality PIV results . The parameters 
-are data validation criterion, particle image density, relative in-plane image 
-displacement, relative out-of-plane displacement, velocity gradient, and the 
-ratio of the mean image diameter to the interrogation spot diameter 
-\cite{keane1990,lawson1997b}. Steep velocity gradients create random 
-errors as the 
+are: (1) data validation criterion, (2) particle image density, (3) relative 
+in-plane image displacement, (4) relative out-of-plane displacement, (5) 
+velocity gradient, and (6) the ratio of the mean image diameter to the 
+interrogation spot diameter \cite{keane1990,lawson1997b}. Steep flow velocity 
+gradients create random errors, because the 
 individual particle displacements cover a discreet range within an 
 interrogation spot. Particle displacements should be restricted to 25\% of the 
-interrogation spot diameter for in-plane velocities, and to 25\% of the light 
+interrogation spot diameter for in-plane velocities, and to no more than 25\% 
+of the light 
 sheet thickness in out-of-plane velocities. One way to mitigate both of these 
-effects is to use as high resolution PIV as possible, or by scaling the 
-interrogation area down by altering the zoom of the cameras. Since the velocity 
-profile of an axial vortex can contain high velocity gradients in the vicinity 
-of the core, and both in-plane and out-of-plane velocities are expected to be 
-high, the present experiments used 50mm lenses to zoom each camera to 
-focus on a small an interrogation plane as possible \cite{prasad1992}.
+limitations is to use as highest resolution PIV possible, or by scaling the 
+interrogation area down by altering the zoom setting on the camera lenses. 
+Since the velocity profile of an axial vortex can contain high velocity 
+gradients in the vicinity of the core, and both in-plane and out-of-plane 
+velocities are expected to be high, the present experiments used 50mm lenses to 
+zoom each camera to focus on the smallest interrogation plane practical
+\cite{prasad1992}.
 
 \subsection{Principles of Stereo PIV}
 
@@ -140,7 +151,8 @@ Classical single camera PIV is only capable of capturing the projection of the
 velocity vector on the image plane. The out-of-plane component is lost 
 completely, and the in-plane components are affected by unrecoverable error. In 
 Stereo PIV, a pair of cameras may obliquely view the same plane and the entire 
-3d velocity vector may be inferred using the camera geometry. This technique 
+three dimensional velocity vector can be inferred using the camera setup 
+geometry. This technique 
 includes tilting the backplanes of the cameras to satisfy the Scheimpflug image 
 criteria and a dewarping function based on camera geometry to account for 
 projective distortion \cite{willert1997}. An example of the geometric set up 
@@ -162,20 +174,22 @@ stereo PIV \cite{lawson1997b,lawson1997}.
 The "Particles" part of the PIV acronym refers to the small, highly reflective 
 solid or liquid spheres that are entrained within a flow. It is assumed that 
 the movement of the particles is representative of the fluid which propels them 
-through the air, but this assumption deserves further examination 
-\cite{roscoe1952}. Since particles have mass and inertia, the particles motion 
-is a function of the force exerted upon it by the fluid, and by gravitational 
-or magnetic body forces. As a particle travels along and encounters fluid which 
-has changed direction, it does not respond instantaneously. The particles exact 
-response to rapid changes in velocity in the carrying fluid is of great 
-interest to the study of turbulence. It has been found that lightweight 
+through the fluid, but this assumption deserves further examination 
+\cite{roscoe1952}. Since particles have mass and ineertia, the particle motion 
+is a function of the viscous forces exerted upon them by the fulid, and by 
+gravitational or magnetic body forces. As a particle is convected with the 
+fluid and the local fluid encounters a change in direction, the particle cannot 
+respond instantaneously. The exact response to rapid changes in velocity in the 
+transporting fluid is of great interest to the study of turbulence.It has been 
+found that lightweight 
 particles have a tendency to collect in regions of high strain rate and low 
 vorticity. However, extremely light particles exhibit weaker preferential 
-concentration as they more accurately follow fluid motion, and very heavy 
-particles are relatively insensitive to turbulent velocity fluctuations 
-\cite{squires1990}. Evidence of preferential particle collection can be seen in 
-wake vortex PIV, as the vortex core is identifiable as a small spot of lower 
-particle density as in figure \ref{fig:vortex_core_particles}.
+concentration effects because they follow the fluid motion more closely, while 
+relatively heavy particles become virtually insensitive to turbulent velocity 
+fluctuations \cite{squires1990}. Evidence of preferential particle collection 
+can be seen in wake vortex PIV, where the vortex core is identifiable as a 
+small spot of lower particle density as in Figure 
+\ref{fig:vortex_core_particles}.
 	
 \begin{figure}
 	\centering
@@ -185,29 +199,33 @@ particle density as in figure \ref{fig:vortex_core_particles}.
 	\label{fig:vortex_core_particles}
 \end{figure}
 
-As a particles inertia and diameter shrinks, it becomes capable of following 
-smaller turbulent length scales, but the prime consideration for particles is 
-the ability to detect them. The intensity of the light reflecting from a 
+As the characteristic inertia and diameter of seed particles shrinks, they 
+become capable of following 
+smaller turbulent length scales, but the prime consideration for particles 
+becomes the ability of a camera system to detect the light which scatters from 
+them. The intensity of the light reflecting from a 
 particles should be sufficient to reach 30\% to 50\% of the saturation level of 
-the recording medium. The controlling factors for intensity of reflected light 
+the recording device. The controlling factors for intensity of reflected light 
 are particle size, laser power, and refractive index \cite{adrian2011}. Thus, 
-particles which are small enough to ensure turbulent structures on the time and 
-length scales of interest can be adequately represented in the particles 
-motion, but large enough to be detected must be selected. It has been 
-demonstrated that particles on the scale of one micrometer and between 0.56 and 
-1.62 times the density of the fluid, the particles can accurately represent 
-turbulent structures on the order of many thousand Hertz \cite{mei1996}. In the 
-present study, $CO_2$ filled mineral oil bubbles generated with a Laskin 
-nozzle fog generater were used as particle seed. These droplets have a nominal 
-diameter of 0.6 micrometers and densities of 1.55 times that of air were used.
+particles which are small enough to ensure sensitivity to turbulent structures 
+on the time and length scales of interest must be small enough to respond to 
+those turbulent fluctuation scales, but large enough to be detected. It has 
+been demonstrated that particle dimensions of one micrometer with densities 
+between 0.56 and 1.62 times the density of the fluid enable the particles to 
+respond accurately to turbulent structures in air on the order of many thousand 
+Hertz \cite{mei1996}. In the 
+present study, $CO_2$ filled mineral oil bubbles generated with an MDG MAX 3000 
+APS fog generator with a Laskin 
+nozzle were used as particle seed. These droplets have a nominal 
+diameter of 0.6 micrometers and densities of 1.55 times that of air were used 
+\cite{mdgfog}.
 
 The density of particle seeding must be sufficient for a correlation to be 
 generated between frames for every small interrogation spot in the survey 
 plane. In an instance where only one or two particles are visible in the first 
 frame at the edge of an interrogation sector, then those particles exit the 
 sector for the second frame, to be replaced by new particles 
-entering the area from the other side, spurious results will be produced. 
-Excessively dense particles 
+entering the area from the other side, spurious results will be produced.
 
 
 \subsection{Image processing}
