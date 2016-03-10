@@ -4,9 +4,10 @@ axial wake vortices. Among these models are, in order of introduction, the
 Rankine, Lamb-Oseen, Burnham-Hallock, and Proctor models \cite{ahmad2014}. The 
 simplest and oldest model, the Rankine vortex, approximates the azimuthal 
 velocity of the vortex within the core zone as a rigid body of rotating fluid, 
-with velocity trailing off according to the inverse of radius at the core 
-boundary \cite{rankine1869}. The azimuthal velocity profile of a Rankine vortex 
-is given by Equations \ref{eq:rankine1} and \ref{eq:rankine2}.
+with that component of velocity decreasing as dictated by an inviscid potential 
+flow model, predicting that the azimuthal velocity decreases with the inverse 
+of radius beyond the central core boundary \cite{rankine1869}. The azimuthal 
+velocity profile of a Rankine vortex is given by
 
 \begin{equation}
 v_{\theta}(r) = \frac{\Gamma_0}{2 \pi r_{core}} \frac{r}{r_{core}} 
@@ -16,25 +17,27 @@ v_{\theta}(r) = \frac{\Gamma_0}{2 \pi r_{core}} \frac{r}{r_{core}}
 
 \begin{equation}
 v_{\theta}(r) = \frac{\Gamma_0}{2 \pi r}
+	\text{ for } r > r_{core}
 	\label{eq:rankine2}
 \end{equation}
 
 \noindent
-Where $\Gamma_0$ is the circulation and $r_{core}$ is the radius of the core, 
+where $\Gamma_0$ is the circulation and $r_{core}$ is the core radius,
 which is defined as the location of the maximum azimuthal velocity, 
 $v_{\theta, max}$. The azimuthal velocity $v_{\theta}$, is proportional to 
-radius $r$, in the core zone, but proportional to $1/r$ in the area outside the 
-core zone. This discontinuity makes the model unsuitable in the vicinity of the 
-core region of the vortex. The model is unsuitable for the study of unsteady 
-flow or turbulence, and the rigid body assumption at the core has been 
-experimentally shown to be invalid.
+radius $r$, in the core zone, but proportional to $1/r$ in the region outside 
+the core zone. This shear stress discontinuity makes the model unsuitable in 
+the vicinity of the core region of the vortex. The model is therefore 
+unsuitable for the study of unsteady flow or turbulence, and the rigid body 
+assumption within the core has been shown experimentally to be invalid.
 
-Significantly later, the Lamb-Oseen vortex model was developed from an 
+Much later, the Lamb-Oseen vortex model was developed from an 
 analytical solution to the Navier-Stokes equations. In this model, a potential 
-vortex with an infinite velocity at the centerline was subject to viscous 
-decay. The solution produces a continuous, unsteady function of the azimuthal 
-velocity profile as shown in Equations \ref{eq:lamb1} and \ref{eq:lamb2} 
-\cite{lamb1932}.
+line vortex with an infinite velocity at the centerline was introduced 
+instantaneously as a point, then subjected to viscous decay. That solution 
+produces a continuous, unsteady solution for the azimuthal 
+velocity profile at any time after the introduction of the discontinuity, given 
+as as
 
 \begin{equation}
 v_{\theta}(r,t) = \frac{\Gamma_0}{2 \pi r_{core}}[1 - 
@@ -43,7 +46,7 @@ v_{\theta}(r,t) = \frac{\Gamma_0}{2 \pi r_{core}}[1 -
 \end{equation}
 
 \noindent
-Where the core radius dilates according to 
+where the core radius dilates according to 
 
 \begin{equation}
 r_{core}(t) = \sqrt{4 \nu t}
@@ -51,7 +54,7 @@ r_{core}(t) = \sqrt{4 \nu t}
 \end{equation}
 
 \noindent
-Where $\nu$ is the dynamic viscosity. Alternatively, the azimuthal velocity 
+Utilizing the kinematic viscosity, $\nu$. Alternatively, the azimuthal velocity 
 profile can be expressed in terms of the maximum azimuthal velocity, 
 $v_{\theta, max}$, as
 
@@ -62,7 +65,7 @@ v_{\theta}(r,t) = v_{\theta, max} (1 + \frac{1}{2 \alpha}) \frac{r_{max}}{r}
 \end{equation}
 
 \noindent
-Where the core radius dilates according to 
+where the core radius dilates according to 
 
 \begin{equation}
 r_{core}(t) = \sqrt{\alpha 4 \nu t}
@@ -70,7 +73,8 @@ r_{core}(t) = \sqrt{\alpha 4 \nu t}
 \end{equation}
 
 \noindent
-Where $\alpha = 1.25643$ \cite{davenport1996}. Like the Rankine vortex, a 
+In the case where $\alpha = 1.25643$ \cite{davenport1996}. Like the Rankine 
+vortex, a 
 Lamb-Oseen vortex does not allow for unsteady flow. In addition, the predicted 
 centerline velocity at $r=0$ is undefined. It has utility in estimating average 
 velocity profiles, and has been used to initialize large eddy 
