@@ -1,17 +1,18 @@
 \section{Stereo PIV Data processing}
 
-Raw PIV data was processed into text files containing lists of vectors and 
-positions from raw image data with commercial INSIGHT software. 
-This format is considered to be the 
+PIV data were processed into text files containing lists of vectors and 
+positions from raw image data using 
+INSIGHTINSIGHT\textsuperscript{\textcopyright} software. 
+This format was considered to be the 
 starting point for the present analysis. Each vector is recorded as a row in a 
 "v3d" file, with a set of position coordinates,velocity 
 vector components, and two quality control flags that were used to reduce 
-spurious vector count. An example of this data is shown in Table 
+spurious vector counts. An example of this data is shown in Table 
 \ref{table:v3d_row_example}.
 
 \input{tables/v3d_row_example}
 
-The position coordinates are expressed in units of millimeters from 
+The position coordinates are expressed in units of millimeters away from 
 the fiducial mark on the target used for calibration. These coordinates are 
 expressed from the viewpoint of the cameras, which were pointed upstream; 
 positive $X$ coordinates are to the right, positive $Y$ is upwards, and 
@@ -19,20 +20,18 @@ positive $Z$ is towards the cameras. Vector components are recorded as $U$,
 $V$ and $W$. 
 
 \subsection{Reynolds Averaging}
-Since each run contained 200 separate vector sets, this data needed to be 
-synthesized into 
-values that compare well with the Reynolds Averaged Navier Stokes equations in 
-cylindrical coordinates. This processing was performed in Python 2.7 and 
-Matlab, with much of the code entirely replicated in each language. 
+Since each run contained 200 separate vector sets, the data needed to be 
+synthesized into unsteady velocity can enable examination of the Reynolds 
+Averaged Navier Stokes equations in cylindrical coordinates. This processing 
+was performed employing \textit{Python 2.7} and 
+\textit{Matlab}, with much of the code entirely replicated in each language. 
 First, text files with tables of vector data were loaded into a parser to 
-construct a mesh grid of the $X$, $Y$ coordinate space. These mesh grids 
-establish the relationship between matrix indices and real coordinate 
-space with units of $mm$.
-Then, for each test as shown in Table \ref{table:test_matrix_table}, data from 
-each of the 200 snapshots is Reynolds averaged to produce a stable velocity 
-component, and a fluctuating velocity component in each dimension for each 
-vector, as expressed in equation \ref{eq:rans_components} in terms of position 
-$x$ at time $t$.
+construct a mesh grid of the $X$, $Y$ coordinate space in a given plane. These 
+mesh grids established the relationship between matrix indices and real 
+coordinate space with units of $mm$.Then, for each test as referenced in Table 
+\ref{table:test_matrix_table}, data from 
+each of the 200 snapshots is Reynolds averaged to produce a mean velocity 
+component, and an associated fluctuating velocity components, that is
 
 \begin{equation}
 u(x,t) = \overline{u}(x) + u^\prime(x,t)
@@ -40,10 +39,10 @@ u(x,t) = \overline{u}(x) + u^\prime(x,t)
 \end{equation}
 
 
-Each component is given an individual variable name, with stable nonfluctuating 
-components taken from a simple average of all sets expressed as the component 
-letter with an over bar ($\overline{v_x}$, $\overline{v_y}$, $\overline{v_z}$), 
-and 
+Each component is given an individual variable name, with mean nonfluctuating 
+components determined employing simple averages of all sets expressed as the 
+component letter with an over bar ($\overline{v_x}$, $\overline{v_y}$, 
+$\overline{v_z}$), and 
 time averaged fluctuating component expressed with a prime 
 ($\overline{v_x^\prime}$, $\overline{v_y^\prime}$, $\overline{v_z^\prime}$). 
 Velocities referring to just one of the 200 sets will use a 
@@ -82,7 +81,7 @@ through \ref{eq:wprime}.
 \label{eq:wprime}
 \end{equation}
 
-Where $\overline{v_x}$, $\overline{v_y}$ and $\overline{v_z}$ are the time 
+where $\overline{v_x}$, $\overline{v_y}$ and $\overline{v_z}$ are the time 
 averaged velocity 
 components in the $X$, $Y$, $Z$ directions respectively, and  
 $\overline{v_x^\prime}$, $\overline{v_y^\prime}$ and $\overline{v_z^\prime}$ 
@@ -124,9 +123,9 @@ equations \ref{eq:rs_uu} through \ref{eq:rs_vw}.
 \label{eq:rs_vw}
 \end{equation}
 
-Turbulent kinetic energy $k$ can be calculated as one half 
-of the sum of the three double correlation components as in equation 
-\ref{eq:tke}.
+Turbulent kinetic energy $k$ can be calculated as one half of the sum of the 
+squares of the three instantaneous fluctuation components, taken over the set, 
+i.e
 
 \begin{equation}
 k = \frac{1}{2} \left(\overline{v_x^\prime v_x^\prime}^2 + 
@@ -136,21 +135,23 @@ k = \frac{1}{2} \left(\overline{v_x^\prime v_x^\prime}^2 +
 \end{equation}
 
 
-Once all the statistics for Cartesian coordinates have been generated, the 
-vortex core must be found in order to convert all values to cylindrical 
-coordinates. The core is found by finding the minimum in-plane velocity 
-magnitudes near the center of the interrogation plane, excluding the stream 
-wise $w$ component. In practice, to avoid confusion in identifying the vortex 
-core due to spurious edge values, a threshold value is defined that limits the 
-search for in-plane velocity minima to an area near the center of the field of 
-view. Once the lowest value was found, sub-grid accuracy was 
-achieved by taking a cubic interpolation of the grid points surrounding the 
-minimum. This technique was sufficiently robust to automatically identify the 
-core correctly in every test.
+Once all the turbulence statistics have been 
+generated in Cartesian coordinates, the 
+vortex core must be located in that survey plane in order to represent the 
+turbulence data in cylindrical coordinates. The core was established in terms 
+of the minimum in-plane velocity magnitudes near the center of the 
+interrogation plane, and excluding the stream-wise $w$ component. In the 
+present case, it was necessary to avoid confusion produced by spurious edge 
+values, and a threshold value was defined that limited the search for in-plane 
+velocity minima to the area surrounding the center of the field of view. Once 
+the lowest value was found, sub-grid accuracy was 
+achieved by taking utilizing cubic interpolation of the grid points surrounding 
+the minimum. This technique was sufficiently robust to automatically establish 
+the core axis correctly for every experiment.
 
-With a location for the vortex core, new mesh grids in radial and tangential 
-coordinates, $R$ and $\theta$, are created from the $X$ and 
-$Y$ mesh grids. Velocity components, $v_r$ and $v_\theta$,are then 
+Employing the location for the vortex core, new mesh grids in radial and 
+tangential coordinates, $R$ and $\theta$, were created from the $X$ and 
+$Y$ mesh grids. Velocity components, $v_r$ and $v_\theta$, were then 
 calculated by equations \ref{eq:uv_r} and \ref{eq:uv_t}.
 
 \begin{equation}
@@ -163,12 +164,12 @@ v_{\theta} = v_{x} \sin{(\theta)} - v_{y} \cos{(\theta)}
 \label{eq:uv_t}
 \end{equation}
 
-Where $v_{r}$ and $v_{\theta}$ represent a radial and tangential velocity 
+where $v_{r}$ and $v_{\theta}$ represent a radial and tangential velocity 
 matrix, and $\theta$ is the mesh grid of angles 
 about the vortex core. These equations were applied on an element wise basis to 
 every grid point in the vector field. Once this was done, the same Reynolds 
-averaging technique was applied to separate the radial and tangential velocity 
-components $v_{r}$ and $v_{\theta}$ into stable and fluctuating components in 
+averaging techniques were applied to extract the radial and tangential velocity 
+components $v_{r}$ and $v_{\theta}$ into mean and fluctuating components in 
 equations 
 \ref{eq:rbar} through \ref{eq:tprime}.
 
@@ -195,9 +196,9 @@ equations
 \label{eq:tprime}
 \end{equation}
 
-The double correlations in cylindrical coordinates were calculated directly 
-from the transformed cylindrical velocities with equations \ref{eq:rs_rr) 
-through \ref{eq:rs_tw}.
+The Reynolds stress correlations in cylindrical coordinates were calculated 
+directly from the transformed cylindrical velocities with equations 
+\ref{eq:rs_rr) through \ref{eq:rs_tw}.
 	
 \begin{equation}
 \overline{v_{r}^\prime v_{r}^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
@@ -229,20 +230,24 @@ through \ref{eq:rs_tw}.
 \end{equation}
 
 	
-Once this processing is complete, we have large set of Reynolds averaged 
-velocity data available for each of the 70 test cases. Plots of this data from 
-test case 55 will be shown as examples. Stream plots can be produced as in 
-figure \ref{fig:examp_stream}. Cartesian average velocity components for test 
-case is shown in figures \ref{fig:examp_U} through \ref{fig:examp_W}, though 
-they are not particularly useful when compared to values in cylindrical 
-coordinates. 
-Cylindrical average velocity components are shown in figures \ref{fig:examp_R} 
-and \ref{fig:examp_T}. Reynolds stresses are shown in figures 
-\ref{fig:examp_rt} through \ref{fig:examp_tw}. Turbulent energies are shown in 
-figures \ref{fig:examp_rr} through \ref{fig:examp_ww}. Total turbulent kinetic 
-energy $k$ is shown in figure \ref{fig:examp_tke}. Scatter plots that 
+Once this processing was complete, a large set of Reynolds averaged 
+velocity data were available for each of the 70 test cases. Plots of this data 
+from experiment 55 will be employed in this thesis as a representative example. 
+Stream line plots can be produced as shown in 
+Figure \ref{fig:examp_stream}. Cartesian average velocity components for test 
+case are shown in Figures \ref{fig:examp_U} through \ref{fig:examp_W}, although 
+they are not particularly useful when compared to representations in 
+cylindrical coordinates. 
+Cylindrical average velocity components are shown in Figures \ref{fig:examp_R} 
+and \ref{fig:examp_T}. Reynolds stress distributions are shown in Figures 
+\ref{fig:examp_rt} through \ref{fig:examp_tw}. Variation of the fluctuating 
+magnitudes of the individual cylindrical velocity components are shown in 
+Figures \ref{fig:examp_rr} through \ref{fig:examp_ww}. Variation in the total 
+turbulent kinetic 
+energy $k$ is shown in Figure \ref{fig:examp_tke}. Scatter plots that 
 flatten the dataset into one dimension can be generated as in the tangential 
-velocity vs distance to core plot shown in figure \ref{fig:examp_Tscatter}. 
+velocity vs radial distance from the rotational axis is shown in Figure 
+\ref{fig:examp_Tscatter}. 
 
 \begin{figure}[H]
 	\centering
@@ -345,9 +350,9 @@ velocity vs distance to core plot shown in figure \ref{fig:examp_Tscatter}.
 Insight to the quality and uncertainty in each measurement was gained by 
 examining the number of vectors successfully extracted from the set of 200 
 snapshots as shown in Figure \ref{fig:example_num_contour}. Locations with 
-fewer than twenty valid vectors in the set of 200 were thrown out. A clear 
+fewer than twenty valid vectors in each set were omitted. A clear 
 relationship between the total turbulent kinetic energy, $k$, and the number of 
-vectors making up the average was observed, and is discussed in Chapter 
+vectors making up the average was observed, and will be discussed in Chapter 
 \ref{chapter:results}.
 
 \begin{figure}[H]
