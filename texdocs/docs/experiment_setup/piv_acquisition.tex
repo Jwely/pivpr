@@ -218,7 +218,18 @@ which results in an increased frequency of spurious measurements with a
 poor signal to noise ratio. Manipulation of sector size 
 can increase the number of particles and the reliability of the correlation 
 mapping, but only at the expense of reduced velocity field resolution, since 
-more pixels are required to resolve each vector.
+more pixels are required to resolve each vector.  The amount of mineral oil fog 
+(seed) was not controllable in a quantitative manner over an extended period of 
+testing, because the dissipation rate was slow enough to disallow complete 
+evacuation and re-seeding between experiments, but fast enough to require 
+occasional injections of more fog over the course of several hours of 
+experimentation. Additional fog was added to the tunnel through a hose inserted 
+in the tunnel wall, far upstream of the high speed test section, on a 
+qualitative basis. Prior to actual PIV data acquisition, a few test PIV images 
+were captured, and a low quality two dimensional computation was performed real 
+time for a heads-up evaluation of data quality. On occasion, observed low data 
+quality indicated a low particle density in the tunnel, 
+so additional particle fog was injected.
 
 
 \subsection{Pressure Measurements}
@@ -252,41 +263,30 @@ could be obtained.
 \subsection{Capturing PIV Imagery}
 
 The experiments were conducted with the interrogation plane at seven 
-downstream  between and 546$mm$ and 1016$mm$. Each of these downstream 
-locations will be referred to as 
-a "station". Tests were conducted starting nearest to the vortex 
+downstream  locations between and 546$mm$ and 1016$mm$. Each of these 
+downstream locations will be referred to as a "station". Tests were conducted 
+starting nearest to the vortex 
 generator and progressing downstream. Since changing the position of the 
 interrogation plane required a complete re-calibration of the PIV system, the 
 testing sequence was not randomized. For each station, data were taken for each 
 of 
 the ten test velocities between 15$m/s$ and 33$m/s$ in ascending order, gaining 
-speed over time. Image pairs were acquired once per second, at a 
-rate of $1Hz$ for a period of 200 seconds, generating a total of 200 image 
-sets. Each test set of images was then processed using INSIGHT software in 
+speed over time. Image pairs were acquired once per second, for a period of 200 
+seconds, generating a total of 200 image sets. Each test set of images was then 
+processed using INSIGHT\textsuperscript{\textcopyright} software in 
 order to produce text files containing three-dimensional vector fields for each 
-image set.
+image set in real $(X, Y, Z)$ coordinates.
 
-Tunnel conditions were monitored closely and recorded for the duration of each 
-test. Ancillary wet bulb and dry bulb temperatures were taken with a sling 
-psychrometer. The amount of mineral oil fog (seed) was not controllable in a 
-quantitative manner over an extended period of testing, because the dissipation 
-rate was not constant. Additional fog was added to the tunnel through a hose in 
-the tunnel wall, far upstream of the high speed test section, on a qualitative 
-basis. Prior to actual PIV data acquisition, a few test PIV images 
-were captured, and a low quality two dimensional computation was performed real 
-time for a heads-up evaluation of data quality. 
-On occasion, low data quality indicated a low particle density in the tunnel, 
-so additional particle fog was added. 
-Specific details for each test including the relative humidity ($\phi$) derived 
-from wet bulb and dry bulb measurements and associated pressure relaxation 
-coefficient 
+Tunnel conditions were monitored closely and recorded over the duration of each 
+test. In addition, wet bulb and dry bulb temperatures were taken with a sling 
+psychrometer. Specific details for each test including the relative humidity 
+($\phi$) estimated from wet bulb and dry bulb temperature measurements and the
+associated pressure relaxation coefficient 
 ($\eta_P$), are summarized in Tables \ref{table:station_1_measurements} through 
 \ref{table:station_7_measurements}. 
 
-Stations are defined by the position of the interrogation plane, measured 
-downstream from the wing edge of the bi-wing vortex generator, expressed as
-$I_Z$. Nominal velocity is denoted by $V_{nom}$, while actual mean free stream 
-velocity is denoted by $V_{fs}$, and variance in the measurement for the 
+Nominal velocity is denoted $V_{nom}$, while actual mean free stream 
+velocity is denoted $V_{fs}$, and variance in the measurement for the 
 duration of the test is labeled $\sigma_{V_{fs}}$. Dynamic pressure is $Q$, 
 atmospheric 
 pressure is $P_{atm}$, and the tunnel temperature is $T_{tunnel}$. Relative 
