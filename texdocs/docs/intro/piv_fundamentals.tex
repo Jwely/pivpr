@@ -232,32 +232,33 @@ entering the area from the other side, spurious results will be produced.
 
 There are multiple methods for extracting vector fields from images of 
 particles. A commonality between all methods is the use of a correlation 
-function to find particle displacements. The correlation map is computed by 
-taking the inverse fast Fourier transform (FFT) of the product of the FFT of 
-the first image, and the complex conjugate of the FFT of the second image, then 
-adjusting for up-sampling by dividing by the original factor as in equation. 
-Displacement is measured by finding the peak of correlation map between a small 
-sector of each image, represented by Equation \ref{eq:correlation_map}. 
+function to distinguish actual particle displacements from two or more 
+sequential images. The correlation map is 
+computed by taking the inverse fast Fourier transform (FFT) of the product of 
+the FFT of the first image, and the complex conjugate of the FFT of the second 
+image, then adjusting for up-sampling by dividing by the original up-sampling 
+factor. Displacement is measured by finding the peak of correlation map 
+between a small sector of each image, where $C_{map}$ is given by
 
 \begin{equation}
 C_{map} = FFT^{-1} * [F_A \times conj(F_B) ]
 \label{eq:correlation_map}
 \end{equation}
 
-where $C_{map}$ is the correlation map, $F_A$ is the fast Fourier transform of 
+\noindent
+and $F_A$ is the fast Fourier transform of 
 image $A$, at time $t=0$ and $F_B$ is the fast Fourier transform of image $B$ 
 at time $t=dt$. This process is repeated many times to create a vector field of 
 pixel displacements. In the simplest case, these correlation maps are 
 considered individually, and the absolute highest peak is used to determine the 
-mean pixel displacement within a sector. The Hart method, which was used in the 
-present study, improves upon this with element by element comparison of 
-adjacent sectors correlation tables to remove false peaks 
-\cite{hart1998,hart1999}.
+mean pixel displacement within a sector. The Hart method, employed in the 
+present study, improves upon this general approach by utilizing an element by 
+element comparison of correlation tables from adjacent sectors to remove false 
+peaks \cite{hart1998,hart1999}.
 
 The mathematics behind derivation of velocity vector fields from stereo image 
 pairs is based upon coordinate transformations from pixel coordinates to real 
-coordinates with the following Equations 
-\ref{eq:piv_to_real1} to \ref{eq:piv_to_real4}.
+coordinates. That is, 
 
 \begin{equation}
 x_L= X\frac{dx_L}{dX} + Y\frac{dx_L}{dY} + Z\frac{dx_L}{dZ}
@@ -279,30 +280,34 @@ y_R= X\frac{dy_R}{dX} + Y\frac{dy_R}{dY} + Z\frac{dy_R}{dZ}
 \label{eq:piv_to_real4}
 \end{equation}
 
-where $x_L$, $x_R$, $y_L$ and $y_R$ are the pixel displacements in the x 
-direction on the left and right cameras, and the y direction on the left and 
+
+	where $x_L$, $x_R$, $y_L$ and $y_R$ are the pixel displacements in the x 
+direction on the left and right cameras; similarly for the y direction on the 
+left and 
 right cameras respectively. Symbols $X$, $Y$, and $Z$ are real spatial particle 
 displacements in the interrogation plane. The set of twelve derivatives are 
-pixel displacement sensitivity coefficients, which are determined by a 
-calibration process which involves taking pictures of a matrix of bright dots 
-with a known distance between each dot. Once all twelve calibration 
-coefficients are known, the set of equations is actually over constrained, with 
-four equations and only three unknowns, a least squared method will be used to 
-map measurements form the image plane to the real plane. In the case of this 
-study, INSIGHT software was used to generate this set of calibration 
-coefficients.
+pixel displacement sensitivity coefficients, which are determined by employing 
+a calibration process which involves taking pictures of a matrix of bright 
+dots arranged on a physical calibration target with a known separation distance 
+between 
+each dot. Once all twelve calibration coefficients are determined, the set of 
+equations is actually over constrained, since there are four equations and only 
+three unknowns, justifying a least squares best fit to map measurements from 
+the image plane to the real plane. In the case of this study, INSIGHT 
+\copyright software was used to generate this set of calibration coefficients 
+\cite{fouras2007}.
 
 The image is 
 up sampled to higher resolution to allow sub-pixel displacements to be 
 measured, thus preventing accuracy limitations associated with the physical 
-dimensions of each pixel. The image is typically divided into grids 16 by 16 
+dimensions of each pixel. The image is divided typically into grids 16 by 16 
 pixels in size, with 50\% overlap with surrounding grids to ensure particles 
 which started inside the sector at $t=0$, but begin to exit the sector at 
 $t=dt$, are still identifiable.  
 
 
 Figure \ref{fig:piv_sector_0up} shows a sample of two side by side images taken 
-several microseconds, $dt$ apart without any up-sampling. Figure 
+several microseconds, ($dt$) apart without any up-sampling. Figure 
 \ref{fig:piv_sector_overlay_fft_0up} shows a sample of the same two images 
 layered on top of each other to show the apparent horizontal displacement 
 between the two images. The two dimensional correlation map shows a clear peak 
@@ -377,25 +382,26 @@ example, any other two dimensional method such as cubic may be used.
 	\label{fig:piv_sector_overlay_fft_6up}
 \end{figure}
 
-As the sampling method creates a finer mesh, the sub-pixel resolution 
+Since the sampling method creates a finer mesh, the sub-pixel resolution 
 increases. Table \ref{table:piv_upsampling_displacement} shows how the 
 displacement error may vary with sampling order.
 
 \input{tables/piv_upsampling_displacement}
 
 While the above analysis demonstrates the mathematical motivation behind up 
-sampling images before performing a Fourier transform for measuring particle 
+sampling images before performing the Fourier transform for measuring particle 
 displacement, it does not adequately describe the total uncertainty in 
 measurements made with particle image velocimetry. The uncertainty associated 
 with measurements made with PIV are dependent upon the geometry of the specific 
 optical setup used to take the data.
 
-In stereo PIV, Equations \ref{eq:piv_to_real1} to \ref{eq:piv_to_real4} the 
+In stereo PIV,  the 
 derivative terms which relate displacements in the image plane to displacements 
-in the real plane are not constant throughout the entire interrogation plane, 
-but are functions of the pixels position. These functions can be determined by 
+in the real plane (Equations \ref{eq:piv_to_real1} to \ref{eq:piv_to_real4}) 
+are not constant throughout the entire interrogation plane. They are instead 
+functions of the pixel position. These functions can be determined by 
 measurement of a calibration target, which has a pattern of dots of known 
-position \cite{fouras2007}. The known position of these calibration points can 
+position . The known position of these calibration points can 
 be used to compute the nine coefficients for four functions of the form in 
 Equation \ref{eq:calibration_equation}. There exists a separate set of nine 
 coefficients for the left and right camera, in the $X$ and $Y$ directions.
@@ -410,12 +416,13 @@ coefficients for the left and right camera, in the $X$ and $Y$ directions.
 \newline
 \noindent
 where $X_{mm}$ is the position in $mm$, $[A, B, C, D, E, F, G, H, J]$ 
-represents the entire set of nine coefficients, $X_{px} and Y_{px}$ are the 
+represents the entire set of nine coefficients, $X_{px}$ and $Y_{px}$ are the 
 pixel positions in the $X$ and $Y$ directions of the camera plane 
-respectively. And $Z_{mm}$ is the actual position in the $Z$ direction. The 
+respectively. Similarly $Z_{mm}$ is the actual position in the $Z$ direction. 
+The 
 $Z_{mm}$ position of all particles is assumed to be zero in the first image, 
-and is determined relative to its starting position by root mean squared of 
-the solutions to Equations \ref{eq:piv_to_real1} to \ref{eq:piv_to_real4}.
+and is determined relative to its starting position by the root mean square of 
+the solutions to Equations \ref{eq:piv_to_real1} through \ref{eq:piv_to_real4}.
 For simple optical setups, this approach also accounts for distortion due to 
 variations in magnification \cite{soloff1997, willert1997}.
 
@@ -424,15 +431,15 @@ variations in magnification \cite{soloff1997, willert1997}.
 Understanding the uncertainty in a PIV measurement can be accomplished with 
 analysis of the PIV optical geometry \cite{lawson1997b}. Alternatively, Monte 
 Carlo techniques for evaluating PIV uncertainty can be used by creating 
-artificial image pairs with simulated particle displacements and passing them 
-through the PIV processing chain. In PIV, each camera will have a set of 
-equations which allow pixel coordinates to be mapped to coordinates of the 
-interrogation plane. Particles are simulated with random coordinates within the 
-views of both cameras in the interrogation plane, then mapped onto the 
-coordinate system of both cameras. The intensity of each pixel can be 
-determined by summing the intensity function of every randomly generated 
-particle as in \cite{adeyinka2005,fouras2007}.
-
+artificial image pairs with simulated particle displacements, then passing them 
+through the PIV processing chain. In PIV, as previously discussed, each camera 
+utilizes its own set of coordinate transform equations which allow pixel 
+coordinates to be mapped to the coordinates of the interrogation plane. 
+Simulated particles are given random coordinates within the views of both 
+cameras in the interrogation plane, then mapped onto the coordinate system of 
+both cameras. The intensity of each pixel can be determined by summing the 
+intensity function of every randomly generated particle as in 
+\cite{adeyinka2005,fouras2007}.
 
 
 
