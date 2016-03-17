@@ -852,6 +852,9 @@ class AxialVortex(MeanVecFieldCartesian):
         :return:
         """
 
+        if r_range is None:
+            r_range = (0, '4r')
+
         if kinematic_viscosity is None:
             kinematic_viscosity = AIR_KINEMATIC_VISCOSITY
 
@@ -904,6 +907,7 @@ class AxialVortex(MeanVecFieldCartesian):
             t_ash2 = AshVortex(core_radius, circulation_strength, kinematic_viscosity, ettap).get_vtheta(r_array)
             plt.plot(r_plot, t_ash2, linewidth=2, linestyle='-.', color='darkgreen', label="Ash: $\etta_p$")
 
+        plt.xlim([0, 4])
         plt.legend()
         plt.xlim(xmin=0)
         plt.ylim(ymin=0)
