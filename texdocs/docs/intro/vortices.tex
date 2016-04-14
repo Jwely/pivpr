@@ -35,10 +35,10 @@ Much later, the Lamb-Oseen vortex model was developed from an
 analytical solution to the Navier-Stokes equations \cite{lamb1932}. In this 
 model, a potential 
 line vortex with an infinite velocity at the centerline was introduced 
-instantaneously as a point, then subjected to viscous decay. That solution 
-produces a continuous, unsteady solution for the azimuthal 
+instantaneously as a point, then subjected to viscous decay. This is an 
+unsteady solution for the azimuthal 
 velocity profile at any time after the introduction of the discontinuity, given 
-as as
+as
 
 \begin{equation}
 v_{\theta}(r,t) = \frac{\Gamma_0}{2 \pi r_{core}}[1 - 
@@ -82,13 +82,14 @@ velocity profiles, and has been used to initialize large eddy
 simulations \cite{hennemann2011}.
 
 A model which is widely used in the study of wake vortices, and demonstrates 
-great skill at predicting the velocity profiles of large experimental vortices 
-is the Burnham-Hallock model \cite{burnham1982}. This empirically based model 
-has been independently discovered by many, and describes the 
-azimuthal velocity profile as
+great suitability for modeling the velocity profiles of large experimental 
+vortices is the Burnham-Hallock model \cite{burnham1982}. This 
+empirically-based model has been independently discovered by many 
+\cite{burnam2013}, and describes the azimuthal velocity profile as
 
 \begin{equation}
-v_{\theta}(r) = \frac{\Gamma_0}{2 \pi r_{core}} \frac{r^2}{r^2 + r_{core}^2}
+v_{\theta}(r) = \frac{\Gamma_0}{2 \pi r_{core}} \Big(\frac{r^2}{r^2 + 
+r_{core}^2} \Big)
 \label{eq:burnham-hallock}
 \end{equation}
 
@@ -151,7 +152,8 @@ x_i} \Bigg( \frac{1}{\rho} \frac{D\rho}{Dt} \Bigg) \Bigg]
 
 The term in brackets has been examined and appears to be related to sound 
 production 
-in incompressible flows, but in any scenario, it should be negligibly small 
+in incompressible flows \cite{ash1998}, but in any scenario, it should be 
+negligibly small 
 when multiplied by the pressure relaxation coefficient. Thus, Equation 
 \ref{eq:modified_ns3} can be dramatically simplified \cite{ash2011}.
 
@@ -190,10 +192,10 @@ v_\theta(r) = 2 v_{\theta, max}\frac{(r / r_{core})}{(r/r_{core})^2 + 1}
 \label{eq:ash_vortex_model2}
 \end{equation}
 
-Equation \ref{eq:ash_vortex_model2} is exactly the same form as the 
+Equation \ref{eq:ash_vortex_model2} is the same form as the 
 empirically based Burnham-Hallock model, but is an exact solution to the 
 modified Navier Stokes equations. As the pressure relaxation coefficient 
-shrinks to zero, the solution becomes a potential vortex similar to the 
+tends to zero, the solution becomes a potential vortex similar to the 
 Lamb-Oseen model. For very large pressure relaxation coefficients, the velocity 
 distribution becomes similar to that of a rigid body rotation as in the inner 
 portion of the Rankine model.
@@ -220,22 +222,20 @@ entrainment and laminarization of highly turbulent fluid into the core
 \cite{bandyopadhyay1991}. Direct Numerical Simulation (DNS) has shown 
 intense turbulent structures in the free stream to impact the longevity of a 
 vortex formed within it, with large scale motions causing long wave instability 
-and core wobbling, and small scale motions enhancing the diffusion of vorticity 
+and slight periodic movements of the vortex core (wobbling), and small scale 
+motions enhancing the diffusion of vorticity 
 between the core region and the free stream \cite{risso1997}. It is 
 unsurprising that the turbulent structure of an axial vortex likely depends
 upon local atmospheric conditions, and thus the ambient environment can 
 influence the rate at which a vortex decays. This has a significant impact on 
-aviation safety \cite{ash1998}.
+aviation safety \cite{ash1998}. 
 
-The vortex model developed by Ash, Zardadkhan and Zuckerwar 
-\cite{ash2011} comes from an exact solution to the modified
-Navier Stokes equations, employing a simple turbulent eddy viscosity 
-assumption. Since that model merely changes the ratio of the effective 
+The vortex model developed by Ash, Zardadkhan 
+and Zuckerwar comes from an exact solution to the modified Navier Stokes 
+equations, employing a simple turbulent eddy viscosity assumption 
+\cite{ash2011}. 
+Since that model merely changes the ratio of the effective 
 viscosity to the pressure relaxation coefficient, the resulting axial velocity 
 profile continues to be identical with the empirical Burnham-Hallock model. 
-Since no experiments have been successful to date, demonstrating either the 
-accuracy of the acoustically based pressure relaxation estimates of the implied 
-simplicity of the relationship between measured Reynolds stress, this was a 
-primary emphasis for this thesis. Specific 
-assumptions for the turbulent viscosity model and Reynolds stresses will be 
-examined in the present study.
+Specific assumptions for the turbulent viscosity model and Reynolds stresses 
+will be examined in the present study.

@@ -14,9 +14,10 @@ The first three stations display characteristics that resemble co-rotating
 vortices that had not yet finished merging. Furthermore, analysis shows that 
 the uncertainty in measurements decreases significantly as the interrogation 
 plane moves down stream. Therefore, results from only a few vortices at 
-downstream locations of are discussed here. Complete measurement sets for all 
+downstream locations are discussed here. Complete measurement sets for all 
 vortices generated as part of this study can be obtained from an online public 
-repository at \url{https://github.com/Jwely/pivpr}. Turbulent quantities have 
+repository which can be accessed with its DOI,  
+\url{http://dx.doi.org/10.5281/zenodo.46745}. Turbulent quantities have 
 been compared with hot-wire anemometry experiments using a bodiless bi-wing 
 vortex generator in the same wind tunnel conducted by Thompson 
 \cite{thompson2016}.
@@ -25,9 +26,9 @@ vortex generator in the same wind tunnel conducted by Thompson
 \subsection{Vortex Stabilization}
 A bi-wing vortex generator creates a pair of co-rotating vortices, emanating 
 from the intersections of the wing and center body. A single 
-axial vortex stabilizes as the co rotating vortices merge together and as the 
+axial vortex stabilizes as the co-rotating vortices merge together and as the 
 wake of the center body diminishes. The rotational motion of the vortex 
-wraps the axial velocity deficit around the core region. This was observed 
+winds the axial velocity deficit around the core region. This was observed 
 in the PIV data in Figure \ref{fig:run_1_W_contour} showing a far upstream 
 mean axial velocity distribution with very clear wing wake zones radiating from 
 the center.Those rays largely disappear further downstream as shown in Figure 
@@ -69,8 +70,13 @@ not occur near the true core boundary. Therefore, the vortices were
 characterized by sorting the scattered set of points of azimuthal velocity vs 
 radius as shown in \ref{fig:run_1_T_vs_r_mesh_scatter} in ascending order and 
 performing a Gaussian smoothing to create a smoothed profile as shown in Figure 
-\ref{fig:run_55_comparison}. The maximum azimuthal velocity and core radius was 
-then obtained from the smoothed curve. Thus,
+\ref{fig:run_55_comparison}. This Gaussian smoothing creates the average value 
+for a point from the scattered data by using a weighted average that prefers 
+nearby points, but will accept many points further away, allowing a smooth 
+profile to be drawn across the range of point densities inherent in the 
+dataset. The 
+maximum azimuthal velocity and core radius was then obtained from the smoothed 
+curve. Thus,
 developed vortex planes with pronounced radial symmetry were better suited for 
 further study. With a smoothed azimuthal velocity profile, the experimental 
 data were compared to the theoretical profile models of common vortices 
@@ -107,7 +113,7 @@ It is critical to note that the cameras
 \label{section:macroturb}
 
 The vortex cores sizes at all tested velocities were observed to shrink from 
-a radius of 17-20$mm$ 684$mm$ downstream to a radius of 13-16$mm$ 914$mm$ down 
+a radius of 17-20$mm$ 684$mm$ down stream to a radius of 13-16$mm$ 914$mm$ down 
 stream, a span of just 50$mm$. The abrupt contraction of the core 
 may be attributable to the instability created by the wake of the vortex 
 generator center body. As the core diameter decreased, the azimuthal velocities 
@@ -250,6 +256,7 @@ which use a scalar viscosity term to represent the transport and dissipation of
 energy in small scale flows make direct assumptions about the Reynolds stresses 
 in a given fluid flow. 
 
+\clearpage
 \subsection{Velocity fluctuations}
 
 While turbulent energy and Reynolds stress, especially the radial-tangential 
@@ -414,7 +421,7 @@ vortex can be expressed as
 	\cfrac{\eta_p \bar{v_\theta}}{r^2}\Bigg[\overline{v_{r}^\prime 
 	v_{r}^\prime} - 
 	\overline{v_{\theta}^\prime v_{\theta}^\prime} + 
-	\cfrac{d(\overline{v_{r}^\prime 
+	r \cfrac{d(\overline{v_{r}^\prime 
 	v_{r}^\prime})}{dr}\Bigg]} {\Bigg[\cfrac{d^2 \bar{v_{\theta}}}{dr^2} + 
 	\cfrac{d}{dr}
 	\Bigg(\cfrac{\bar{v_{\theta}}}{r}\Bigg)\Bigg]}

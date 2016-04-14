@@ -7,6 +7,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+import matplotlib.ticker as mtick
 
 # package imports
 from shorthand_to_tex import shorthand_to_tex
@@ -514,7 +515,7 @@ class AxialVortex(MeanVecFieldCartesian):
         nu = ((vt * (etap ** 0.5) / (2 ** 1.5)) * (((r / c) ** 2 + 1) / (r / c))) ** 2
         self.equation_terms['turb_visc_by_vtheta'] = nu
 
-    def get_pressure_relax_terms(self, pressure_relaxation):
+    def get_pressure_relax_terms(self, pressure_relaxation=None):
         """
         Calculates the relatinshib between reynolds stress and turbulent viscosity as derived by the
         pressure relaxation equations.
@@ -1010,7 +1011,8 @@ class AxialVortex(MeanVecFieldCartesian):
     def scatter_plot(self, component_x, component_y, component_c=None,
                      title=None, x_label=None, y_label=None, c_label=None, cmap=None,
                      x_range=None, y_range=None, r_range=None, t_range=None, symmetric=None,
-                     tight=True, figsize=None, outpath=None, log_y=None, show_grid=False):
+                     tight=True, figsize=None, outpath=None, log_y=None, show_grid=False,
+                     add_mean_line=False, y_axis_sci=False):
         """
         prints quick simple scatter plot of component_x vs component_y. Useful for viewing data
         as a function of distance to vortex core (R) or angle around the core (T)
@@ -1030,8 +1032,7 @@ class AxialVortex(MeanVecFieldCartesian):
         :param outpath:         filepath to save the figure
         :param log_y:           set True to make the y axis logarithmic
         :param show_grid:       set True to show dotted grid on the plot
-        :param smooth:          set True to smooth the data, may also math smooth_kwargs
-        :param smooth_kwargs:   keyword arguments to pass to the smoothing function, if any. see get_average_profile
+        :param add_mean_line:   Set to True to add a horizontal line on the mean
         :return:
         """
 
@@ -1069,6 +1070,7 @@ class AxialVortex(MeanVecFieldCartesian):
             x_label = "$R/r_{core}$"
 
         fig = plt.figure(figsize=figsize, dpi=DEFAULT_DPI, facecolor='w', edgecolor='k')
+        ax = fig.add_subplot(111)
         if component_c is not None:
             c = self._get_item_by_rt(component_c, r_range=r_range, t_range=t_range, symmetric=symmetric).flatten()
             vmin, vmax = self._get_vrange(component_c, r_range=r_range, t_range=t_range)
@@ -1079,8 +1081,19 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.scatter(x, y, marker=SCATTER_DEFAULT_MARKER, color=SCATTER_DEFAULT_COLOR)
             c = None
 
-        # if smoothing is desired, get smoothed versions of the datasets
-        # not added
+        # if a mean line is desired, add it
+        # this is a shitty ugly temporary hack that is terribly out of scope, but it gets me the result my
+        # committee is demanding and im out of time for worrying about elegance
+        if add_mean_line:
+            if isinstance(add_mean_line, tuple):
+                y_mean_line = np.mean(self._get_item_by_rt(component_y, r_range=add_mean_line,
+                                                           t_range=t_range, symmetric=symmetric).flatten())
+            else:
+                y_mean_line = np.mean(y)
+            if x_range is not None:
+                plt.axhline(y=y_mean_line, xmin=x_range[0], xmax=x_range[1], c='k')
+            else:
+                plt.axhline(y=y_mean_line, xmin=x.min(), xmax=x.max(), c='k')
 
         # apply manual specifications of x and y range, otherwise guess.
         if y_range is None:
@@ -1096,6 +1109,9 @@ class AxialVortex(MeanVecFieldCartesian):
             plt.grid()
         if log_y:
             plt.yscale('log')
+
+        if y_axis_sci:
+            ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.2e'))
 
         plt.xlabel(x_label)
         plt.ylabel(y_label)

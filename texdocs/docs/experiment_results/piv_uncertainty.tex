@@ -1,5 +1,35 @@
 \section{Uncertainty in PIV measurements}
 \label{sec:piv_uncert}
+
+ There are two major sources of measurement uncertainty associated with PIV. 
+ The first is "particle lag", or the ability of the seed particles to follow 
+ the 
+ flow, and is related to the inertia of the particle and the force exerted by 
+ the fluid upon the particle. The mineral oil droplets used in the present 
+ study are capable of following unsteady movements in the fluid flow on a scale 
+ much smaller than the PIV is capable of resolving, and so the uncertainty from 
+ this source is negligible. Sustained rotation similar to a rigid body 
+ inside the vortex core boundary has the effect of ejecting the relatively 
+ heavy particles away from the centerline. This particle ejection introduces a 
+ slight radial velocity bias in all measurements. This bias however is also 
+ negligible when compared to the second source of uncertainty: the process of 
+ extracting velocity vector information from the PIV images.
+ 
+ Understanding the uncertainty in a PIV measurement can be accomplished with 
+ analysis of the PIV optical geometry \cite{lawson1997b}. Alternatively, Monte 
+ Carlo techniques for evaluating PIV uncertainty can be used by creating 
+ artificial image pairs with simulated particle displacements, then passing 
+ them through the PIV processing chain. In PIV, as previously discussed, each 
+ camera 
+ utilizes its own set of coordinate transform equations which allow pixel 
+ coordinates to be mapped to the coordinates of the interrogation plane. 
+ Simulated particles are given random coordinates within the views of both 
+ cameras in the interrogation plane, then mapped onto the coordinate system of 
+ both cameras. The intensity of each pixel can be determined by summing the 
+ intensity function of every randomly generated particle as in 
+ \cite{adeyinka2005,fouras2007}. This approach has been used successfully once 
+ before in the same wind tunnel facility with the same PIV system by 
+ \cite{doan2012}.
  
 There are a number of factors that contribute to uncertainty in PIV 
 measurements. Both bias and precision errors can be estimated by considering 
@@ -91,7 +121,7 @@ and the three bias components are denoted as
 \label{eq:Wbias}
 \end{equation}
 
-The measurement precision is reported as the root-mean-square of the  
+The measurement precision is reported as the  
 standard deviation, calculated as in 
 	
 \begin{equation}
@@ -205,11 +235,12 @@ ensure that the intensities of each particle was represented accurately was to
 evaluate the intensity for every particle at every point in the full image 
 space of 1280 x 1024 pixels, and then add them together. Since this produces a 
 three-dimensional space in excess 
-of a five billion values for a set of $La, Lb, Ra$ and $Rb$ images, computation 
-time for uncertainty images was a limiting factor. At a minimum, one set of 
-uncertainty images for each combination of viewing geometry and time step $dt$ 
-was required. Therefore, simulated velocity values were chosen for each of the 
-14 cases to approximate the velocities of greatest interest. 
+of five billion values for a set of stereo image pairs, $La, Lb, Ra$ and $Rb$ 
+images, computation time for uncertainty images was a limiting factor. At a 
+minimum, one set of uncertainty images for each combination of viewing geometry 
+and time step $dt$ was required. Therefore, simulated velocity values were 
+chosen for each of the 14 cases to approximate the velocities of greatest 
+interest. 
 
 Tables \ref{table:experiment_results_1} through 
 \ref{table:experiment_results_7} show a summary of results from each of the 70 
@@ -243,12 +274,12 @@ Uncertainty in the stable component was lower, since this measurement is a
 result of averaging many measurements, and was calculated by using an $N$-value 
 of 200 in the precision Equations \ref{eq:Uprec} through \ref{eq:Wprec}.
 
-
+\clearpage
 \subsection{Uncertainty Analysis Results}
 The Monte Carlo analysis was performed for each station employing two 
 scenarios. Uncertainty in the measurements for $u, v$ and $w$ 
-components are tabulated in Tables \ref{table:uncertainties_u} through 
-\ref{table:uncertainties_w}. For the $u$ velocity components in the $X$ 
+components are tabulated in Tables \ref{table:uncertainties_u} and 
+\ref{table:uncertainties_v}. For the $u$ velocity components in the $X$ 
 direction, bias is reported as $\beta_u$, 
 precisions are reported for both single-sample measurements and with 
 measurements comprised of 200 averages by $P_{u^\prime}$ and $P_{\bar{u}}$ 
@@ -257,9 +288,8 @@ $U_{\bar{u}}$.
 
 \input{tables/uncertainties_u}
 \input{tables/uncertainties_v}
-\input{tables/uncertainties_w}
 
-The results of the Monte Carlo analysis held some surprises. Uncertainties in 
+Uncertainties in 
 the $X$ and $Y$ direction were comparable in some cases, while in others $Y$ 
 uncertainties were half as high as those in $X$. At all velocities, poor 
 precision in the individual measurements was the primary driver of total 
@@ -274,9 +304,8 @@ some areas where vectors were less frequently resolved successfully may be
 characterized with greater uncertainty.
 
 In the axial or $Z$-direction, the PIV was found to exhibit an extreme bias 
-toward underestimating velocities based on the Monte Carlo simulation. This 
-bias starts at over 30\% at the closest station, and diminishes systematically 
-with downstream position and decreasing velocity. However, experimental data 
+toward underestimating velocities based on the Monte Carlo simulation. However, 
+experimental data 
 showed that the average axial velocity was consistently a few percent above 
 free stream velocity measured in the wind tunnel using dynamic pressure 
 instrumentation, as expected, as shown in Tables 
@@ -288,7 +317,7 @@ sensitive to precision. The Reynolds stress and turbulence values which are of
 great importance in this study included contributions of velocity fluctuations 
 in the axial direction, which are not impacted by any bias that does exist. 
 Experimental data were examined for possible misrepresentation of measurement 
-uncertainty in the $X$ and $Y$ direction, but no statistically meaningful 
+uncertainty in the $X$ and $Y$ direction, but no meaningful 
 discrepancies were found. Histograms the distribution of measurements for each 
 of the 14 cases were included in Appendix \ref{appendix:uncertainty_histograms}.
 
@@ -305,10 +334,10 @@ challenging. Furthermore, the likelihood of successfully resolving a vector is
 dependent upon aspects of the interaction between tracer particles and the 
 fluid flow. A very clear interdependence between areas of high turbulence, and 
 the number of successful vector calculations was observed as shown in Figures 
-\ref{fig:run_55_num_contour} and \ref{fig:run_55_ctke_contour}. 
+\ref{fig:run_55_num_contour_nolab} and \ref{fig:run_55_ctke_contour_nolab}. 
 
-\input{figs/run_55/run_55_num_contour}
-\input{figs/run_55/run_55_ctke_contour}
+\input{figs/run_55/run_55_num_contour_nolab}
+\input{figs/run_55/run_55_ctke_contour_nolab}
 
 It was assumed that, as long as the number of samples making up any given 
 measurement remains above the threshold of 20, every vector in the field is 
