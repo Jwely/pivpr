@@ -1,1 +1,13 @@
-{"particle_scatter": 100, "name": "Ely_May28th05002", "n_particles": 131072, "u": 3.3, "output_dir": "../uncertainty/artificial_images", "w": 19.0, "v": 3.3, "dt": 40, "dtype": "uint16", "light_sheet_thickness": 3.0, "particle_size": 0.2}
+{
+    "particle_scatter": 100, 
+    "name": "Ely_May28th05002", 
+    "n_particles": 131072, 
+    "u": 3.3, 
+    "output_dir": "../uncertainty/artificial_images", 
+    "w": 19.0, 
+    "v": -3.3, 
+    "dt": 40, 
+    "dtype": "uint16", 
+    "light_sheet_thickness": 3.0, 
+    "particle_size": 0.2
+}

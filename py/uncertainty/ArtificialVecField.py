@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 from py.piv import VecFieldCartesian
 
 
-
 class ArtificialVecField(VecFieldCartesian):
     """
     Class for evaluating performance of PIV to resolve images synthesized
