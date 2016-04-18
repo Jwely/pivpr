@@ -27,9 +27,7 @@ class ArtificialVecField(VecFieldCartesian):
         self.edge_clip = 0.10       # fraction of the image to trim from all edges.
 
         # correction factor for directional convention in Y direction
-        self.vel_matrix['U'] *= 1
-        self.vel_matrix['V'] *= 1
-        self.vel_matrix['W'] *= 1
+        self.vel_matrix['V'] *= -1
 
 
     def subset_center(self, component):
