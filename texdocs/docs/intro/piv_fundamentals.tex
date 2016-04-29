@@ -15,6 +15,7 @@ plane. This technique can be used to study flows in gases and liquids, and is
 derived from techniques originally developed to measure deformations on the 
 surface of solid material \cite{arroyo1991,adrian1991}.
 
+\vspace{20pt}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=5in]{figs/example_vortex_figs/example_quiver}
@@ -90,9 +91,10 @@ set of several thousand PIV image pairs \cite{scharnowski2011}.
 A simple planar PIV system consists of a double pulsed laser, light sheet 
 forming optics, particle seed, a single lens camera, image digitization 
 hardware, and a computer system for data storage and subsequent analysis. The 
-optical geometry of a planar PIV experiment is shown schematically in figure 
+optical geometry of a planar PIV experiment is shown schematically in Figure 
 \ref{fig:mono_piv}.
 
+\vspace{30pt}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=5in]{figs/piv_method/mono_piv_optics}
@@ -127,9 +129,9 @@ of calibration data \cite{fouras2007}.The method of direct measurement of a
 calibration target was employed in this research. 
 
 The detection rate, accuracy, and reliability of PIV depends upon careful 
-selection of experimental parameters. \cite{keane1990} suggest a set of six 
+selection of experimental parameters. Kean and Adrian suggest a set of six 
 important dimensionless quantities and ideal operating ranges that improve the 
-chances of high quality PIV results . The parameters 
+chances of high quality PIV results \cite{keane1990}. The parameters 
 are: (1) data validation criterion, (2) particle image density, (3) relative 
 in-plane image displacement, (4) relative out-of-plane displacement, (5) 
 velocity gradient, and (6) the ratio of the mean image diameter to the 
@@ -164,6 +166,7 @@ interrogation plane is shown in Figure \ref{fig:stereo_piv}. Uncertainties
 associated with high out-of-plane motion in planar PIV are greatly reduced in 
 stereo PIV \cite{lawson1997b,lawson1997}.
 
+\vspace{32pt}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=5in]{figs/piv_method/stereo_piv_optics}
@@ -171,10 +174,11 @@ stereo PIV \cite{lawson1997b,lawson1997}.
 		vectors}
 	\label{fig:stereo_piv}
 \end{figure}  
+\vspace{16pt}
 
 \subsection{Particles}
 
-The "Particles" part of the PIV acronym refers to the small, reflective solid 
+The ``Particles" part of the PIV acronym refers to the small, reflective solid 
 or liquid spheres 
 that are entrained within a flow and illuminated with 
 an intense light source. It is assumed that 
@@ -249,6 +253,7 @@ demonstrated by \cite{lang1999}, and visible in Figure
 is not representative of fluid motion creates a small outward bias in radial 
 velocity measurements, particularly within the core boundary.
 
+\vspace{32pt}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=4in]{figs/piv_method/vortex_core}
@@ -256,6 +261,7 @@ velocity measurements, particularly within the core boundary.
 		low particle density in the vortex core.}
 	\label{fig:vortex_core_particles}
 \end{figure}
+\vspace{16pt}
 
 \subsection{Image processing}
 
@@ -344,7 +350,7 @@ layered on top of each other to show the apparent horizontal displacement
 between the two images. The two dimensional correlation map shows a clear peak 
 down at four pixels in the $X$ direction and zero pixels in the $Y$ direction.
 
-
+\vspace{32pt}
 \begin{figure}[H]
 	\begin{subfigure}{.49\textwidth}
 		\centering
@@ -358,8 +364,6 @@ down at four pixels in the $X$ direction and zero pixels in the $Y$ direction.
 		(right), no up sampling.}
 	\label{fig:piv_sector_0up}
 \end{figure}
-
-
 \begin{figure}[H]
 	\begin{subfigure}{.49\textwidth}
 		\centering
@@ -373,17 +377,18 @@ down at four pixels in the $X$ direction and zero pixels in the $Y$ direction.
 		map (right), no up sampling.}
 	\label{fig:piv_sector_overlay_fft_0up}
 \end{figure}
-
+\vspace{32pt}
 
 Every up sampling doubles the dimensions of the sector, quadrupling the number 
 of pixels and increasing the sub-pixel resolution by a factor of two. The same 
 set of figures is repeated for the same image with 6th order bilinear up 
-sampling in figures \ref{fig:piv_sector_6up} and
+sampling in Figures \ref{fig:piv_sector_6up} and
 \ref{fig:piv_sector_overlay_fft_6up}. Note that the images are much smoother, 
 and the images have been sampled sufficiently to make a very finely spaced grid.
 It is important to note that while bilinear up sampling is used for this
 example, any other two dimensional method such as cubic may be used.
 
+\vspace{32pt}
 \begin{figure}[H]
 	\begin{subfigure}{.49\textwidth}
 		\centering
@@ -397,8 +402,6 @@ example, any other two dimensional method such as cubic may be used.
 		(right), 6th order up sampling.}
 	\label{fig:piv_sector_6up}
 \end{figure}
-
-
 \begin{figure}[H]
 	\begin{subfigure}{.49\textwidth}
 		\centering
@@ -412,6 +415,7 @@ example, any other two dimensional method such as cubic may be used.
 		map (right), 6th order up sampling.}
 	\label{fig:piv_sector_overlay_fft_6up}
 \end{figure}
+\vspace{16pt}
 
 Since the sampling method creates a finer mesh, the sub-pixel resolution 
 increases. Table \ref{table:piv_upsampling_displacement} shows how the 
@@ -424,7 +428,7 @@ sampling images before performing the Fourier transform for measuring particle
 displacement, it does not adequately describe the total uncertainty in 
 measurements made with particle image velocimetry. The uncertainty associated 
 with measurements made with PIV are dependent upon the geometry of the specific 
-optical setup used to take the data.
+optical setup used to gather the data.
 
 In stereo PIV,  the 
 derivative terms which relate displacements in the image plane to displacements 

@@ -1,13 +1,14 @@
 \tolerance=10000
 
 % magical packages
-\documentclass[12pt]{report}	% defines the type of document this is
+\documentclass[12pt, openany]{report}	% defines the type of document this is
 \usepackage{geometry}			% needed for some reason
 \usepackage[utf8]{inputenc}		% dont care
 \usepackage[english]{babel}		% multilingual support? not sure why its here
 
 % less magical packages
 \usepackage{ODUthesis} 		% custom template specific to ODU thesis.
+\usepackage{afterpage}
 \usepackage{graphicx}		% allows images to be included in latex
 \usepackage{amsmath}		% makes big math fractions display less shitilly
 \usepackage{enumitem}		% list formating doohickey
@@ -35,11 +36,11 @@ Effects in Axial Wake Vortices Via Particle Image Velocimetry}
 \principaladviser{Robert Ash}
 \member{Drew Landman} 
 \member{Colin Britcher} 
-\degrees{Bachelor of Science in Mechanical Engineering}
+\degrees{B.S.M.E. 2011, Old Dominion University}
 \dept{Aerospace Engineering}
 \submitdate{May 2016}
-\vita{Bachelors of Mechanical Engineering, Old Dominion University, December 
-2011}
+\vita{Bachelors of Science, Mechanical Engineering, Old Dominion University, 
+December 2011}
 
 \phdfalse 			%produces language on title page for Masters Thesis
 %\copyrightfalse    %suppresses copyright notice
@@ -94,17 +95,18 @@ Effects in Axial Wake Vortices Via Particle Image Velocimetry}
 
 \prefacesection{Acknowledgments}
 For my lovely bride-to-be, who planned our wedding by herself while I remained 
-occupied with this thing. Special thanks to Dr. Robert Ash, whom I ignored for 
+occupied with this thing. Special thanks to Dr. Robert Ash, who I ignored for 
 two years while off adventuring, but was enthusiastic to pick things right 
 back up where they were left upon my return. Additional thanks to my committee 
-members Dr. Drew Landman and Dr. Colin Britcher for their support. 
+members, Dr. Drew Landman and Dr. Colin Britcher, for their support. 
 
-\prefacesection{Notes}
-Good practice for preserving the code used to perform this research was 
-attempted by use of git version control software and a git repository. All code 
-used to perform data analysis and visualization, along with the raw three 
-dimensional vector dataset can be downloaded from 
-\url{https://github.com/Jwely/pivpr}.
+%\prefacesection{Notes}
+%Good practice for preserving the code used to perform this research was 
+%attempted by use of git version control software and a git repository. All 
+%%%code 
+%used to perform data analysis and visualization, along with the raw three 
+%dimensional vector dataset can be downloaded from 
+%\url{https://github.com/Jwely/pivpr}.
 %\prefacesection{Nomenclature}
 %\input{docs/nomenclature}
 \fi
@@ -145,13 +147,11 @@ dimensional vector dataset can be downloaded from
 \bibliographystyle{apalike}
 \bibliography{bib/vortices,bib/other,bib/particles,bib/piv}
 
-\begin{thebibliography}{99}
 %This command adds some extra space in the table of contents
 \addtocontents{toc}{\vspace*{12pt}}  
 
 % adds an entry for the bibliography in the table of contents
 \addcontentsline{toc}{chapter}{BIBLIOGRAPHY}  
-\end{thebibliography}
 
 %=========================================================================
 

@@ -2,12 +2,12 @@
 
 PIV data were processed into text files containing lists of vectors and 
 positions from raw image data using 
-INSIGHTINSIGHT\textsuperscript{\textcopyright} software. 
+INSIGHT\textsuperscript{\textcopyright} software. 
 This format was considered to be the 
 starting point for the present analysis. Each vector is recorded as a row in a 
 "v3d" file, with a set of position coordinates,velocity 
 vector components, and two quality control flags that were used to reduce 
-spurious vector counts. An example of this data is shown in Table 
+spurious vector counts. An example of these data is shown in Table 
 \ref{table:v3d_row_example}.
 
 \input{tables/v3d_row_example}
@@ -49,7 +49,7 @@ Velocities referring to just one of the 200 sets will use a
 subscript $i$ as ($v_{x_i}$, $v_{y_i}$, $v_{z_i}$). The stable components are 
 computed with 
 a simple average to preserve the sign, while the fluctuating components are 
-computed with a root mean squared method as shown in equations \ref{eq:ubar} 
+computed with a root mean squared method as shown in Equations \ref{eq:ubar} 
 through \ref{eq:wprime}.
 
 \begin{equation}
@@ -89,7 +89,7 @@ are the time averaged fluctuating velocity components.
 
 Similarly, time averaged Reynolds stresses can be calculated by multiplying the 
 fluctuating components together before taking the root mean square average by 
-equations \ref{eq:rs_uu} through \ref{eq:rs_vw}.
+Equations \ref{eq:rs_uu} through \ref{eq:rs_vw}.
 
 \begin{equation}
 \overline{v_x^\prime v_x^\prime} = \sqrt{\frac{1}{N-1} \sum_{i=1}^{200} 
@@ -125,7 +125,7 @@ equations \ref{eq:rs_uu} through \ref{eq:rs_vw}.
 
 Turbulent kinetic energy $k$ can be calculated as one half of the sum of the 
 squares of the three instantaneous fluctuation components, taken over the set, 
-i.e
+i.e.
 
 \begin{equation}
 k = \frac{1}{2} \left(\overline{v_x^\prime v_x^\prime}^2 + 
@@ -152,7 +152,7 @@ the core axis correctly for every experiment.
 Employing the location for the vortex core, new mesh grids in radial and 
 tangential coordinates, $R$ and $\theta$, were created from the $X$ and 
 $Y$ mesh grids. Velocity components, $v_r$ and $v_\theta$, were then 
-calculated by equations \ref{eq:uv_r} and \ref{eq:uv_t}.
+calculated by Equations \ref{eq:uv_r} and \ref{eq:uv_t}.
 
 \begin{equation}
 v_{r} = v_{x} \cos{(\theta)} + v_{y} \sin{(\theta)}
@@ -164,13 +164,14 @@ v_{\theta} = v_{x} \sin{(\theta)} - v_{y} \cos{(\theta)}
 \label{eq:uv_t}
 \end{equation}
 
+\noindent
 where $v_{r}$ and $v_{\theta}$ represent a radial and tangential velocity 
 matrix, and $\theta$ is the mesh grid of angles 
 about the vortex core. These equations were applied on an element wise basis to 
 every grid point in the vector field. Once this was done, the same Reynolds 
 averaging techniques were applied to extract the radial and tangential velocity 
 components $v_{r}$ and $v_{\theta}$ into mean and fluctuating components in 
-equations 
+Equations 
 \ref{eq:rbar} through \ref{eq:tprime}.
 
 \begin{equation}
@@ -231,7 +232,7 @@ directly from the transformed cylindrical velocities with equations
 
 	
 Once this processing was complete, a large set of Reynolds averaged 
-velocity data were available for each of the 70 test cases. Plots of this data 
+velocity data were available for each of the 70 test cases. Plots of these data 
 from experiment 55 will be employed in this thesis as a representative example. 
 Stream line plots can be produced as shown in 
 Figure \ref{fig:examp_stream}. Cartesian average velocity components for test 
@@ -359,6 +360,14 @@ vectors making up the average was observed, and will be discussed in Chapter
 	\centering
 	\includegraphics[width=5in]{figs/example_vortex_figs/example_num_contour}
 	\caption{Example contour plot showing the variation in the number of 
-	measurements within the interrogation plane}
+	measurements within the interrogation plane.}
 	\label{fig:example_num_contour}
 \end{figure}
+
+%ensures every page has "Figure         Page" at the top of it
+\makeatletter
+\addtocontents{lof}{%
+      	\protect\afterpage{\protect\hbox to \linewidth%
+      		{\noindent Figure \hfill Page}\par%
+      		\protect\vspace{12\p@}}}
+\makeatother

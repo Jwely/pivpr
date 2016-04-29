@@ -28,17 +28,17 @@
  both cameras. The intensity of each pixel can be determined by summing the 
  intensity function of every randomly generated particle as in 
  \cite{adeyinka2005,fouras2007}. This approach has been used successfully once 
- before in the same wind tunnel facility with the same PIV system by 
+ before in the same wind tunnel facility with the same PIV system 
  \cite{doan2012}.
  
 There are a number of factors that contribute to uncertainty in PIV 
 measurements. Both bias and precision errors can be estimated by considering 
-detailed information about the optical geometry of the PIV setup. Monte-Carlo 
+detailed information about the optical geometry of the PIV setup. Monte-Carlo- 
 based error estimation techniques can be applied by creating artificially 
 simulated images with randomly distributed particles \cite{adeyinka2005}. 
 The distribution of these particles can be modeled using a Gaussian intensity  
-profile by \cite{raffel1998} as described in Equation 
-\ref{eq:piv_gaussian_uncertainty}.
+profile as described in Equation 
+\ref{eq:piv_gaussian_uncertainty} \cite{raffel1998}.
 
 \begin{equation}
 	I(x,y) = I_0exp \left( \frac{-(x_{img} - x_p)^2 - (y_{img} - y_p)^2}
@@ -46,6 +46,7 @@ profile by \cite{raffel1998} as described in Equation
 	\label{eq:piv_gaussian_uncertainty}
 \end{equation}
 
+\noindent
 where $x_p$ and $y_p$ are the locations of the particle centroid, $d_\tau$ is 
 the diameter of the particle, and $I_0$ is particle intensity. Particle 
 intensity is directly related to the intensity of the light sheet, which is 
@@ -58,11 +59,13 @@ to express particle intensity as \ref{eq:particle_intensity_gaus}
 	\label{eq:particle_intensity_gaus}
 \end{equation}
 
+\noindent
 where $z_p$ is the particles position within the thickness of the light sheet, 
 $q$ is the particle light scattering efficiency, and $\Delta Z_L$ is the 
 thickness of the light sheet.
 
-These formula were used to generate artificial image pairs for a single camera. 
+These formulae were used to generate artificial image pairs for a single 
+camera. 
 A sufficient number of particles were created with $x$, $y$ and $z$ coordinates 
 to meet particle density parameters, these coordinates are then 
 used to generate light intensities according to Equation 
@@ -83,7 +86,7 @@ interrogation plane. The coordinate transforms obtained from PIV calibration
 were used to map the displacements from the conceptual plane into the image 
 plane of each camera. These coordinate transforms are unique to each camera, 
 and depend upon the optical geometry of the PIV setup. Uncertainty is 
-calculated using the recommended AIAA calibration procedure outlined in 
+calculated using the recommended AIAA calibration procedure 
 \cite{PIVuncertAIAA}. To determine the system bias, the mean difference between 
 the velocity standard established by the Monte Carlo simulation and the 
 velocity calculated by the PIV software are compared as follows
@@ -103,6 +106,7 @@ velocity calculated by the PIV software are compared as follows
 \label{eq:Werror}
 \end{equation}
 
+\noindent
 which is simply the average difference between the known velocity components 
 and the measured velocity components $\Delta U$, $\Delta V$, and $\Delta W$, 
 for a large number of simulations. This is referred to as the \textit{bias}, 
@@ -190,6 +194,7 @@ synthetically created particle imagery as shown in Figures \ref{fig:la} and
 \ref{fig:lb}. Artificial pixel displacements were specified to approximate the 
 typical displacement associated with the velocities of greatest interest. 
 
+\vspace{32pt}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=4in]{figs/artificial_images/la}
@@ -204,6 +209,14 @@ typical displacement associated with the velocities of greatest interest.
 	\label{fig:lb}
 \end{figure}
 
+%ensures every page has "Figure         Page" at the top of it
+\makeatletter
+\addtocontents{lof}{%
+	\protect\afterpage{\protect\hbox to \linewidth%
+		{\noindent Figure \hfill Page}\par%
+		\protect\vspace{12\p@}}}
+\makeatother
+
 To add complexity, the time between frame captures, $dt$ was expected to have a 
 significant impact on uncertainty. Since the range of velocities used in this 
 study required the use of multiple values of $dt$, artificial images were 
@@ -215,7 +228,7 @@ $\mu s$ were also used. During the experimentation period, great difficulty
 was encountered in tuning PIV parameters to achieve well-resolved vector fields 
 at station one. The uncertainty analysis demonstrated that the actual geometry 
 of the viewing angles was also unfavorable at this station, and the quality of 
-measurements taken this far upstream was poor. Hence, that data was entirely 
+measurements taken this far upstream was poor. Hence, that data were entirely 
 disregarded.
 
 Creation of these artificial images by Monte Carlo was performed with custom 
@@ -224,7 +237,7 @@ files output
 from INSIGHT software and constructs the set of equations needed for all 
 coordinate transformations. In order to simulate as accurately as possible, 
 artificial images were generated at the full resolution of the specific PIV 
-cameras, (1280 x 1024). Particles were only generated randomly at coordinates 
+cameras (1280 x 1024). Particles were only generated randomly at coordinates 
 that were within the field of view of both cameras, to eliminate wasted 
 computation time generating particles which would not aid in the production of 
 a three-dimensional vector. An excess of 100,000 particles were simulated for 
@@ -263,6 +276,7 @@ $29
 m/s$ were used for the high and low velocity experiments respectively. These 
 conditions are summarized in Table \ref{table:uncertainty_sim_table}.
 
+\vspace{32pt}
 \input{tables/uncertainty_sim_table}
 
 Even though many samples were taken at every vector location, the uncertainty 
@@ -286,6 +300,7 @@ measurements comprised of 200 averages by $P_{u^\prime}$ and $P_{\bar{u}}$
 respectively. Total uncertainties are reported as $U_{u^\prime}$ and 
 $U_{\bar{u}}$. 
 
+\vspace{32pt}
 \input{tables/uncertainties_u}
 \input{tables/uncertainties_v}
 

@@ -6,6 +6,17 @@
 %The formatting corresponds to "The Old Dominion University Guide to the Preparation of These and Dissertation"
 %as updated in August 2010.
 %
+
+\usepackage{afterpage}
+
+% define tocless function
+% use \tocless to hide appendix sections from your table of contents, use
+% section as the top level header in your appendices to meet the indentation
+% requirements
+\newcommand{\nocontentsline}[3]{}
+\newcommand{\tocless}[2]{\bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup}
+
+
 \setlength{\voffset}{-0.5in}
 \marginparwidth 40pt \marginparsep 10pt
 \topmargin 0in \headsep .31in
@@ -130,7 +141,7 @@
         \def\baselinestretch{2.0}\@normalsize
         \thispagestyle{empty}%
         \begin{center}
-                {\large\bf\uppercase\expandafter{\@title}}
+                {\uppercase\expandafter{\@title}}
         \end{center}
         \renewcommand{\baselinestretch}{1.0}\@normalsize
         \begin{center}
@@ -139,7 +150,7 @@
                 \@author\\
                 \@degrees\\
         \end{center}
-        \vfill
+        \vspace{12pt}
         \begin{center}
                 A \ifphd Dissertation \else Thesis \fi Submitted to the Faculty of\\
                 Old Dominion University in Partial Fulfillment of the\\
@@ -153,22 +164,26 @@
                 \@submitdate\\
         \end{center}
         \vfill
-        \hfill\parbox[t]{2.5in}{Approved by:\\
-                                \signline{\@principaladviser\ (Director)}
-                                \@member}
-        \vfill\newpage}
+        % uncomment next 3 lines to producesignature spots on the title page
+        %\hfill\parbox[t]{2.5in}{Approved by:\\
+        %                        \signline{\@principaladviser\ (Director)}
+        %                        \@member}
+        \vfill\newpage
+        }
 
 
 \def\abstractpage{\def\baselinestretch{1.5}\@normalsize\pagestyle{empty}%
         \begin{center}
-                {\large\bf ABSTRACT}\\
+                {\bf\large ABSTRACT}\\
                 \vspace{18pt}
                 \renewcommand{\baselinestretch}{1.5}\@normalsize
-                {\large\uppercase\expandafter{\@title}}\\
+                {\uppercase\expandafter{\@title}}\\
                 \vspace{18pt}
                 \@author\\
+                \renewcommand{\baselinestretch}{1.0}\@normalsize
                 Old Dominion University, \number\the\year\\
                 Director: Dr. \@principaladviser\\
+                \renewcommand{\baselinestretch}{1.5}\@normalsize
         \end{center}
         \par
         \@abstract
@@ -195,7 +210,7 @@
 
 \def\copyrightpage{%
         \pagestyle{myheadings}
-        \vspace*{2in}
+        \vspace*{3.5in}
         \begin{center}
                 Copyright,\ \@copyrightyear,\ by
                 \@author,\
@@ -255,10 +270,12 @@
  \addtocontents{toc}{\hfill Page\par}}
 
 \def\listoffigures{\chapter*{List of Figures}
- %\newline
  {\setlength{\parskip}{12\p@}
   \@starttoc{lof}}
- \addtocontents{lof}{\noindent Figure\hfill Page\par}}
+ \addtocontents{lof}{\noindent{Figure}~\hfill{Page}\par}
+ 
+
+ }
 
 \renewcommand*\l@figure{\@dottedtocline{1}{0em}{2.3em}}
 
@@ -402,13 +419,17 @@
 \newcommand{\labelappendicesintableofcontents}{%
      \addtocontents{toc}{\vspace*{12pt}}
      \addtocontents{toc}{\noindent APPENDICES}
-     \addtocontents{toc}{}}
+     \addtocontents{toc}{}
+     }
+     
 \renewcommand{\appendix}{\par
   \setcounter{chapter}{0}%
   \setcounter{section}{0}%
   \labelappendicesintableofcontents%
   \gdef\@chapapp{\appendixname}%
-  \gdef\thechapter{\@Alph\c@chapter}}
+  \gdef\thechapter{\@Alph\c@chapter}
+  }
+
 \renewcommand*\l@chapter[2]{%
   \ifnum \c@tocdepth >\m@ne
     \addpenalty{-\@highpenalty}%

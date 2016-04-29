@@ -19,8 +19,7 @@ vortices generated as part of this study can be obtained from an online public
 repository which can be accessed with its DOI,  
 \url{http://dx.doi.org/10.5281/zenodo.46745}. Turbulent quantities have 
 been compared with hot-wire anemometry experiments using a bodiless bi-wing 
-vortex generator in the same wind tunnel conducted by Thompson 
-\cite{thompson2016}.
+vortex generator in the same wind tunnel \cite{thompson2016}.
 
 
 \subsection{Vortex Stabilization}
@@ -35,6 +34,7 @@ the center.Those rays largely disappear further downstream as shown in Figure
 \ref{fig:run_55_W_contour} at a higher velocity with wake remnants wound about 
 the core. 
 
+\vspace{32pt}
 \input{figs/run_1/run_1_W_contour}
 \input{figs/run_55/run_55_W_contour}
 
@@ -48,6 +48,7 @@ values indicate fluid flowing away from the core. For the majority of tests,
 the radial velocity patterns from the wings remain intact, with radial outflow 
 in the top right and bottom left quadrants. 
 
+\vspace{32pt}
 \input{figs/run_1/run_1_R_contour}
 \input{figs/run_51/run_51_R_contour}
 
@@ -59,6 +60,7 @@ this data is mapped into a scatter plot for every grid point making up the
 two dimensional dataset, the asymmetries become particularly apparent as shown 
 in Figure \ref{fig:run_1_T_vs_r_mesh_scatter}.
 
+\vspace{32pt}
 \input{figs/run_1/run_1_T_contour}
 \input{figs/run_55/run_55_T_contour}
 \input{figs/run_1/run_1_T_vs_r_mesh_scatter}
@@ -85,6 +87,7 @@ comparison, the Lamb-Oseen and Ash vortices are scaled to match the
 experimental maximum azimuthal velocity, while the Rankine vortex is scaled to 
 match the core radius.
 
+\vspace{32pt}
 \input{figs/run_55/run_55_comparison}
 
 The measured vortex characteristics are shown in Tables
@@ -99,8 +102,7 @@ is the core radius, $\overline{v_{\theta}}_{max}$
 is the maximum azimuthal velocity, and $\overline{v}_{z}$ is the axial 
 velocity averaged over the entire observation area.
 
-It is critical to note that the cameras 
-
+\vspace{32pt}
 \input{tables/experiment_results_1}
 \input{tables/experiment_results_2}
 \input{tables/experiment_results_3}
@@ -124,6 +126,7 @@ and out of the core (+). Figure \ref{fig:run_45_R_contour} shows the dispersion
 of these radial velocity jets just one half chord length further downstream, at 
 the same free stream velocity. 
 
+\vspace{32pt}
 \input{figs/run_35/run_35_R_contour}
 \input{figs/run_45/run_45_R_contour}
 
@@ -164,6 +167,14 @@ about 0.01 Hz and 0.5 Hz. Understanding the characteristic time and length
 scales of turbulent fluctuations within the core, and how they relate to those 
 seen outside of the core is of great interest. Evolution of turbulent scales as 
 the interrogation plane moves downstream is of further interest. 
+
+%ensures every page has "Figure         Page" at the top of it
+\makeatletter
+\addtocontents{lof}{%
+	\protect\afterpage{\protect\hbox to \linewidth%
+		{\noindent Figure \hfill Page}\par%
+		\protect\vspace{12\p@}}}
+\makeatother
 
 Figures \ref{fig:run_35_ctke_01rdynamic} through 
 \ref{fig:run_55_ctke_01rdynamic} show power spectral densities of 
@@ -220,16 +231,24 @@ Figures \ref{fig:run_51_ctke_01rdynamic} through
 \input{figs/run_59/run_59_ctke_01rdynamic}
 \input{figs/run_60/run_60_ctke_01rdynamic}
 
+%ensures every page has "Figure         Page" at the top of it
+\makeatletter
+\addtocontents{lof}{%
+	\protect\afterpage{\protect\hbox to \linewidth%
+		{\noindent Figure \hfill Page}\par%
+		\protect\vspace{12\p@}}}
+\makeatother
+
 A regular upward trend in peak turbulence at the cores center was observed with 
 increasing free stream velocity. These were compared to hot-wire anemometry 
-measurements by \cite{thompson2016} at greater free stream velocities and up to 
-14 chord lengths downstream, and found to be consistent.
+measurements at greater free stream velocities and up to 
+14 chord lengths downstream, and found to be consistent \cite{thompson2016}.
 
 Over the range of velocities tested, the time between frame captures, $dt$ was 
 changed between nominal free stream velocities of 25 and 27 $m/s$. A smaller 
 $dt$ value was required at higher velocities to ensure that some particles 
 within the light sheet for the first image capture would remain there for the 
-second. Uncertainty analysis demonstrated that, since the average particle 
+second. An uncertainty analysis demonstrated that, since the average particle 
 moves fewer pixels in the shorter period of time, the precision in the 
 displacement computations is reduced for a shorter $dt$. Since the Reynolds 
 averaged fluctuating components used to calculate turbulent energy are directly 
@@ -246,7 +265,7 @@ precision of PIV measurements is sufficient to study time averaged quantities
 including Reynolds stresses and those related to the root-mean-square of 
 velocity fluctuations, but insufficient to study the real time dynamic nature 
 of turbulent structures. The basis for this conclusion is discussed in greater 
-detail in section \ref{sec:piv_uncert}.
+detail in Section \ref{sec:piv_uncert}.
 
 \section{Reynolds stress and turbulence relationships}
 
@@ -353,6 +372,15 @@ fluctuations in the regions above and below.
 \input{figs/run_49/run_49_tt_contour}
 \input{figs/run_50/run_50_tt_contour}
 
+%ensures every page has "Figure         Page" at the top of it
+\makeatletter
+\addtocontents{lof}{%
+	\protect\afterpage{\protect\hbox to \linewidth%
+		{\noindent Figure \hfill Page}\par%
+		\protect\vspace{12\p@}}}
+\makeatother
+
+
 Using a similar vortex age approach as Equation \ref{eq:period_frequency}, the 
 frequency of this motion was estimated to be 120Hz, approximately twice that of 
 the observed frequency of periodic radial fluctuations. Each of these 
@@ -395,6 +423,7 @@ frequently in these zones with no physical significance. To reduce noise, the
 scatter plots shown do not include points within 5 degrees of a vertical or 
 horizontal axis.
 
+\vspace{32pt}
 \input{figs/run_55/run_55_turb_visc_vs_r_meshscatter}
 
 \noindent
@@ -444,6 +473,7 @@ magnitude of the pressure relaxation term was consistently found to be many
 orders smaller as shown in Figure 
 \ref{fig:run_55_turb_visc_ettap_vs_r_meshscatter}.
 
+\vspace{32pt}
 \input{figs/run_55/run_55_turb_visc_reynolds_vs_r_meshscatter}
 \input{figs/run_55/run_55_turb_visc_ettap_vs_r_meshscatter}
 
@@ -452,6 +482,7 @@ to the Reynolds stress term was observed,
 though the slope was found to be slightly shallower as shown in Figure 
 \ref{fig:run_55_turb_visc_vel_grad_vs_r_meshscatter}.
 
+\vspace{32pt}
 \input{figs/run_55/run_55_turb_visc_vel_grad_vs_r_meshscatter}
 
 
@@ -468,16 +499,17 @@ opportunities for velocities at small angles or small errors in denominators to
 become very large errors. The opportunities for these errors to arise becomes 
 greater in the vicinity of the core.
 
+\vspace{32pt}
 \input{figs/run_55/run_55_turb_visc_total_vs_r_meshscatter}
 
 This exercise was useful in showing the relative magnitudes of the strain rate 
-and Reynolds stress terms in equation \ref{eq:etap_nut}, but did not yield an 
+and Reynolds stress terms in Equation \ref{eq:etap_nut}, but did not yield an 
 explanation for why a constant turbulent viscosity assumption can be used to 
 accurately approximate the velocity profiles of an axial wave vortex.
 
 More simply, a total viscosity can be estimated by 
 substituting circulation strength Reynolds number, $R_\Gamma$, and rearranging 
-equation \ref{eq:ash_vortex_model} for total turbulence, $\nu$, by
+Equation \ref{eq:ash_vortex_model} for total turbulence, $\nu$, by
 
 \begin{equation}
 \nu(r) = \Bigg[\frac{v_\theta(r) \sqrt{\eta_P}}{2 \sqrt{2}}
@@ -502,6 +534,7 @@ free stream velocity. Tests at lower free stream velocities consistently showed
 that total viscosity, and thus turbulent viscosity could be well approximated 
 by a constant value. 
 
+\vspace{32pt}
 \input{figs/run_51/run_51_turb_visc_by_vtheta_vs_r_meshscatter}
 \input{figs/run_52/run_52_turb_visc_by_vtheta_vs_r_meshscatter}
 \input{figs/run_53/run_53_turb_visc_by_vtheta_vs_r_meshscatter}
