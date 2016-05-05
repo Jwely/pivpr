@@ -130,12 +130,16 @@
 %
 \def\signline#1{\\
                 \rule{2.5in}{0.5pt}\\
-                 {\small #1} \\}
+                 {\small #1} \\}                
+\def\blanksignline#1{\\
+	{\small #1}}          
 
 
 \def\@member{}
 \def\member#1{\expandafter\def\expandafter\@member\expandafter
-{\@member{\signline{#1\ (Member)}}}}
+% swap these coment lines to produce/hide signature lines. use blanksignline for final version
+%{\@member{\signline{#1\ (Member)}}}}
+{\@member{\blanksignline{#1\ (Member)}}}}
 
 \def\titlep{%
         \def\baselinestretch{2.0}\@normalsize
@@ -168,6 +172,10 @@
         %\hfill\parbox[t]{2.5in}{Approved by:\\
         %                        \signline{\@principaladviser\ (Director)}
         %                        \@member}
+        % just include the commite members names on final version, no signature lines
+        \hfill\parbox{2.5in}{Approved by: \\
+                             \@principaladviser (Director)
+                             \@member}
         \vfill\newpage
         }
 
