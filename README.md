@@ -55,8 +55,8 @@ The full 3d vector dataset and working drafts of the thesis can be downloaded fr
 
 ## Requirements
 Statistics sets and plots can be generated from the vector set using controller scripts which interface with a small axial vortex API. Runing this code requires:
- * [Python 2.7](https://www.python.org/downloads/)
- * [Microsoft visual C++ compiler](https://www.microsoft.com/en-us/download/details.aspx?id=44266)
+ * [Python 2.7 +](https://www.python.org/downloads/)
+ * [Microsoft visual C++ compiler (windows)](https://www.microsoft.com/en-us/download/details.aspx?id=44266)
 
 And, with easy installation using pip:
  * [`numpy` with the math kernel library](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
